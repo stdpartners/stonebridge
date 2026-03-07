@@ -484,7 +484,7 @@
           <div class="card-header"><div class="card-title">Quick Add Position</div></div>
           <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
             <div class="field"><label>Symbol</label><input type="text" id="ov-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
-            <div class="field"><label>P&amp;L ($)</label><input type="number" id="ov-pnl" placeholder="±0.00" step="0.01"></div>
+            <div class="field"><label>P&amp;L ($)</label><input type="text" inputmode="decimal" id="ov-pnl" placeholder="เช่น 25.50 หรือ -10.00"></div>
             <div class="field"><label>Direction</label>
               <select id="ov-type"><option value="long">LONG</option><option value="short">SHORT</option></select>
             </div>
@@ -513,7 +513,7 @@
       <div class="card-body">
         <div class="trade-form">
           <div class="field field-sym"><label>Symbol</label><input type="text" id="t-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
-          <div class="field field-pnl"><label>P&amp;L ($)</label><input type="number" id="t-pnl" placeholder="±0.00" step="0.01"></div>
+          <div class="field field-pnl"><label>P&amp;L ($)</label><input type="text" inputmode="decimal" id="t-pnl" placeholder="เช่น 25.50 หรือ -10.00"></div>
           <div class="field field-type"><label>Direction</label>
             <select id="t-type"><option value="long">LONG</option><option value="short">SHORT</option></select>
           </div>
@@ -678,20 +678,27 @@ function pushTrade(sym,pnl,type){
   localStorage.setItem('sb_trades',JSON.stringify(trades));
   recalc();
 }
+function parsePnl(id){
+  const val = document.getElementById(id).value.trim().replace(/\s/g,'');
+  const n = parseFloat(val);
+  return isNaN(n) ? null : n;
+}
 function addTrade(){
   const sym=(document.getElementById('t-symbol').value.trim()||'TRADE').toUpperCase();
-  const pnl=parseFloat(document.getElementById('t-pnl').value);
+  const pnl=parsePnl('t-pnl');
   const type=document.getElementById('t-type').value;
-  if(isNaN(pnl))return;
+  if(pnl===null){ document.getElementById('t-pnl').style.borderColor='var(--loss)'; return; }
+  document.getElementById('t-pnl').style.borderColor='';
   pushTrade(sym,pnl,type);
   document.getElementById('t-pnl').value='';
   document.getElementById('t-symbol').value='';
 }
 function addTradeOv(){
   const sym=(document.getElementById('ov-symbol').value.trim()||'TRADE').toUpperCase();
-  const pnl=parseFloat(document.getElementById('ov-pnl').value);
+  const pnl=parsePnl('ov-pnl');
   const type=document.getElementById('ov-type').value;
-  if(isNaN(pnl))return;
+  if(pnl===null){ document.getElementById('ov-pnl').style.borderColor='var(--loss)'; return; }
+  document.getElementById('ov-pnl').style.borderColor='';
   pushTrade(sym,pnl,type);
   document.getElementById('ov-pnl').value='';
   document.getElementById('ov-symbol').value='';
