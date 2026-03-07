@@ -484,7 +484,16 @@
           <div class="card-header"><div class="card-title">Quick Add Position</div></div>
           <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
             <div class="field"><label>Symbol</label><input type="text" id="ov-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
-            <div class="field"><label>P&amp;L ($)</label><input type="text" inputmode="decimal" id="ov-pnl" placeholder="เช่น 25.50 หรือ -10.00"></div>
+            <div class="field">
+              <label>P&amp;L ($)</label>
+              <div style="display:flex;gap:8px;">
+                <select id="ov-sign" style="width:72px;flex-shrink:0;background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:9px 8px;font-family:'DM Mono',monospace;font-size:.9rem;color:var(--stone-900);outline:none;-webkit-appearance:none;appearance:none;text-align:center;">
+                  <option value="1">＋</option>
+                  <option value="-1">－</option>
+                </select>
+                <input type="text" inputmode="decimal" id="ov-pnl" placeholder="0.00" style="flex:1;min-width:0;">
+              </div>
+            </div>
             <div class="field"><label>Direction</label>
               <select id="ov-type"><option value="long">LONG</option><option value="short">SHORT</option></select>
             </div>
@@ -513,7 +522,16 @@
       <div class="card-body">
         <div class="trade-form">
           <div class="field field-sym"><label>Symbol</label><input type="text" id="t-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
-          <div class="field field-pnl"><label>P&amp;L ($)</label><input type="text" inputmode="decimal" id="t-pnl" placeholder="เช่น 25.50 หรือ -10.00"></div>
+          <div class="field field-pnl">
+              <label>P&amp;L ($)</label>
+              <div style="display:flex;gap:8px;">
+                <select id="t-sign" style="width:72px;flex-shrink:0;background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:9px 8px;font-family:'DM Mono',monospace;font-size:.9rem;color:var(--stone-900);outline:none;-webkit-appearance:none;appearance:none;text-align:center;">
+                  <option value="1">＋</option>
+                  <option value="-1">－</option>
+                </select>
+                <input type="text" inputmode="decimal" id="t-pnl" placeholder="0.00" style="flex:1;min-width:0;">
+              </div>
+            </div>
           <div class="field field-type"><label>Direction</label>
             <select id="t-type"><option value="long">LONG</option><option value="short">SHORT</option></select>
           </div>
@@ -678,14 +696,16 @@ function pushTrade(sym,pnl,type){
   localStorage.setItem('sb_trades',JSON.stringify(trades));
   recalc();
 }
-function parsePnl(id){
-  const val = document.getElementById(id).value.trim().replace(/\s/g,'');
+function parsePnl(valId, signId){
+  const val = document.getElementById(valId).value.trim().replace(/\s/g,'');
   const n = parseFloat(val);
-  return isNaN(n) ? null : n;
+  if(isNaN(n) || n < 0) return null;
+  const sign = signId ? parseFloat(document.getElementById(signId).value) : 1;
+  return n * sign;
 }
 function addTrade(){
   const sym=(document.getElementById('t-symbol').value.trim()||'TRADE').toUpperCase();
-  const pnl=parsePnl('t-pnl');
+  const pnl=parsePnl('t-pnl','t-sign');
   const type=document.getElementById('t-type').value;
   if(pnl===null){ document.getElementById('t-pnl').style.borderColor='var(--loss)'; return; }
   document.getElementById('t-pnl').style.borderColor='';
@@ -695,7 +715,7 @@ function addTrade(){
 }
 function addTradeOv(){
   const sym=(document.getElementById('ov-symbol').value.trim()||'TRADE').toUpperCase();
-  const pnl=parsePnl('ov-pnl');
+  const pnl=parsePnl('ov-pnl','ov-sign');
   const type=document.getElementById('ov-type').value;
   if(pnl===null){ document.getElementById('ov-pnl').style.borderColor='var(--loss)'; return; }
   document.getElementById('ov-pnl').style.borderColor='';
