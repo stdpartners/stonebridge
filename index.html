@@ -268,15 +268,12 @@
   .field input:focus, .field select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(184,151,90,.1); background:var(--white); }
 
   /* ══ TRADE FORM ══ */
-  .trade-form { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
-  .trade-form .field-sym  { grid-column:1; }
-  .trade-form .field-pnl  { grid-column:2; }
-  .trade-form .field-type { grid-column:1; }
-  .trade-form .wrap-btn   { grid-column:2; display:flex; align-items:flex-end; }
+  .trade-form { display:flex; flex-direction:column; gap:9px; }
+  .wrap-btn { display:flex; }
   .btn-add {
     background:var(--stone-900); color:var(--gold-light);
-    border:none; border-radius:6px; width:100%; height:40px;
-    font-family:'DM Sans',sans-serif; font-size:.72rem;
+    border:none; border-radius:6px; width:100%; height:44px;
+    font-family:'DM Sans',sans-serif; font-size:.78rem;
     font-weight:500; letter-spacing:.06em; text-transform:uppercase;
     cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
     transition:background .2s,transform .1s;
@@ -284,6 +281,21 @@
   .btn-add svg { width:16px; height:16px; stroke-width:2; flex-shrink:0; }
   .btn-add:hover  { background:var(--stone-800); }
   .btn-add:active { transform:scale(.97); }
+
+  /* sign + amount row */
+  .pnl-row { display:flex; gap:8px; }
+  .pnl-sign {
+    width:64px; flex-shrink:0;
+    background:var(--paper); border:1px solid var(--border);
+    border-radius:6px; padding:9px 8px;
+    font-family:'DM Mono',monospace; font-size:1rem;
+    color:var(--stone-900); outline:none;
+    -webkit-appearance:none; appearance:none;
+    text-align:center; cursor:pointer;
+    transition:border-color .2s;
+  }
+  .pnl-sign:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(184,151,90,.1); }
+  .pnl-amount { flex:1; min-width:0; }
 
   /* ══ TRADE LOG ══ */
   .tlog-head { display:grid; grid-template-columns:58px 1fr 58px 80px 24px; gap:7px; padding:7px 0; border-bottom:1px solid var(--border); }
@@ -350,12 +362,10 @@
 
     .overview-grid { display:grid; grid-template-columns:1fr 340px; gap:16px; align-items:start; }
 
-    .trade-form { grid-template-columns:1fr 1fr 120px 48px; }
-    .trade-form .field-sym  { grid-column:auto; }
-    .trade-form .field-pnl  { grid-column:auto; }
-    .trade-form .field-type { grid-column:auto; }
-    .trade-form .wrap-btn   { grid-column:auto; }
-    .btn-add { height:100%; min-height:40px; }
+    /* desktop: trade form in a row */
+    .trade-form { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:9px; align-items:end; }
+    .wrap-btn { height:100%; }
+    .btn-add { height:100%; min-height:42px; }
 
     .form-row { grid-template-columns:repeat(2,1fr); }
     .progress-big { font-size:2.4rem; }
@@ -486,12 +496,12 @@
             <div class="field"><label>Symbol</label><input type="text" id="ov-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
             <div class="field">
               <label>P&amp;L ($)</label>
-              <div style="display:flex;gap:8px;">
-                <select id="ov-sign" style="width:72px;flex-shrink:0;background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:9px 8px;font-family:'DM Mono',monospace;font-size:.9rem;color:var(--stone-900);outline:none;-webkit-appearance:none;appearance:none;text-align:center;">
+              <div class="pnl-row">
+                <select id="ov-sign" class="pnl-sign">
                   <option value="1">＋</option>
                   <option value="-1">－</option>
                 </select>
-                <input type="text" inputmode="decimal" id="ov-pnl" placeholder="0.00" style="flex:1;min-width:0;">
+                <input type="text" inputmode="decimal" id="ov-pnl" class="pnl-amount" placeholder="0.00">
               </div>
             </div>
             <div class="field"><label>Direction</label>
@@ -524,12 +534,12 @@
           <div class="field field-sym"><label>Symbol</label><input type="text" id="t-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
           <div class="field field-pnl">
               <label>P&amp;L ($)</label>
-              <div style="display:flex;gap:8px;">
-                <select id="t-sign" style="width:72px;flex-shrink:0;background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:9px 8px;font-family:'DM Mono',monospace;font-size:.9rem;color:var(--stone-900);outline:none;-webkit-appearance:none;appearance:none;text-align:center;">
+              <div class="pnl-row">
+                <select id="t-sign" class="pnl-sign">
                   <option value="1">＋</option>
                   <option value="-1">－</option>
                 </select>
-                <input type="text" inputmode="decimal" id="t-pnl" placeholder="0.00" style="flex:1;min-width:0;">
+                <input type="text" inputmode="decimal" id="t-pnl" class="pnl-amount" placeholder="0.00">
               </div>
             </div>
           <div class="field field-type"><label>Direction</label>
