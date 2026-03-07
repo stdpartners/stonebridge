@@ -310,8 +310,31 @@
   .td-date { font-size:.68rem; color:var(--stone-400); font-family:'DM Mono',monospace; }
   .td-sym  { font-size:.82rem; font-weight:500; color:var(--stone-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .td-type { font-size:.58rem; font-weight:500; letter-spacing:.06em; padding:2px 5px; border-radius:3px; display:inline-block; text-align:center; }
-  .td-type.long  { background:var(--profit-bg); color:var(--profit); }
-  .td-type.short { background:var(--loss-bg);   color:var(--loss);   }
+  .td-type.deposit    { background:#e8f0fe; color:#3b5bdb; }
+  .td-type.withdrawal { background:#fff3e0; color:#e67700; }
+
+  /* tab switcher */
+  .tab-row { display:flex; gap:6px; margin-bottom:14px; }
+  .tab-btn {
+    flex:1; padding:8px; border-radius:7px; border:1px solid var(--border);
+    background:var(--white); font-family:'DM Sans',sans-serif;
+    font-size:.68rem; font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--stone-400); cursor:pointer; transition:all .2s; text-align:center;
+  }
+  .tab-btn.active { background:var(--stone-900); color:var(--gold-light); border-color:var(--stone-900); }
+
+  /* fund form */
+  .fund-form { display:flex; flex-direction:column; gap:9px; }
+  .fund-type-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .fund-type-btn {
+    padding:10px; border-radius:7px; border:1px solid var(--border);
+    background:var(--white); font-family:'DM Sans',sans-serif;
+    font-size:.75rem; font-weight:500; letter-spacing:.04em;
+    color:var(--stone-400); cursor:pointer; transition:all .2s; text-align:center;
+  }
+  .fund-type-btn.dep  { }
+  .fund-type-btn.dep.active  { background:#e8f0fe; border-color:#3b5bdb; color:#3b5bdb; }
+  .fund-type-btn.with.active { background:#fff3e0; border-color:#e67700; color:#e67700; }
   .td-pnl { font-family:'DM Mono',monospace; font-size:.82rem; text-align:right; }
   .td-pnl.pos { color:var(--profit); }
   .td-pnl.neg { color:var(--loss);   }
@@ -481,10 +504,13 @@
           </div>
         </div>
 
-        <div class="stats-strip">
+        <div class="stats-strip" style="grid-template-columns:repeat(3,1fr)">
           <div class="stat-cell"><div class="lbl">Best Trade</div><div class="val pos" id="stat-best">—</div></div>
           <div class="stat-cell"><div class="lbl">Worst Trade</div><div class="val" style="color:var(--loss)" id="stat-worst">—</div></div>
           <div class="stat-cell"><div class="lbl">Avg Trade</div><div class="val" id="stat-avg">—</div></div>
+          <div class="stat-cell"><div class="lbl">Realized R:R</div><div class="val" id="stat-rr">—</div></div>
+          <div class="stat-cell"><div class="lbl">Expectancy</div><div class="val" id="stat-exp">—</div></div>
+          <div class="stat-cell"><div class="lbl">Profit Factor</div><div class="val" id="stat-pf">—</div></div>
         </div>
       </div>
 
@@ -527,42 +553,79 @@
     <div class="eyebrow">Position Log</div>
     <div class="pg-title">Trade History</div>
 
-    <div class="card">
-      <div class="card-header"><div class="card-title">New Position</div></div>
-      <div class="card-body">
-        <div class="trade-form">
-          <div class="field field-sym"><label>Symbol</label><input type="text" id="t-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
-          <div class="field field-pnl">
-              <label>P&amp;L ($)</label>
+    <!-- Tab switcher -->
+    <div class="tab-row">
+      <button class="tab-btn active" id="tab-trade" onclick="switchTab('trade')">New Trade</button>
+      <button class="tab-btn" id="tab-fund" onclick="switchTab('fund')">Deposit / Withdraw</button>
+    </div>
+
+    <!-- Trade form -->
+    <div id="form-trade">
+      <div class="card">
+        <div class="card-header"><div class="card-title">New Position</div></div>
+        <div class="card-body">
+          <div class="trade-form">
+            <div class="field field-sym"><label>Symbol</label><input type="text" id="t-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
+            <div class="field field-pnl">
+                <label>P&amp;L ($)</label>
+                <div class="pnl-row">
+                  <select id="t-sign" class="pnl-sign">
+                    <option value="1">＋</option>
+                    <option value="-1">－</option>
+                  </select>
+                  <input type="text" inputmode="decimal" id="t-pnl" class="pnl-amount" placeholder="0.00">
+                </div>
+              </div>
+            <div class="field field-type"><label>Direction</label>
+              <select id="t-type"><option value="long">LONG</option><option value="short">SHORT</option></select>
+            </div>
+            <div class="wrap-btn">
+              <button class="btn-add" onclick="addTrade()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                <span class="desk-only">Add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fund form -->
+    <div id="form-fund" style="display:none">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Fund Movement</div></div>
+        <div class="card-body">
+          <div class="fund-form">
+            <div class="fund-type-row">
+              <button class="fund-type-btn dep active" id="fund-dep" onclick="selectFund('deposit')">Deposit</button>
+              <button class="fund-type-btn with" id="fund-with" onclick="selectFund('withdrawal')">Withdrawal</button>
+            </div>
+            <div class="field">
+              <label>Amount ($)</label>
               <div class="pnl-row">
-                <select id="t-sign" class="pnl-sign">
-                  <option value="1">＋</option>
-                  <option value="-1">－</option>
-                </select>
-                <input type="text" inputmode="decimal" id="t-pnl" class="pnl-amount" placeholder="0.00">
+                <input type="text" inputmode="decimal" id="f-amount" class="pnl-amount" placeholder="0.00">
               </div>
             </div>
-          <div class="field field-type"><label>Direction</label>
-            <select id="t-type"><option value="long">LONG</option><option value="short">SHORT</option></select>
-          </div>
-          <div class="wrap-btn">
-            <button class="btn-add" onclick="addTrade()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
-              <span class="desk-only">Add</span>
-            </button>
+            <div class="field"><label>Note (optional)</label><input type="text" id="f-note" placeholder="e.g. Monthly top-up"></div>
+            <div class="wrap-btn">
+              <button class="btn-add" onclick="addFund()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                Confirm
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-header"><div class="card-title">All Positions</div></div>
+      <div class="card-header"><div class="card-title">All Activity</div></div>
       <div class="card-body" style="padding-top:8px">
         <div class="tlog-head">
           <span class="col-h">Date</span>
-          <span class="col-h" style="text-align:left">Symbol</span>
-          <span class="col-h">Dir.</span>
-          <span class="col-h">P&amp;L</span>
+          <span class="col-h" style="text-align:left">Detail</span>
+          <span class="col-h">Type</span>
+          <span class="col-h">Amount</span>
           <span></span>
         </div>
         <div class="trade-rows" id="tradeRows"></div>
@@ -673,6 +736,8 @@ document.getElementById('headerDate').textContent =
 
 // ── STATE ──
 let trades = JSON.parse(localStorage.getItem('sb_trades')||'[]');
+let funds  = JSON.parse(localStorage.getItem('sb_funds') ||'[]');
+let currentFundType = 'deposit';
 
 // ── RESTORE SETTINGS ──
 (function restoreSettings(){
@@ -693,6 +758,42 @@ function switchPage(name) {
   ['nav-'+name,'dnav-'+name].forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.add('active'); });
   window.scrollTo(0,0);
 }
+
+// ── TAB SWITCHER (trade vs fund) ──
+function switchTab(tab) {
+  document.getElementById('form-trade').style.display = tab==='trade' ? 'block' : 'none';
+  document.getElementById('form-fund').style.display  = tab==='fund'  ? 'block' : 'none';
+  document.getElementById('tab-trade').classList.toggle('active', tab==='trade');
+  document.getElementById('tab-fund').classList.toggle('active',  tab==='fund');
+}
+
+// ── FUND TYPE (deposit vs withdrawal) ──
+function selectFund(type) {
+  currentFundType = type;
+  document.getElementById('fund-dep').classList.toggle('active',  type==='deposit');
+  document.getElementById('fund-with').classList.toggle('active', type==='withdrawal');
+}
+
+// ── ADD FUND ──
+function addFund() {
+  const amt = parseFloat(document.getElementById('f-amount').value.trim());
+  if(isNaN(amt) || amt <= 0){ document.getElementById('f-amount').style.borderColor='var(--loss)'; return; }
+  document.getElementById('f-amount').style.borderColor='';
+  const note = document.getElementById('f-note').value.trim() || (currentFundType==='deposit' ? 'Deposit' : 'Withdrawal');
+  funds.unshift({
+    id: Date.now(),
+    date: new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'}),
+    type: currentFundType,
+    amt,
+    note
+  });
+  localStorage.setItem('sb_funds', JSON.stringify(funds));
+  document.getElementById('f-amount').value='';
+  document.getElementById('f-note').value='';
+  recalc();
+}
+
+function delFund(id){ funds=funds.filter(f=>f.id!==id); localStorage.setItem('sb_funds',JSON.stringify(funds)); recalc(); }
 
 // ── HELPERS ──
 function fmt(n) { const a=Math.abs(n); if(a>=1e6)return(n/1e6).toFixed(2)+'M'; if(a>=1e3)return(n/1e3).toFixed(2)+'K'; return n.toFixed(2); }
@@ -745,16 +846,17 @@ function recalc(){
   // save settings every recalc
   localStorage.setItem('sb_settings', JSON.stringify({ capital, target, avg:avgPct, freq }));
 
-  const totalPnl=trades.reduce((s,t)=>s+t.pnl,0);
-  const balance =capital+totalPnl;
-  const wins    =trades.filter(t=>t.pnl>0).length;
-  const winRate =trades.length?wins/trades.length*100:0;
-  const roi     =capital>0?totalPnl/capital*100:0;
-  const remaining=target-balance;
-  const pnlArr  =trades.map(t=>t.pnl);
-  const best    =pnlArr.length?Math.max(...pnlArr):0;
-  const worst   =pnlArr.length?Math.min(...pnlArr):0;
-  const avg     =pnlArr.length?totalPnl/pnlArr.length:0;
+  const totalPnl  = trades.reduce((s,t)=>s+t.pnl, 0);
+  const totalFunds = funds.reduce((s,f)=> f.type==='deposit' ? s+f.amt : s-f.amt, 0);
+  const balance   = capital + totalPnl + totalFunds;
+  const wins      = trades.filter(t=>t.pnl>0).length;
+  const winRate   = trades.length ? wins/trades.length*100 : 0;
+  const roi       = capital>0 ? totalPnl/capital*100 : 0;
+  const remaining = target-balance;
+  const pnlArr    = trades.map(t=>t.pnl);
+  const best      = pnlArr.length?Math.max(...pnlArr):0;
+  const worst     = pnlArr.length?Math.min(...pnlArr):0;
+  const avg       = pnlArr.length?totalPnl/pnlArr.length:0;
 
   $s('kpi-balance','$'+fmt(balance));
   $s('kpi-balance-sub','Base $'+fmt(capital));
@@ -790,6 +892,41 @@ function recalc(){
   $s('stat-worst',pnlArr.length?'$' +worst.toFixed(2):'—');
   $s('stat-avg',  pnlArr.length?(avg>=0?'+':'')+' $'+avg.toFixed(2):'—');
 
+  // ── Deep Insights ──
+  const winners = trades.filter(t=>t.pnl>0).map(t=>t.pnl);
+  const losers  = trades.filter(t=>t.pnl<0).map(t=>t.pnl);
+  const avgWin  = winners.length ? winners.reduce((a,b)=>a+b,0)/winners.length : 0;
+  const avgLoss = losers.length  ? Math.abs(losers.reduce((a,b)=>a+b,0)/losers.length) : 0;
+  const lossRate = 1 - winRate/100;
+
+  // Realized R:R
+  if(winners.length && losers.length){
+    const rr = avgWin / avgLoss;
+    const rrEl = document.getElementById('stat-rr');
+    rrEl.textContent = '1 : ' + rr.toFixed(2);
+    rrEl.style.color = rr >= 1 ? 'var(--profit)' : 'var(--loss)';
+  } else { $s('stat-rr','—'); }
+
+  // Expectancy as % of avg trade size
+  if(trades.length >= 2){
+    const expectancy = (winRate/100 * avgWin) - (lossRate * avgLoss);
+    const avgSize    = trades.map(t=>Math.abs(t.pnl)).reduce((a,b)=>a+b,0) / trades.length;
+    const expPct     = avgSize > 0 ? (expectancy / avgSize * 100) : 0;
+    const expEl = document.getElementById('stat-exp');
+    expEl.textContent = (expPct >= 0 ? '+' : '') + expPct.toFixed(1) + '%';
+    expEl.style.color = expPct >= 0 ? 'var(--profit)' : 'var(--loss)';
+  } else { $s('stat-exp','—'); }
+
+  // Profit Factor
+  if(winners.length && losers.length){
+    const grossWin  = winners.reduce((a,b)=>a+b,0);
+    const grossLoss = Math.abs(losers.reduce((a,b)=>a+b,0));
+    const pf = grossWin / grossLoss;
+    const pfEl = document.getElementById('stat-pf');
+    pfEl.textContent = pf.toFixed(2);
+    pfEl.style.color = pf >= 1.5 ? 'var(--profit)' : pf >= 1 ? 'var(--gold)' : 'var(--loss)';
+  } else { $s('stat-pf','—'); }
+
   renderTrades(); renderRecent(); renderTable(capital,target,avgPct,balance);
 }
 
@@ -805,8 +942,35 @@ function rowHTML(t){
 
 const EMPTY=`<div class="empty-state"><div class="icon">◈</div><p>No positions recorded</p></div>`;
 
-function renderTrades(){ const e=document.getElementById('tradeRows'); if(e) e.innerHTML=trades.length?trades.map(rowHTML).join(''):EMPTY; }
-function renderRecent(){ const e=document.getElementById('recentRows'); if(e) e.innerHTML=trades.length?trades.slice(0,5).map(rowHTML).join(''):EMPTY; }
+function fundRowHTML(f){
+  const isDep = f.type==='deposit';
+  return`<div class="trade-row">
+    <span class="td-date">${f.date}</span>
+    <span class="td-sym" style="color:var(--stone-600);font-size:.78rem">${f.note}</span>
+    <span class="td-type ${f.type}">${isDep?'DEP':'WDR'}</span>
+    <span class="td-pnl ${isDep?'pos':'neg'}">${isDep?'+':'-'}$${f.amt.toFixed(2)}</span>
+    <button class="btn-del" onclick="delFund(${f.id})">✕</button>
+  </div>`;
+}
+
+function allRowsSorted(){
+  const tRows = trades.map(t=>({...t, _ts: t.id, _html: rowHTML(t)}));
+  const fRows = funds.map(f=>({...f, _ts: f.id, _html: fundRowHTML(f)}));
+  return [...tRows,...fRows].sort((a,b)=>b._ts-a._ts).map(r=>r._html).join('');
+}
+
+function renderTrades(){
+  const e=document.getElementById('tradeRows');
+  if(!e) return;
+  const all = trades.length||funds.length;
+  e.innerHTML = all ? allRowsSorted() : EMPTY;
+}
+function renderRecent(){
+  const e=document.getElementById('recentRows');
+  if(!e) return;
+  const all = trades.length||funds.length;
+  e.innerHTML = all ? allRowsSorted().split('</div>').slice(0,5).join('</div>') + (allRowsSorted().split('</div>').length>1?'':'') : EMPTY;
+}
 
 function renderTable(capital,target,avgPct,cur){
   const tb=document.getElementById('compBody'); if(!tb)return; tb.innerHTML='';
