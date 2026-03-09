@@ -780,9 +780,9 @@
 // ── SESSIONS DATA (declared early so ticker can use it) ──
 const SESSIONS = [
   { id:'asia',   name:'Asia',     color:'#7dba9b', start:6*60,      end:15*60,
-    pairs:['XAU/USD','AUD/USD','AUD/JPY','USD/JPY','XAG/USD','BTC/USD'] },
+    pairs:['XAU/USD','AUD/USD','USD/JPY','XAG/USD','BTC/USD'] },
   { id:'london', name:'London',   color:'#6b8cba', start:15*60,     end:20*60+30,
-    pairs:['XAU/USD','GBP/USD','EUR/USD','GBP/JPY','XAG/USD','BTC/USD'] },
+    pairs:['XAU/USD','GBP/USD','EUR/USD','XAG/USD','BTC/USD'] },
   { id:'ny',     name:'New York', color:'#b87d4b', start:20*60+30,  end:24*60,
     pairs:['XAU/USD','EUR/USD','GBP/USD','USD/CAD','XAG/USD','BTC/USD'] },
   { id:'nylate', name:'NY Late',  color:'#9b8eb5', start:0,         end:3*60,
@@ -809,8 +809,6 @@ let tickerData = [
   { sym:'GBP/USD', price:0, chg:0, dec:4 },
   { sym:'USD/JPY', price:0, chg:0, dec:2 },
   { sym:'AUD/USD', price:0, chg:0, dec:4 },
-  { sym:'AUD/JPY', price:0, chg:0, dec:2 },
-  { sym:'GBP/JPY', price:0, chg:0, dec:2 },
   { sym:'USD/CAD', price:0, chg:0, dec:4 },
 ];
 
@@ -881,8 +879,6 @@ async function fetchPrices() {
       update('AUD/USD', AUDUSD);
       update('USD/JPY', USDJPY);
       update('USD/CAD', USDCAD);
-      update('AUD/JPY', AUDUSD * USDJPY);
-      update('GBP/JPY', GBPUSD * USDJPY);
     }
 
     // XAU + XAG — ลอง metals.live ก่อน fallback เป็น Binance PAXG
