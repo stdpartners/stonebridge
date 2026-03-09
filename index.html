@@ -88,41 +88,32 @@
   }
   .ticker-wrap::before,
   .ticker-wrap::after {
-    content: '';
-    position: absolute; top:0; bottom:0;
-    width: 72px; z-index:2; pointer-events:none;
+    content:''; position:absolute; top:0; bottom:0;
+    width:60px; z-index:2; pointer-events:none;
   }
   .ticker-wrap::before { left:0;  background:linear-gradient(90deg,var(--stone-900),transparent); }
   .ticker-wrap::after  { right:0; background:linear-gradient(-90deg,var(--stone-900),transparent); }
-
   .ticker-track {
-    display: flex;
-    width: max-content;
-    animation: tickerScroll 40s linear infinite;
+    display:flex; width:max-content;
+    animation:tickerScroll 50s linear infinite;
   }
-  .ticker-track:hover { animation-play-state:paused; cursor:default; }
-
+  .ticker-track:hover { animation-play-state:paused; }
   @keyframes tickerScroll {
     0%   { transform:translateX(0); }
     100% { transform:translateX(-50%); }
   }
-
   .tick-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 0 24px;
-    border-right: 1px solid rgba(255,255,255,.06);
-    white-space: nowrap;
+    display:inline-flex; align-items:center; gap:7px;
+    padding:0 22px; border-right:1px solid rgba(255,255,255,.06);
+    white-space:nowrap;
   }
-  .tick-sym   { font-family:'DM Mono',monospace; font-size:.66rem; color:rgba(255,255,255,.4); letter-spacing:.06em; }
+  .tick-sym   { font-family:'DM Mono',monospace; font-size:.64rem; color:rgba(255,255,255,.38); letter-spacing:.07em; }
   .tick-price { font-family:'DM Mono',monospace; font-size:.76rem; color:rgba(255,255,255,.85); }
-  .tick-chg   { font-family:'DM Mono',monospace; font-size:.66rem; padding:1px 5px; border-radius:3px; }
+  .tick-chg   { font-family:'DM Mono',monospace; font-size:.64rem; padding:1px 5px; border-radius:3px; }
   .tick-chg.up   { color:#5ec994; background:rgba(94,201,148,.12); }
   .tick-chg.down { color:#e07070; background:rgba(224,112,112,.12); }
-  .tick-arrow    { font-size:.55rem; }
-  .tick-arrow.up   { color:#5ec994; }
-  .tick-arrow.down { color:#e07070; }
+  .tick-arrow.up   { color:#5ec994; font-size:.54rem; }
+  .tick-arrow.down { color:#e07070; font-size:.54rem; }
 
   /* ══ HEADER ══ */
   .header {
@@ -394,6 +385,75 @@
     .progress-big { font-size:2.4rem; }
     .tlog-head, .trade-row { grid-template-columns:68px 1fr 68px 90px 28px; }
   }
+  /* ══ SESSIONS ══ */
+  .session-timeline {
+    position:relative; margin:8px 0 28px;
+    padding:0 4px;
+  }
+  .timeline-bar {
+    display:flex; height:8px; border-radius:4px; overflow:hidden;
+    margin-bottom:6px; gap:2px;
+  }
+  .tbar-seg {
+    height:100%; border-radius:3px; transition:opacity .2s;
+    cursor:default;
+  }
+  .tbar-seg.active-seg { box-shadow:0 0 0 2px var(--white), 0 0 0 4px var(--gold); }
+  .timeline-labels {
+    display:flex; justify-content:space-between;
+    font-family:'DM Mono',monospace; font-size:.6rem;
+    color:var(--stone-400); margin-bottom:20px;
+  }
+
+  .session-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(min-width:640px){ .session-cards { grid-template-columns:repeat(3,1fr); } }
+  @media(min-width:900px){ .session-cards { grid-template-columns:repeat(5,1fr); } }
+
+  .sess-card {
+    border:1px solid var(--border); border-radius:10px;
+    padding:14px 13px; background:var(--white);
+    transition:border-color .2s, box-shadow .2s;
+    position:relative; overflow:hidden;
+  }
+  .sess-card.active-sess {
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(184,151,90,.12);
+  }
+  .sess-card.dead-sess { opacity:.5; }
+  .sess-live-badge {
+    position:absolute; top:10px; right:10px;
+    background:var(--gold); color:var(--white);
+    font-size:.5rem; font-weight:600; letter-spacing:.08em;
+    padding:2px 6px; border-radius:10px; text-transform:uppercase;
+  }
+  .sess-name {
+    font-size:.6rem; font-weight:600; letter-spacing:.12em;
+    text-transform:uppercase; margin-bottom:2px;
+  }
+  .sess-time {
+    font-family:'DM Mono',monospace; font-size:.68rem;
+    color:var(--stone-400); margin-bottom:10px;
+  }
+  .sess-pairs { display:flex; flex-direction:column; gap:4px; }
+  .sess-pair {
+    font-family:'DM Mono',monospace; font-size:.72rem;
+    color:var(--stone-700); padding:3px 0;
+    border-bottom:1px solid var(--stone-50);
+  }
+  .sess-pair:last-child { border-bottom:none; }
+  .sess-pair.gold  { color:var(--gold); font-weight:500; }
+  .sess-pair.muted { color:var(--stone-300); }
+
+  .sess-now-label {
+    font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--stone-400); margin-bottom:10px;
+    font-family:'DM Sans',sans-serif;
+  }
+  .sess-clock {
+    font-family:'DM Mono',monospace; font-size:1.6rem;
+    font-weight:300; color:var(--stone-900); letter-spacing:.02em;
+    margin-bottom:4px;
+  }
   @media (min-width:1024px) {
     .progress-big { font-size:2.6rem; }
   }
@@ -403,7 +463,9 @@
 
 <!-- TICKER TAPE -->
 <div class="ticker-wrap">
-  <div class="ticker-track" id="tickerTrack"></div>
+  <div class="ticker-track" id="tickerTrack">
+    <div class="tick-item"><span class="tick-sym">LOADING</span><span class="tick-price">—</span></div>
+  </div>
 </div>
 
 <!-- HEADER -->
@@ -430,6 +492,7 @@
         <button class="desk-nav-btn active" id="dnav-overview"   onclick="switchPage('overview')">Overview</button>
         <button class="desk-nav-btn"        id="dnav-trades"     onclick="switchPage('trades')">Trades</button>
         <button class="desk-nav-btn"        id="dnav-projection" onclick="switchPage('projection')">Projection</button>
+        <button class="desk-nav-btn"        id="dnav-sessions"   onclick="switchPage('sessions')">Sessions</button>
       </nav>
       <span class="header-date" id="headerDate">—</span>
       <div class="status-dot"></div>
@@ -667,6 +730,30 @@
     </div>
   </div>
 
+  <!-- ── SESSIONS ── -->
+  <div class="page" id="page-sessions">
+    <div class="eyebrow">Market Hours</div>
+    <div class="pg-title">Trading Sessions</div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-body" style="padding-bottom:14px">
+        <div class="sess-now-label">Current Time (Local)</div>
+        <div class="sess-clock" id="sess-clock">00:00:00</div>
+        <div class="sess-active-name" id="sess-active-name">—</div>
+
+        <!-- Timeline bar -->
+        <div class="session-timeline" style="margin-top:18px">
+          <div class="timeline-bar" id="sess-timeline-bar"></div>
+          <div class="timeline-labels">
+            <span>06:00</span><span>15:00</span><span>20:30</span><span>00:00</span><span>03:00</span><span>06:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="session-cards" id="sess-cards"></div>
+  </div>
+
 </main>
 
 <!-- BOTTOM NAV (mobile) -->
@@ -683,52 +770,160 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
     Projection
   </button>
+  <button class="nav-item" id="nav-sessions"    onclick="switchPage('sessions')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+    Sessions
+  </button>
 </nav>
 
 <script>
-// ── TICKER ──
-const BASE_ASSETS = [
-  { sym:'XAU/USD',  price:2338.50,  chg:+0.42, dec:2 },
-  { sym:'DXY',      price:104.82,   chg:-0.18, dec:2 },
-  { sym:'S&P 500',  price:5204.34,  chg:+0.67, dec:2 },
-  { sym:'EUR/USD',  price:1.0821,   chg:-0.11, dec:4 },
-  { sym:'GBP/USD',  price:1.2694,   chg:+0.09, dec:4 },
-  { sym:'USD/JPY',  price:151.43,   chg:+0.23, dec:2 },
-  { sym:'BTC/USD',  price:67240.00, chg:+1.84, dec:0 },
+// ── SESSIONS DATA (declared early so ticker can use it) ──
+const SESSIONS = [
+  { id:'asia',   name:'Asia',     color:'#7dba9b', start:6*60,      end:15*60,
+    pairs:['XAU/USD','AUD/USD','AUD/JPY','USD/JPY','XAG/USD','BTC/USD'] },
+  { id:'london', name:'London',   color:'#6b8cba', start:15*60,     end:20*60+30,
+    pairs:['XAU/USD','GBP/USD','EUR/USD','GBP/JPY','XAG/USD','BTC/USD'] },
+  { id:'ny',     name:'New York', color:'#b87d4b', start:20*60+30,  end:24*60,
+    pairs:['XAU/USD','EUR/USD','GBP/USD','USD/CAD','XAG/USD','BTC/USD'] },
+  { id:'nylate', name:'NY Late',  color:'#9b8eb5', start:0,         end:3*60,
+    pairs:['XAU/USD','EUR/USD','GBP/USD','XAG/USD','BTC/USD'] },
+  { id:'dead',   name:'Dead Zone',color:'#c0b8ae', start:3*60,      end:6*60,
+    pairs:['XAU/USD','XAG/USD','BTC/USD'] }
 ];
-let liveAssets = BASE_ASSETS.map(a=>({...a}));
+const TOTAL_MINS = 1440;
 
-function driftPrices() {
-  liveAssets.forEach(a => {
-    a.price += (Math.random()-.499)*a.price*.0003;
-    a.chg   += (Math.random()-.499)*.05;
-    a.chg    = +a.chg.toFixed(2);
-  });
-  buildTicker();
+function getActiveSession(mins){
+  for(const s of SESSIONS){
+    if(s.start < s.end){ if(mins >= s.start && mins < s.end) return s; }
+    else { if(mins >= s.start || mins < s.end) return s; }
+  }
+  return null;
 }
+
+// ── TICKER (real prices) ──
+let tickerData = [
+  { sym:'XAU/USD', price:0, chg:0, dec:2 },
+  { sym:'XAG/USD', price:0, chg:0, dec:2 },
+  { sym:'BTC/USD', price:0, chg:0, dec:0 },
+  { sym:'EUR/USD', price:0, chg:0, dec:4 },
+  { sym:'GBP/USD', price:0, chg:0, dec:4 },
+  { sym:'USD/JPY', price:0, chg:0, dec:2 },
+  { sym:'AUD/USD', price:0, chg:0, dec:4 },
+  { sym:'AUD/JPY', price:0, chg:0, dec:2 },
+  { sym:'GBP/JPY', price:0, chg:0, dec:2 },
+  { sym:'USD/CAD', price:0, chg:0, dec:4 },
+];
 
 function buildTicker() {
   const track = document.getElementById('tickerTrack');
-  if (!track) return;
-  const items = [...liveAssets, ...liveAssets];
+  if(!track) return;
+
+  // หา session ปัจจุบัน
+  const now    = new Date();
+  const mins   = now.getHours()*60 + now.getMinutes();
+  const active = typeof getActiveSession === 'function' ? getActiveSession(mins) : null;
+
+  // กรองเฉพาะ pair ที่อยู่ใน session นั้น
+  const activePairs = active ? active.pairs : null;
+  const pool = tickerData.filter(a =>
+    a.price > 0 && (!activePairs || activePairs.includes(a.sym))
+  );
+
+  if(!pool.length) return;
+  const items = [...pool, ...pool];
   track.innerHTML = items.map(a => {
-    const up = a.chg >= 0;
-    const c  = up ? 'up' : 'down';
-    const arr= up ? '▲' : '▼';
-    const p  = a.dec===0
-      ? a.price.toLocaleString('en-US',{maximumFractionDigits:0})
+    const up  = a.chg >= 0;
+    const p   = a.dec === 0
+      ? a.price.toLocaleString('en-US', {maximumFractionDigits:0})
       : a.price.toFixed(a.dec);
+    const cls = up ? 'up' : 'down';
+    const arr = up ? '▲' : '▼';
     return `<div class="tick-item">
       <span class="tick-sym">${a.sym}</span>
       <span class="tick-price">${p}</span>
-      <span class="tick-arrow ${c}">${arr}</span>
-      <span class="tick-chg ${c}">${(up?'+':'')+a.chg.toFixed(2)}%</span>
+      <span class="tick-arrow ${cls}">${arr}</span>
+      <span class="tick-chg ${cls}">${(up?'+':'')+a.chg.toFixed(2)}%</span>
     </div>`;
   }).join('');
 }
 
-buildTicker();
-setInterval(driftPrices, 3500);
+async function fetchPrices() {
+  try {
+    // Binance — BTC/USD (ฟรี ไม่ต้อง key)
+    const [btcRes, forexRes] = await Promise.allSettled([
+      fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'),
+      fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY,AUD,CAD')
+    ]);
+
+    if(btcRes.status === 'fulfilled' && btcRes.value.ok){
+      const d = await btcRes.value.json();
+      const t = tickerData.find(a=>a.sym==='BTC/USD');
+      if(t){ t.price = parseFloat(d.lastPrice); t.chg = parseFloat(d.priceChangePercent); }
+    }
+
+    if(forexRes.status === 'fulfilled' && forexRes.value.ok){
+      const d = await forexRes.value.json();
+      const r = d.rates;
+      const set = (sym, val, base=1) => {
+        const t = tickerData.find(a=>a.sym===sym);
+        if(t && val) { t.price = base/val; }
+      };
+      // USD/xxx → invert to get xxx/USD or cross pairs
+      const EURUSD = 1/r.EUR, GBPUSD = 1/r.GBP, AUDUSD = 1/r.AUD;
+      const USDJPY = r.JPY, USDCAD = r.CAD;
+
+      const update = (sym, price) => {
+        const t = tickerData.find(a=>a.sym===sym);
+        if(t) { const prev = t.price||price; t.chg = prev>0 ? (price-prev)/prev*100 : 0; t.price = price; }
+      };
+      update('EUR/USD', EURUSD);
+      update('GBP/USD', GBPUSD);
+      update('AUD/USD', AUDUSD);
+      update('USD/JPY', USDJPY);
+      update('USD/CAD', USDCAD);
+      update('AUD/JPY', AUDUSD * USDJPY);
+      update('GBP/JPY', GBPUSD * USDJPY);
+    }
+
+    // XAU + XAG — ลอง metals.live ก่อน fallback เป็น Binance PAXG
+    try {
+      const metalsRes = await fetch('https://api.metals.live/v1/spot/gold,silver');
+      if(metalsRes.ok){
+        const metals = await metalsRes.json();
+        let gold = null, silver = null;
+        if(Array.isArray(metals)){
+          metals.forEach(m => {
+            if(m.gold   !== undefined) gold   = parseFloat(m.gold);
+            if(m.silver !== undefined) silver = parseFloat(m.silver);
+          });
+        } else {
+          if(metals.gold)   gold   = parseFloat(metals.gold);
+          if(metals.silver) silver = parseFloat(metals.silver);
+        }
+        if(gold){   const t=tickerData.find(a=>a.sym==='XAU/USD'); if(t){ const prev=t.price||gold;   t.chg=prev>0?(gold-prev)/prev*100:0;   t.price=gold; } }
+        if(silver){ const t=tickerData.find(a=>a.sym==='XAG/USD'); if(t){ const prev=t.price||silver; t.chg=prev>0?(silver-prev)/prev*100:0; t.price=silver; } }
+      }
+    } catch(e) {}
+
+    // Fallback: ดึง PAXG (gold-backed token) จาก Binance แทน XAU ถ้ายังไม่มีราคา
+    const xau = tickerData.find(a=>a.sym==='XAU/USD');
+    if(!xau || xau.price === 0){
+      try {
+        const paxgRes = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT');
+        if(paxgRes.ok){
+          const d = await paxgRes.json();
+          if(xau){ xau.price=parseFloat(d.lastPrice); xau.chg=parseFloat(d.priceChangePercent); }
+        }
+      } catch(e) {}
+    }
+
+  } catch(e) { console.warn('Ticker fetch error', e); }
+
+  buildTicker();
+}
+
+fetchPrices();
+setInterval(fetchPrices, 30000); // refresh ทุก 30 วิ
 
 // ── DATE ──
 document.getElementById('headerDate').textContent =
@@ -994,9 +1189,57 @@ document.addEventListener('keydown',e=>{
   if(document.activeElement.closest('.overview-right')) addTradeOv();
 });
 
-recalc();
+// ── SESSIONS UI ──
 
-// ── SERVICE WORKER (offline support) ──
+function buildSessionCards(activeSess){
+  const el = document.getElementById('sess-cards'); if(!el) return;
+  el.innerHTML = SESSIONS.map(s => {
+    const isActive = activeSess && activeSess.id === s.id;
+    const isDead   = s.id === 'dead';
+    const fmtT = m => String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+    const endLabel = s.id==='ny' ? '00:00' : fmtT(s.end);
+    const pairs = s.pairs.map(p => {
+      const isGold = p.includes('XAU')||p.includes('XAG');
+      const isMuted = p === '—';
+      return `<div class="sess-pair ${isGold?'gold':''} ${isMuted?'muted':''}">${p}</div>`;
+    }).join('');
+    return `<div class="sess-card ${isActive?'active-sess':''} ${isDead?'dead-sess':''}">
+      ${isActive?'<div class="sess-live-badge">Live</div>':''}
+      <div class="sess-name" style="color:${s.color}">${s.name}</div>
+      <div class="sess-time">${fmtT(s.start)} – ${endLabel}</div>
+      <div class="sess-pairs">${pairs}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildTimelineBar(activeSess){
+  const el = document.getElementById('sess-timeline-bar'); if(!el) return;
+  el.innerHTML = SESSIONS.map(s => {
+    let dur = s.start < s.end ? s.end-s.start : (TOTAL_MINS-s.start)+s.end;
+    const pct = (dur/TOTAL_MINS*100).toFixed(2);
+    const isActive = activeSess && activeSess.id===s.id;
+    return `<div class="tbar-seg ${isActive?'active-seg':''}"
+      style="flex:${pct};background:${s.color};opacity:${isActive?1:0.3}"></div>`;
+  }).join('');
+}
+
+function updateClock(){
+  const now  = new Date();
+  const mins = now.getHours()*60+now.getMinutes();
+  const pad  = n=>String(n).padStart(2,'0');
+  const clockEl = document.getElementById('sess-clock');
+  const nameEl  = document.getElementById('sess-active-name');
+  if(clockEl) clockEl.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const active = getActiveSession(mins);
+  if(nameEl) nameEl.textContent = active ? `${active.name} Session — Active` : '—';
+  buildSessionCards(active);
+  buildTimelineBar(active);
+  buildTicker(); // อัปเดต ticker เมื่อ session เปลี่ยน
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+recalc();
 if ('serviceWorker' in navigator) {
   const swCode = `
     const CACHE = 'sb-v1';
