@@ -391,14 +391,17 @@
     padding:0 4px;
   }
   .timeline-bar {
-    display:flex; height:8px; border-radius:4px; overflow:hidden;
-    margin-bottom:6px; gap:2px;
+    display:flex; height:8px; border-radius:4px; overflow:visible;
+    margin-bottom:6px; gap:2px; position:relative;
   }
   .tbar-seg {
     height:100%; border-radius:3px; transition:opacity .2s;
     cursor:default;
   }
-  .tbar-seg.active-seg { box-shadow:0 0 0 2px var(--white), 0 0 0 4px var(--gold); }
+  @keyframes dotPulse {
+    0%,100% { box-shadow:0 0 0 3px rgba(184,151,90,.35), 0 0 12px rgba(184,151,90,.6); }
+    50%      { box-shadow:0 0 0 6px rgba(184,151,90,.15), 0 0 20px rgba(184,151,90,.4); }
+  }
   .timeline-labels {
     display:flex; justify-content:space-between;
     font-family:'DM Mono',monospace; font-size:.6rem;
@@ -744,9 +747,6 @@
         <!-- Timeline bar -->
         <div class="session-timeline" style="margin-top:18px">
           <div class="timeline-bar" id="sess-timeline-bar"></div>
-          <div class="timeline-labels">
-            <span>06:00</span><span>15:00</span><span>20:30</span><span>00:00</span><span>03:00</span><span>06:00</span>
-          </div>
         </div>
       </div>
     </div>
@@ -1237,7 +1237,7 @@ function buildTimelineBar(activeSess){
 
   const now        = new Date();
   const localMins  = now.getHours()*60 + now.getMinutes();
-  const needlePct  = ((localMins - 6*60 + 1440) % 1440) / 1440 * 100;
+  const dotPct     = ((localMins - 6*60 + 1440) % 1440) / 1440 * 100;
 
   const ordered = [
     { id:'asia',   start:6*60,     end:15*60    },
@@ -1252,7 +1252,7 @@ function buildTimelineBar(activeSess){
     const dur      = o.start < o.end ? o.end - o.start : (1440 - o.start) + o.end;
     const pct      = (dur / 1440 * 100).toFixed(4);
     const isActive = activeSess && activeSess.id === o.id;
-    return `<div style="width:${pct}%;height:100%;background:${s.color};opacity:${isActive?1:0.3};border-radius:3px;${isActive?'box-shadow:0 0 0 1.5px '+s.color+';':''}"></div>`;
+    return `<div style="width:${pct}%;height:100%;background:${s.color};opacity:${isActive?1:0.3};border-radius:3px;flex-shrink:0;"></div>`;
   }).join('');
 
   el.style.position = 'relative';
@@ -1260,12 +1260,15 @@ function buildTimelineBar(activeSess){
   el.style.gap      = '2px';
   el.innerHTML = segs + `<div style="
     position:absolute;
-    top:-4px;bottom:-4px;
-    left:calc(${needlePct.toFixed(3)}% - 1px);
-    width:2px;background:var(--gold);
-    border-radius:2px;
-    box-shadow:0 0 6px rgba(184,151,90,.8);
-    pointer-events:none;z-index:2;
+    top:50%; left:${dotPct.toFixed(3)}%;
+    transform:translate(-50%,-50%);
+    width:12px; height:12px;
+    background:var(--gold);
+    border-radius:50%;
+    border:2px solid var(--white);
+    box-shadow:0 0 0 3px rgba(184,151,90,.35), 0 0 12px rgba(184,151,90,.6);
+    pointer-events:none; z-index:3;
+    animation:dotPulse 2s ease-in-out infinite;
   "></div>`;
 }
 
