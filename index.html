@@ -1195,7 +1195,7 @@ function renderRecent(){
 function renderTable(capital,target,avgPct,cur){
   const tb=document.getElementById('compBody'); if(!tb)return; tb.innerHTML='';
   let bal=capital;
-  const mx=Math.min(40,Math.ceil(Math.log(target*1.2/capital)/Math.log(1+avgPct/100))+3);
+  const mx=Math.ceil(Math.log(target*1.2/capital)/Math.log(1+avgPct/100))+3;
   for(let i=1;i<=mx;i++){
     const gain=bal*avgPct/100; bal+=gain;
     const cum=bal-capital, roi=cum/capital*100;
