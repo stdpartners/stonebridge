@@ -408,6 +408,11 @@
     color:var(--stone-400); margin-bottom:20px;
   }
 
+  .sess-subtitle {
+    font-size:.6rem; letter-spacing:.06em;
+    color:var(--stone-400); font-family:'DM Mono',monospace;
+    font-weight:400;
+  }
   .session-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   @media(min-width:640px){ .session-cards { grid-template-columns:repeat(3,1fr); } }
   @media(min-width:900px){ .session-cards { grid-template-columns:repeat(5,1fr); } }
@@ -779,15 +784,15 @@
 <script>
 // ── SESSIONS DATA (declared early so ticker can use it) ──
 const SESSIONS = [
-  { id:'asia',   name:'Asia',     color:'#7dba9b', start:6*60,      end:15*60,
+  { id:'asia',    name:'Asia',        color:'#7dba9b', start:7*60,   end:15*60,
     pairs:['XAU/USD','AUD/USD','USD/JPY','XAG/USD','BTC/USD'] },
-  { id:'london', name:'London',   color:'#6b8cba', start:15*60,     end:20*60+30,
+  { id:'london',  name:'London',      color:'#6b8cba', start:15*60,  end:19*60,
     pairs:['XAU/USD','GBP/USD','EUR/USD','XAG/USD','BTC/USD'] },
-  { id:'ny',     name:'New York', color:'#b87d4b', start:20*60+30,  end:24*60,
+  { id:'overlap', name:'Overlap',     color:'#b8975a', start:19*60,  end:23*60,
     pairs:['XAU/USD','EUR/USD','GBP/USD','USD/CAD','XAG/USD','BTC/USD'] },
-  { id:'nylate', name:'NY Late',  color:'#9b8eb5', start:0,         end:3*60,
+  { id:'nylate',  name:'NY Late',     color:'#9b8eb5', start:23*60,  end:4*60,
     pairs:['XAU/USD','EUR/USD','GBP/USD','XAG/USD','BTC/USD'] },
-  { id:'dead',   name:'Dead Zone',color:'#c0b8ae', start:3*60,      end:6*60,
+  { id:'dead',    name:'Dead Zone',   color:'#c0b8ae', start:4*60,   end:7*60,
     pairs:['XAU/USD','XAG/USD','BTC/USD'] }
 ];
 const TOTAL_MINS = 1440;
@@ -1217,7 +1222,8 @@ function buildSessionCards(activeSess){
     const isActive = activeSess && activeSess.id === s.id;
     const isDead   = s.id === 'dead';
     const fmtT = m => String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
-    const endLabel = s.id==='ny' ? '00:00' : fmtT(s.end);
+    const endLabel = fmtT(s.end);
+    const nameLabel = s.id==='overlap' ? 'Overlap <span class="sess-subtitle">London × New York</span>' : s.name;
     const pairs = s.pairs.map(p => {
       const isGold = p.includes('XAU')||p.includes('XAG');
       const isMuted = p === '—';
@@ -1225,7 +1231,7 @@ function buildSessionCards(activeSess){
     }).join('');
     return `<div class="sess-card ${isActive?'active-sess':''} ${isDead?'dead-sess':''}">
       ${isActive?'<div class="sess-live-badge">Live</div>':''}
-      <div class="sess-name" style="color:${s.color}">${s.name}</div>
+      <div class="sess-name" style="color:${s.color}">${nameLabel}</div>
       <div class="sess-time">${fmtT(s.start)} – ${endLabel}</div>
       <div class="sess-pairs">${pairs}</div>
     </div>`;
@@ -1237,14 +1243,14 @@ function buildTimelineBar(activeSess){
 
   const now        = new Date();
   const localMins  = now.getHours()*60 + now.getMinutes();
-  const dotPct     = ((localMins - 6*60 + 1440) % 1440) / 1440 * 100;
+  const dotPct     = ((localMins - 7*60 + 1440) % 1440) / 1440 * 100;
 
   const ordered = [
-    { id:'asia',   start:6*60,     end:15*60    },
-    { id:'london', start:15*60,    end:20*60+30 },
-    { id:'ny',     start:20*60+30, end:24*60    },
-    { id:'nylate', start:0,        end:3*60     },
-    { id:'dead',   start:3*60,     end:6*60     },
+    { id:'asia',    start:7*60,  end:15*60 }, // 8h
+    { id:'london',  start:15*60, end:19*60 }, // 4h
+    { id:'overlap', start:19*60, end:23*60 }, // 4h
+    { id:'nylate',  start:23*60, end:4*60  }, // 5h
+    { id:'dead',    start:4*60,  end:7*60  }, // 3h
   ];
 
   const segs = ordered.map(o => {
