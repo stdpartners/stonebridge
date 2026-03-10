@@ -1098,13 +1098,37 @@ function recalc(){
     rrEl.style.color = rr >= 1 ? 'var(--profit)' : 'var(--loss)';
   } else { $s('stat-rr','—'); }
 
-  // Expectancy as % of avg trade size
+  // Expectancy % of portfolio (คำนวณย้อนหลังจาก running balance รวม deposit/withdrawal)
   if(trades.length >= 2){
-    const expectancy = (winRate/100 * avgWin) - (lossRate * avgLoss);
-    const avgSize    = trades.map(t=>Math.abs(t.pnl)).reduce((a,b)=>a+b,0) / trades.length;
-    const expPct     = avgSize > 0 ? (expectancy / avgSize * 100) : 0;
+    // รวม trades + funds เรียงตาม timestamp (เก่าสุดก่อน)
+    const allEvents = [
+      ...trades.map(t => ({ ...t, _type:'trade' })),
+      ...funds.map(f  => ({ ...f, _type:'fund'  }))
+    ].sort((a,b) => a.id - b.id); // id = Date.now() ตอนบันทึก
+
+    let runBal = capital;
+    const winPcts  = [];
+    const lossPcts = [];
+
+    allEvents.forEach(e => {
+      if(e._type === 'fund'){
+        // deposit/withdrawal อัปเดต balance แต่ไม่นับเป็น trade
+        runBal += e.type === 'deposit' ? e.amt : -e.amt;
+      } else {
+        // trade — คำนวณ % เทียบกับ balance ก่อน trade นั้น
+        const pct = runBal > 0 ? (e.pnl / runBal * 100) : 0;
+        if(e.pnl > 0) winPcts.push(pct);
+        else if(e.pnl < 0) lossPcts.push(Math.abs(pct));
+        runBal += e.pnl;
+      }
+    });
+
+    const avgWinPct  = winPcts.length  ? winPcts.reduce((a,b)=>a+b,0)  / winPcts.length  : 0;
+    const avgLossPct = lossPcts.length ? lossPcts.reduce((a,b)=>a+b,0) / lossPcts.length : 0;
+    const expPct = (winRate/100 * avgWinPct) - (lossRate * avgLossPct);
+
     const expEl = document.getElementById('stat-exp');
-    expEl.textContent = (expPct >= 0 ? '+' : '') + expPct.toFixed(1) + '%';
+    expEl.textContent = (expPct >= 0 ? '+' : '') + expPct.toFixed(2) + '%';
     expEl.style.color = expPct >= 0 ? 'var(--profit)' : 'var(--loss)';
   } else { $s('stat-exp','—'); }
 
@@ -1210,13 +1234,39 @@ function buildSessionCards(activeSess){
 
 function buildTimelineBar(activeSess){
   const el = document.getElementById('sess-timeline-bar'); if(!el) return;
-  el.innerHTML = SESSIONS.map(s => {
-    let dur = s.start < s.end ? s.end-s.start : (TOTAL_MINS-s.start)+s.end;
-    const pct = (dur/TOTAL_MINS*100).toFixed(2);
-    const isActive = activeSess && activeSess.id===s.id;
-    return `<div class="tbar-seg ${isActive?'active-seg':''}"
-      style="flex:${pct};background:${s.color};opacity:${isActive?1:0.3}"></div>`;
+
+  const now        = new Date();
+  const localMins  = now.getHours()*60 + now.getMinutes();
+  const needlePct  = ((localMins - 6*60 + 1440) % 1440) / 1440 * 100;
+
+  const ordered = [
+    { id:'asia',   start:6*60,     end:15*60    },
+    { id:'london', start:15*60,    end:20*60+30 },
+    { id:'ny',     start:20*60+30, end:24*60    },
+    { id:'nylate', start:0,        end:3*60     },
+    { id:'dead',   start:3*60,     end:6*60     },
+  ];
+
+  const segs = ordered.map(o => {
+    const s        = SESSIONS.find(x=>x.id===o.id);
+    const dur      = o.start < o.end ? o.end - o.start : (1440 - o.start) + o.end;
+    const pct      = (dur / 1440 * 100).toFixed(4);
+    const isActive = activeSess && activeSess.id === o.id;
+    return `<div style="width:${pct}%;height:100%;background:${s.color};opacity:${isActive?1:0.3};border-radius:3px;${isActive?'box-shadow:0 0 0 1.5px '+s.color+';':''}"></div>`;
   }).join('');
+
+  el.style.position = 'relative';
+  el.style.display  = 'flex';
+  el.style.gap      = '2px';
+  el.innerHTML = segs + `<div style="
+    position:absolute;
+    top:-4px;bottom:-4px;
+    left:calc(${needlePct.toFixed(3)}% - 1px);
+    width:2px;background:var(--gold);
+    border-radius:2px;
+    box-shadow:0 0 6px rgba(184,151,90,.8);
+    pointer-events:none;z-index:2;
+  "></div>`;
 }
 
 function updateClock(){
