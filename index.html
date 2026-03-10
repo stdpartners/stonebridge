@@ -1223,7 +1223,8 @@ function buildSessionCards(activeSess){
     const isDead   = s.id === 'dead';
     const fmtT = m => String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
     const endLabel = fmtT(s.end);
-    const nameLabel = s.id==='overlap' ? 'Overlap <span class="sess-subtitle">London × New York</span>' : s.name;
+    const nameLabel = s.name;
+    const subtitle = s.id==='overlap' ? '<div class="sess-subtitle">London × New York</div>' : '';
     const pairs = s.pairs.map(p => {
       const isGold = p.includes('XAU')||p.includes('XAG');
       const isMuted = p === '—';
@@ -1232,6 +1233,7 @@ function buildSessionCards(activeSess){
     return `<div class="sess-card ${isActive?'active-sess':''} ${isDead?'dead-sess':''}">
       ${isActive?'<div class="sess-live-badge">Live</div>':''}
       <div class="sess-name" style="color:${s.color}">${nameLabel}</div>
+      ${subtitle}
       <div class="sess-time">${fmtT(s.start)} – ${endLabel}</div>
       <div class="sess-pairs">${pairs}</div>
     </div>`;
