@@ -1047,7 +1047,13 @@ function recalc(){
   const balance   = capital + totalPnl + totalFunds;
   const wins      = trades.filter(t=>t.pnl>0).length;
   const winRate   = trades.length ? wins/trades.length*100 : 0;
-  const roi       = capital>0 ? totalPnl/capital*100 : 0;
+
+  // MWR (Money-Weighted Return) — รวม deposit/withdrawal เป็นต้นทุน
+  // total invested = initial capital + net deposits
+  const totalDeposits    = funds.filter(f=>f.type==='deposit').reduce((s,f)=>s+f.amt,0);
+  const totalWithdrawals = funds.filter(f=>f.type==='withdrawal').reduce((s,f)=>s+f.amt,0);
+  const totalInvested    = capital + totalDeposits - totalWithdrawals;
+  const roi = totalInvested > 0 ? (totalPnl / totalInvested * 100) : 0;
   const remaining = target-balance;
   const pnlArr    = trades.map(t=>t.pnl);
   const best      = pnlArr.length?Math.max(...pnlArr):0;
