@@ -408,7 +408,15 @@
     color:var(--stone-400); margin-bottom:20px;
   }
 
-  .sess-subtitle {
+  .btn-reset-target {
+    display:block; margin-top:8px;
+    background:var(--gold); color:var(--white);
+    border:none; border-radius:6px;
+    font-size:.65rem; font-weight:600; letter-spacing:.08em;
+    text-transform:uppercase; padding:5px 12px;
+    cursor:pointer; opacity:.9;
+  }
+  .btn-reset-target:hover { opacity:1; }
     font-size:.6rem; letter-spacing:.06em;
     color:var(--stone-400); font-family:'DM Mono',monospace;
     font-weight:400;
@@ -1061,6 +1069,24 @@ function addTradeOv(){
   document.getElementById('ov-pnl').value='';
   document.getElementById('ov-symbol').value='';
 }
+function resetTarget(){
+  if(_targetMode === 'fixed'){
+    // fixed%: reset โดยย้าย balance ปัจจุบันเป็น capital ใหม่ + clear trades/funds
+    const newCapital = parseFloat(document.getElementById('s-capital').value)||1000;
+    const s = JSON.parse(localStorage.getItem('sb_settings')||'{}');
+    // อัปเดต capital เป็น balance ปัจจุบัน
+    const totalPnl   = trades.reduce((a,t)=>a+t.pnl,0);
+    const totalFunds = funds.reduce((a,f)=>f.type==='deposit'?a+f.amt:a-f.amt,0);
+    const curBalance = newCapital + totalPnl + totalFunds;
+    document.getElementById('s-capital').value = curBalance.toFixed(2);
+  } else {
+    // compound: แค่ขยับ target ใหม่
+    const curTarget = parseFloat(document.getElementById('s-target').value)||10000;
+    document.getElementById('s-target').value = (curTarget * 2).toFixed(2);
+  }
+  recalc();
+}
+
 function delTrade(id){ trades=trades.filter(t=>t.id!==id); localStorage.setItem('sb_trades',JSON.stringify(trades)); recalc(); }
 
 // ── RECALC ──
@@ -1110,7 +1136,28 @@ function recalc(){
   $s('kpi-roi','ROI '+roi.toFixed(2)+'%');
   $s('kpi-winrate',winRate.toFixed(1)+'%');
   $s('kpi-trades',trades.length+' positions');
-  $s('kpi-remaining',remaining>0?'$'+fmt(remaining):'✓ Achieved');
+  if(remaining > 0){
+    $s('kpi-remaining','$'+fmt(remaining));
+    const rb = document.getElementById('btn-reset-target');
+    if(rb) rb.style.display = 'none';
+  } else {
+    $s('kpi-remaining','✓ Achieved');
+    if(_targetMode === 'fixed'){
+      let rb = document.getElementById('btn-reset-target');
+      if(!rb){
+        rb = document.createElement('button');
+        rb.id = 'btn-reset-target';
+        rb.textContent = 'Reset Target';
+        rb.className = 'btn-reset-target';
+        rb.onclick = resetTarget;
+        document.getElementById('kpi-remaining').after(rb);
+      }
+      rb.style.display = '';
+    } else {
+      const rb = document.getElementById('btn-reset-target');
+      if(rb) rb.style.display = 'none';
+    }
+  }
 
   let b2=balance,cnt=0;
   while(b2<target&&cnt<9999){b2+=b2*avgPct/100;cnt++;}
