@@ -1089,7 +1089,15 @@ function recalc(){
 
   const wins    = trades.filter(t=>t.pnl>0).length;
   const winRate = trades.length ? wins/trades.length*100 : 0;
-  const remaining = target - balance;
+
+  // fixed% mode: target คือ P&L ที่ต้องทำ = roiBase × targetPct%
+  // compound mode: target คือ balance ที่ต้องถึง
+  const targetPnl = _targetMode === 'fixed'
+    ? roiBase * (targetPct / 100)
+    : target - roiBase;
+  const remaining = _targetMode === 'fixed'
+    ? targetPnl - totalPnl
+    : target - balance;
   const pnlArr    = trades.map(t=>t.pnl);
   const best      = pnlArr.length?Math.max(...pnlArr):0;
   const worst     = pnlArr.length?Math.min(...pnlArr):0;
@@ -1108,8 +1116,13 @@ function recalc(){
   while(b2<target&&cnt<9999){b2+=b2*avgPct/100;cnt++;}
   $s('kpi-trades-needed',(cnt<9999?cnt:'9999+')+' trades est.');
 
-  const gr=target-capital, gf=Math.max(0,balance-capital);
-  const gp=gr>0?Math.min(100,gf/gr*100):0;
+  // progress: fixed% วัดจาก P&L / targetPnl, compound วัดจาก balance
+  const progStart = _targetMode === 'fixed' ? 0 : capital;
+  const progEnd   = _targetMode === 'fixed' ? targetPnl : target;
+  const progCur   = _targetMode === 'fixed' ? totalPnl  : balance - capital;
+  const gr = progEnd - progStart;
+  const gf = Math.max(0, progCur - progStart);
+  const gp = gr > 0 ? Math.min(100, gf / gr * 100) : 0;
   $s('prog-pct',gp.toFixed(1)+'%');
   $s('prog-target',fmtS(target));
   $s('prog-lbl-start',fmtS(capital));
