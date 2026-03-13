@@ -714,7 +714,15 @@
       <div class="card-body">
         <div class="form-row">
           <div class="field"><label>Initial Capital ($)</label><input type="number" id="s-capital" value="1000" oninput="recalc()"></div>
-          <div class="field"><label>Target ($)</label><input type="number" id="s-target" value="10000" oninput="recalc()"></div>
+          <div class="field">
+            <label>Target Mode</label>
+            <div class="tab-row" style="margin-top:4px">
+              <button class="tab-btn active" id="tmode-compound" onclick="setTargetMode('compound')">Compound $</button>
+              <button class="tab-btn" id="tmode-fixed" onclick="setTargetMode('fixed')">Fixed %</button>
+            </div>
+          </div>
+          <div class="field" id="field-target-amt"><label>Target ($)</label><input type="number" id="s-target" value="10000" oninput="recalc()"></div>
+          <div class="field" id="field-target-pct" style="display:none"><label>Target Return (%)</label><input type="number" id="s-target-pct" value="100" step="1" oninput="recalc()"></div>
           <div class="field"><label>Avg. Return / Trade (%)</label><input type="number" id="s-avg" value="3" step="0.1" oninput="recalc()"></div>
           <div class="field"><label>Compound Frequency</label>
             <select id="s-freq" onchange="recalc()">
@@ -948,11 +956,24 @@ let currentFundType = 'deposit';
 // ── RESTORE SETTINGS ──
 (function restoreSettings(){
   const s = JSON.parse(localStorage.getItem('sb_settings')||'{}');
-  if(s.capital) document.getElementById('s-capital').value = s.capital;
-  if(s.target)  document.getElementById('s-target').value  = s.target;
-  if(s.avg)     document.getElementById('s-avg').value     = s.avg;
-  if(s.freq)    document.getElementById('s-freq').value    = s.freq;
+  if(s.capital)    document.getElementById('s-capital').value    = s.capital;
+  if(s.target)     document.getElementById('s-target').value     = s.target;
+  if(s.targetPct)  document.getElementById('s-target-pct').value = s.targetPct;
+  if(s.avg)        document.getElementById('s-avg').value        = s.avg;
+  if(s.freq)       document.getElementById('s-freq').value       = s.freq;
+  if(s.targetMode) setTargetMode(s.targetMode, true);
 })();
+
+// ── TARGET MODE ──
+let _targetMode = 'compound';
+function setTargetMode(mode, silent){
+  _targetMode = mode;
+  document.getElementById('tmode-compound').classList.toggle('active', mode==='compound');
+  document.getElementById('tmode-fixed').classList.toggle('active',    mode==='fixed');
+  document.getElementById('field-target-amt').style.display = mode==='compound' ? '' : 'none';
+  document.getElementById('field-target-pct').style.display = mode==='fixed'    ? '' : 'none';
+  if(!silent) recalc();
+}
 
 // ── NAV ──
 function switchPage(name) {
@@ -1045,26 +1066,30 @@ function delTrade(id){ trades=trades.filter(t=>t.id!==id); localStorage.setItem(
 // ── RECALC ──
 function recalc(){
   const capital=parseFloat(document.getElementById('s-capital').value)||1000;
-  const target =parseFloat(document.getElementById('s-target').value) ||10000;
   const avgPct =parseFloat(document.getElementById('s-avg').value)    ||3;
   const freq   =document.getElementById('s-freq').value               ||'1';
+  const targetPct = parseFloat(document.getElementById('s-target-pct').value)||100;
 
-  // save settings every recalc
-  localStorage.setItem('sb_settings', JSON.stringify({ capital, target, avg:avgPct, freq }));
-
-  const totalPnl  = trades.reduce((s,t)=>s+t.pnl, 0);
+  const totalPnl   = trades.reduce((s,t)=>s+t.pnl, 0);
   const totalFunds = funds.reduce((s,f)=> f.type==='deposit' ? s+f.amt : s-f.amt, 0);
-  const balance   = capital + totalPnl + totalFunds;
-  const wins      = trades.filter(t=>t.pnl>0).length;
-  const winRate   = trades.length ? wins/trades.length*100 : 0;
+  const totalDeposits = funds.filter(f=>f.type==='deposit').reduce((s,f)=>s+f.amt,0);
+  const balance    = capital + totalPnl + totalFunds;
 
-  // MWR (Money-Weighted Return) — รวม deposit/withdrawal เป็นต้นทุน
-  // total invested = initial capital + net deposits
-  const totalDeposits    = funds.filter(f=>f.type==='deposit').reduce((s,f)=>s+f.amt,0);
-  const totalWithdrawals = funds.filter(f=>f.type==='withdrawal').reduce((s,f)=>s+f.amt,0);
-  const totalInvested    = capital + totalDeposits - totalWithdrawals;
-  const roi = totalInvested > 0 ? (totalPnl / totalInvested * 100) : 0;
-  const remaining = target-balance;
+  // ROI = P&L ÷ (initial capital + deposits)
+  const roiBase = capital + totalDeposits;
+  const roi     = roiBase > 0 ? (totalPnl / roiBase * 100) : 0;
+
+  // target ตาม mode
+  const target = _targetMode === 'fixed'
+    ? roiBase * (1 + targetPct / 100)
+    : (parseFloat(document.getElementById('s-target').value) || 10000);
+
+  // save settings
+  localStorage.setItem('sb_settings', JSON.stringify({ capital, target, targetPct, targetMode: _targetMode, avg:avgPct, freq }));
+
+  const wins    = trades.filter(t=>t.pnl>0).length;
+  const winRate = trades.length ? wins/trades.length*100 : 0;
+  const remaining = target - balance;
   const pnlArr    = trades.map(t=>t.pnl);
   const best      = pnlArr.length?Math.max(...pnlArr):0;
   const worst     = pnlArr.length?Math.min(...pnlArr):0;
