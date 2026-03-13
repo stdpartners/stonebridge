@@ -1070,20 +1070,21 @@ function addTradeOv(){
   document.getElementById('ov-symbol').value='';
 }
 function resetTarget(){
-  if(_targetMode === 'fixed'){
-    // fixed%: reset โดยย้าย balance ปัจจุบันเป็น capital ใหม่ + clear trades/funds
-    const newCapital = parseFloat(document.getElementById('s-capital').value)||1000;
-    const s = JSON.parse(localStorage.getItem('sb_settings')||'{}');
-    // อัปเดต capital เป็น balance ปัจจุบัน
-    const totalPnl   = trades.reduce((a,t)=>a+t.pnl,0);
-    const totalFunds = funds.reduce((a,f)=>f.type==='deposit'?a+f.amt:a-f.amt,0);
-    const curBalance = newCapital + totalPnl + totalFunds;
-    document.getElementById('s-capital').value = curBalance.toFixed(2);
-  } else {
-    // compound: แค่ขยับ target ใหม่
-    const curTarget = parseFloat(document.getElementById('s-target').value)||10000;
-    document.getElementById('s-target').value = (curTarget * 2).toFixed(2);
-  }
+  // snapshot totalPnl ตอนนี้เป็น baseline ใหม่
+  // รอบใหม่วัดจาก P&L ที่เกิดขึ้นหลังจากนี้เท่านั้น
+  const totalPnl   = trades.reduce((a,t)=>a+t.pnl,0);
+  const totalFunds = funds.reduce((a,f)=>f.type==='deposit'?a+f.amt:a-f.amt,0);
+  const capital    = parseFloat(document.getElementById('s-capital').value)||1000;
+  const curBalance = capital + totalPnl + totalFunds;
+  const totalDeposits = funds.filter(f=>f.type==='deposit').reduce((a,f)=>a+f.amt,0);
+  const curRoiBase = capital + totalDeposits;
+
+  // บันทึก pnlBaseline = totalPnl ณ ตอนนี้
+  // recalc จะหัก baseline ออกเพื่อให้ ROI เริ่มที่ 0
+  const s = JSON.parse(localStorage.getItem('sb_settings')||'{}');
+  s.pnlBaseline = totalPnl;
+  s.roiBaseSnapshot = curRoiBase;
+  localStorage.setItem('sb_settings', JSON.stringify(s));
   recalc();
 }
 
@@ -1101,13 +1102,20 @@ function recalc(){
   const totalDeposits = funds.filter(f=>f.type==='deposit').reduce((s,f)=>s+f.amt,0);
   const balance    = capital + totalPnl + totalFunds;
 
-  // ROI = P&L ÷ (initial capital + deposits)
+  // ROI base = capital + deposits (ไม่หัก withdrawal)
   const roiBase = capital + totalDeposits;
-  const roi     = roiBase > 0 ? (totalPnl / roiBase * 100) : 0;
+
+  // fixed% mode ใช้ pnlBaseline สำหรับ reset รอบ
+  const savedSettings  = JSON.parse(localStorage.getItem('sb_settings')||'{}');
+  const pnlBaseline    = _targetMode === 'fixed' ? (savedSettings.pnlBaseline || 0) : 0;
+  const roiBaseSnap    = _targetMode === 'fixed' ? (savedSettings.roiBaseSnapshot || roiBase) : roiBase;
+  const pnlSinceReset  = totalPnl - pnlBaseline;
+
+  const roi = roiBaseSnap > 0 ? (pnlSinceReset / roiBaseSnap * 100) : 0;
 
   // target ตาม mode
   const target = _targetMode === 'fixed'
-    ? roiBase * (1 + targetPct / 100)
+    ? roiBaseSnap * (targetPct / 100)
     : (parseFloat(document.getElementById('s-target').value) || 10000);
 
   // save settings
@@ -1116,13 +1124,13 @@ function recalc(){
   const wins    = trades.filter(t=>t.pnl>0).length;
   const winRate = trades.length ? wins/trades.length*100 : 0;
 
-  // fixed% mode: target คือ P&L ที่ต้องทำ = roiBase × targetPct%
+  // fixed% mode: target คือ P&L ที่ต้องทำ = roiBaseSnap × targetPct%
   // compound mode: target คือ balance ที่ต้องถึง
   const targetPnl = _targetMode === 'fixed'
-    ? roiBase * (targetPct / 100)
+    ? roiBaseSnap * (targetPct / 100)
     : target - roiBase;
   const remaining = _targetMode === 'fixed'
-    ? targetPnl - totalPnl
+    ? targetPnl - pnlSinceReset
     : target - balance;
   const pnlArr    = trades.map(t=>t.pnl);
   const best      = pnlArr.length?Math.max(...pnlArr):0;
@@ -1164,11 +1172,11 @@ function recalc(){
   $s('kpi-trades-needed',(cnt<9999?cnt:'9999+')+' trades est.');
 
   // progress: fixed% วัดจาก P&L / targetPnl, compound วัดจาก balance
-  const progStart = _targetMode === 'fixed' ? 0 : capital;
-  const progEnd   = _targetMode === 'fixed' ? targetPnl : target;
-  const progCur   = _targetMode === 'fixed' ? totalPnl  : balance - capital;
+  const progStart = 0;
+  const progEnd   = _targetMode === 'fixed' ? targetPnl  : target - capital;
+  const progCur   = _targetMode === 'fixed' ? pnlSinceReset : balance - capital;
   const gr = progEnd - progStart;
-  const gf = Math.max(0, progCur - progStart);
+  const gf = Math.max(0, progCur);
   const gp = gr > 0 ? Math.min(100, gf / gr * 100) : 0;
   $s('prog-pct',gp.toFixed(1)+'%');
   $s('prog-target',fmtS(target));
