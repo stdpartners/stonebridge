@@ -785,11 +785,11 @@
 // ── SESSIONS DATA (declared early so ticker can use it) ──
 const SESSIONS = [
   { id:'asia',    name:'Asia',        color:'#7dba9b', start:7*60,   end:15*60,
-    pairs:['XAU/USD','AUD/USD','USD/JPY','XAG/USD','BTC/USD'] },
+    pairs:['XAU/USD','AUD/USD','USD/JPY','AUD/JPY','XAG/USD','BTC/USD'] },
   { id:'london',  name:'London',      color:'#6b8cba', start:15*60,  end:19*60,
-    pairs:['XAU/USD','GBP/USD','EUR/USD','XAG/USD','BTC/USD'] },
+    pairs:['XAU/USD','GBP/USD','EUR/USD','GBP/JPY','EUR/JPY','XAG/USD','BTC/USD'] },
   { id:'overlap', name:'Overlap',     color:'#b8975a', start:19*60,  end:23*60,
-    pairs:['XAU/USD','EUR/USD','GBP/USD','USD/CAD','XAG/USD','BTC/USD'] },
+    pairs:['XAU/USD','EUR/USD','GBP/USD','GBP/JPY','EUR/JPY','USD/CAD','XAG/USD','BTC/USD'] },
   { id:'nylate',  name:'NY Late',     color:'#9b8eb5', start:23*60,  end:4*60,
     pairs:['XAU/USD','EUR/USD','GBP/USD','XAG/USD','BTC/USD'] },
   { id:'dead',    name:'Dead Zone',   color:'#c0b8ae', start:4*60,   end:7*60,
@@ -815,6 +815,9 @@ let tickerData = [
   { sym:'USD/JPY', price:0, chg:0, dec:2 },
   { sym:'AUD/USD', price:0, chg:0, dec:4 },
   { sym:'USD/CAD', price:0, chg:0, dec:4 },
+  { sym:'AUD/JPY', price:0, chg:0, dec:2 },
+  { sym:'GBP/JPY', price:0, chg:0, dec:2 },
+  { sym:'EUR/JPY', price:0, chg:0, dec:2 },
 ];
 
 function buildTicker() {
@@ -874,6 +877,10 @@ async function fetchPrices() {
       // USD/xxx → invert to get xxx/USD or cross pairs
       const EURUSD = 1/r.EUR, GBPUSD = 1/r.GBP, AUDUSD = 1/r.AUD;
       const USDJPY = r.JPY, USDCAD = r.CAD;
+      // cross pairs คำนวณจาก USD rates
+      const AUDJPY = AUDUSD * USDJPY;
+      const GBPJPY = GBPUSD * USDJPY;
+      const EURJPY = EURUSD * USDJPY;
 
       const update = (sym, price) => {
         const t = tickerData.find(a=>a.sym===sym);
@@ -884,6 +891,9 @@ async function fetchPrices() {
       update('AUD/USD', AUDUSD);
       update('USD/JPY', USDJPY);
       update('USD/CAD', USDCAD);
+      update('AUD/JPY', AUDJPY);
+      update('GBP/JPY', GBPJPY);
+      update('EUR/JPY', EURJPY);
     }
 
     // XAU + XAG — ลอง metals.live ก่อน fallback เป็น Binance PAXG
