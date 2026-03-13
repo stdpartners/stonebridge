@@ -1111,7 +1111,10 @@ function recalc(){
   const roiBaseSnap    = _targetMode === 'fixed' ? (savedSettings.roiBaseSnapshot || roiBase) : roiBase;
   const pnlSinceReset  = totalPnl - pnlBaseline;
 
-  const roi = roiBaseSnap > 0 ? (pnlSinceReset / roiBaseSnap * 100) : 0;
+  // ROI จริง — แสดงใน KPI card เสมอ ไม่ถูก reset
+  const roi = roiBase > 0 ? (totalPnl / roiBase * 100) : 0;
+  // Virtual ROI — ใช้คำนวณ target เท่านั้น
+  const virtualRoi = roiBaseSnap > 0 ? (pnlSinceReset / roiBaseSnap * 100) : 0;
 
   // target ตาม mode
   const target = _targetMode === 'fixed'
