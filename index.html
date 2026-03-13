@@ -980,7 +980,9 @@ function setTargetMode(mode, silent){
   if(s.targetPct)  document.getElementById('s-target-pct').value = s.targetPct;
   if(s.avg)        document.getElementById('s-avg').value        = s.avg;
   if(s.freq)       document.getElementById('s-freq').value       = s.freq;
+  // restore mode โดยไม่ trigger recalc ก่อน แล้วค่อย recalc ครั้งเดียวตอนท้าย
   if(s.targetMode) setTargetMode(s.targetMode, true);
+  else setTargetMode('compound', true);
 })();
 
 // ── NAV ──
@@ -1121,8 +1123,12 @@ function recalc(){
     ? roiBaseSnap * (targetPct / 100)
     : (parseFloat(document.getElementById('s-target').value) || 10000);
 
-  // save settings
-  localStorage.setItem('sb_settings', JSON.stringify({ capital, target, targetPct, targetMode: _targetMode, avg:avgPct, freq }));
+  // save settings (merge เพื่อไม่ทับ pnlBaseline/roiBaseSnapshot)
+  const _prev = JSON.parse(localStorage.getItem('sb_settings')||'{}');
+  localStorage.setItem('sb_settings', JSON.stringify({
+    ..._prev,
+    capital, target, targetPct, targetMode: _targetMode, avg:avgPct, freq
+  }));
 
   const wins    = trades.filter(t=>t.pnl>0).length;
   const winRate = trades.length ? wins/trades.length*100 : 0;
