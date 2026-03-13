@@ -953,17 +953,6 @@ let trades = JSON.parse(localStorage.getItem('sb_trades')||'[]');
 let funds  = JSON.parse(localStorage.getItem('sb_funds') ||'[]');
 let currentFundType = 'deposit';
 
-// ── RESTORE SETTINGS ──
-(function restoreSettings(){
-  const s = JSON.parse(localStorage.getItem('sb_settings')||'{}');
-  if(s.capital)    document.getElementById('s-capital').value    = s.capital;
-  if(s.target)     document.getElementById('s-target').value     = s.target;
-  if(s.targetPct)  document.getElementById('s-target-pct').value = s.targetPct;
-  if(s.avg)        document.getElementById('s-avg').value        = s.avg;
-  if(s.freq)       document.getElementById('s-freq').value       = s.freq;
-  if(s.targetMode) setTargetMode(s.targetMode, true);
-})();
-
 // ── TARGET MODE ──
 let _targetMode = 'compound';
 function setTargetMode(mode, silent){
@@ -974,6 +963,17 @@ function setTargetMode(mode, silent){
   document.getElementById('field-target-pct').style.display = mode==='fixed'    ? '' : 'none';
   if(!silent) recalc();
 }
+
+// ── RESTORE SETTINGS ──
+(function restoreSettings(){
+  const s = JSON.parse(localStorage.getItem('sb_settings')||'{}');
+  if(s.capital)    document.getElementById('s-capital').value    = s.capital;
+  if(s.target)     document.getElementById('s-target').value     = s.target;
+  if(s.targetPct)  document.getElementById('s-target-pct').value = s.targetPct;
+  if(s.avg)        document.getElementById('s-avg').value        = s.avg;
+  if(s.freq)       document.getElementById('s-freq').value       = s.freq;
+  if(s.targetMode) setTargetMode(s.targetMode, true);
+})();
 
 // ── NAV ──
 function switchPage(name) {
