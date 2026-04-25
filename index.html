@@ -521,6 +521,29 @@
   }
   .export-close:hover { background:var(--stone-50); }
 
+  /* ══ EXPORT HEADER BUTTON ══ */
+  .export-header-btn {
+    background: var(--stone-900); color: var(--gold-light);
+    border: none; border-radius: 7px;
+    padding: 0; width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: background .2s;
+  }
+  .export-header-btn:hover { background: var(--stone-800); }
+  .export-btn-label { display: none; }
+
+  @media (min-width: 768px) {
+    .export-header-btn {
+      width: auto; height: auto;
+      padding: 7px 13px; gap: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .65rem; font-weight: 500;
+      letter-spacing: .06em; text-transform: uppercase;
+    }
+    .export-btn-label { display: inline; }
+  }
+
   /* ══ PRINT STATEMENT ══ */
   @media print {
     *, *::before, *::after { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
@@ -579,16 +602,9 @@
         <button class="desk-nav-btn"        id="dnav-sessions"   onclick="switchPage('sessions')">Sessions</button>
       </nav>
       <span class="header-date" id="headerDate">—</span>
-      <button onclick="openExport()" style="
-        background:var(--stone-900); color:var(--gold-light);
-        border:none; border-radius:7px; padding:7px 13px;
-        font-family:'DM Sans',sans-serif; font-size:.65rem;
-        font-weight:500; letter-spacing:.06em; text-transform:uppercase;
-        cursor:pointer; display:flex; align-items:center; gap:6px;
-        transition:background .2s;
-      " title="Export Data">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export
+      <button class="export-header-btn" onclick="openExport()" title="Export Data">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="export-btn-label">Export</span>
       </button>
       <div class="status-dot"></div>
     </div>
