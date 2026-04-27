@@ -260,6 +260,8 @@
 
   /* ══ TRADE FORM ══ */
   .trade-form { display:flex; flex-direction:column; gap:9px; }
+  .trade-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .trade-form-grid .field-full { grid-column:1/-1; }
   .wrap-btn { display:flex; }
   .btn-add {
     background:var(--stone-900); color:var(--gold-light);
@@ -329,6 +331,8 @@
   .td-pnl { font-family:'DM Mono',monospace; font-size:.82rem; text-align:right; }
   .td-pnl.pos { color:var(--profit); }
   .td-pnl.neg { color:var(--loss);   }
+  .trade-detail { display:flex; flex-wrap:wrap; gap:8px; margin-top:3px; }
+  .trade-detail span { font-size:.6rem; color:var(--stone-400); font-family:'DM Mono',monospace; letter-spacing:.03em; }
   .btn-del { background:none; border:none; color:var(--stone-200); cursor:pointer; font-size:.7rem; transition:color .2s; padding:2px; }
   .btn-del:hover { color:var(--loss); }
 
@@ -342,6 +346,28 @@
   .comp-table tr.row-current td { background:var(--gold-pale); color:var(--stone-900); }
   .comp-table tr.row-current td:first-child { color:var(--gold); font-weight:500; }
   .td-pos { color:var(--profit); }
+
+  /* ══ ROI LOG PAGE ══ */
+  .roi-kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+  .roi-kpi { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:14px 14px 12px; }
+  .roi-kpi .lbl { font-size:.56rem; letter-spacing:.1em; text-transform:uppercase; color:var(--stone-400); margin-bottom:5px; }
+  .roi-kpi .val { font-family:'DM Mono',monospace; font-size:1.1rem; color:var(--stone-900); }
+  .roi-table-wrap { overflow-x:auto; }
+  .roi-table { width:100%; border-collapse:collapse; font-size:.78rem; }
+  .roi-table th { font-size:.54rem; letter-spacing:.1em; text-transform:uppercase; color:var(--stone-400); font-weight:500; padding:8px 10px; border-bottom:1.5px solid var(--border); text-align:right; white-space:nowrap; }
+  .roi-table th:first-child { text-align:left; }
+  .roi-table td { padding:9px 10px; font-family:'DM Mono',monospace; font-size:.76rem; text-align:right; border-bottom:1px solid var(--stone-50); color:var(--stone-600); }
+  .roi-table td:first-child { text-align:left; color:var(--stone-500); font-size:.7rem; }
+  .roi-table tr:hover td { background:var(--stone-50); }
+  .roi-bar-wrap { display:flex; align-items:center; gap:7px; justify-content:flex-end; }
+  .roi-bar-track { width:54px; height:5px; background:var(--border); border-radius:3px; overflow:hidden; flex-shrink:0; }
+  .roi-bar-fill { height:100%; border-radius:3px; transition:width .4s ease; }
+  .roi-bar-fill.pos { background:var(--profit); }
+  .roi-bar-fill.neg { background:var(--loss); }
+  .roi-badge { font-size:.6rem; padding:2px 6px; border-radius:4px; font-weight:500; letter-spacing:.04em; }
+  .roi-badge.pos { background:#eaf4ee; color:#2d6a4f; }
+  .roi-badge.neg { background:#faeaec; color:#9b2335; }
+  .roi-badge.flat{ background:var(--paper); color:var(--stone-400); }
 
   /* ══ BOTTOM NAV ══ */
   .bottom-nav {
@@ -598,6 +624,7 @@
       <nav class="desk-nav">
         <button class="desk-nav-btn active" id="dnav-overview"   onclick="switchPage('overview')">Overview</button>
         <button class="desk-nav-btn"        id="dnav-trades"     onclick="switchPage('trades')">Trades</button>
+        <button class="desk-nav-btn"        id="dnav-dailyroi"   onclick="switchPage('dailyroi')">ROI Log</button>
         <button class="desk-nav-btn"        id="dnav-projection" onclick="switchPage('projection')">Projection</button>
         <button class="desk-nav-btn"        id="dnav-sessions"   onclick="switchPage('sessions')">Sessions</button>
       </nav>
@@ -636,6 +663,11 @@
         <div class="kpi-label">To Target</div>
         <div class="kpi-value" id="kpi-remaining">—</div>
         <div class="kpi-sub"  id="kpi-trades-needed">— trades est.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Daily ROI%</div>
+        <div class="kpi-value" id="kpi-daily-roi">—</div>
+        <div class="kpi-sub"  id="kpi-daily-roi-sub">Today</div>
       </div>
     </div>
 
@@ -739,24 +771,38 @@
         <div class="card-header"><div class="card-title">New Position</div></div>
         <div class="card-body">
           <div class="trade-form">
-            <div class="field field-sym"><label>Symbol</label><input type="text" id="t-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
-            <div class="field field-pnl">
-                <label>P&amp;L ($)</label>
-                <div class="pnl-row">
-                  <select id="t-sign" class="pnl-sign">
-                    <option value="1">＋</option>
-                    <option value="-1">－</option>
-                  </select>
-                  <input type="text" inputmode="decimal" id="t-pnl" class="pnl-amount" placeholder="0.00">
-                </div>
+            <!-- Row 1: Symbol + Direction -->
+            <div class="trade-form-grid">
+              <div class="field"><label>Symbol</label><input type="text" id="t-symbol" placeholder="XAU/USD" style="text-transform:uppercase"></div>
+              <div class="field"><label>Direction</label>
+                <select id="t-type"><option value="long">LONG</option><option value="short">SHORT</option></select>
               </div>
-            <div class="field field-type"><label>Direction</label>
-              <select id="t-type"><option value="long">LONG</option><option value="short">SHORT</option></select>
+            </div>
+            <!-- Row 2: P&L -->
+            <div class="field">
+              <label>P&amp;L ($)</label>
+              <div class="pnl-row">
+                <select id="t-sign" class="pnl-sign">
+                  <option value="1">＋</option>
+                  <option value="-1">－</option>
+                </select>
+                <input type="text" inputmode="decimal" id="t-pnl" class="pnl-amount" placeholder="0.00">
+              </div>
+            </div>
+            <!-- Row 3: Commission + Swap -->
+            <div class="trade-form-grid">
+              <div class="field"><label>Commission ($)</label><input type="text" inputmode="decimal" id="t-commission" placeholder="0.00"></div>
+              <div class="field"><label>Swap ($)</label><input type="text" inputmode="decimal" id="t-swap" placeholder="0.00"></div>
+            </div>
+            <!-- Row 4: Open Time + Close Time -->
+            <div class="trade-form-grid">
+              <div class="field"><label>Open Time</label><input type="datetime-local" id="t-open-time" step="1"></div>
+              <div class="field"><label>Close Time</label><input type="datetime-local" id="t-close-time" step="1"></div>
             </div>
             <div class="wrap-btn">
               <button class="btn-add" onclick="addTrade()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
-                <span class="desk-only">Add</span>
+                <span class="desk-only">Add Position</span>
               </button>
             </div>
           </div>
@@ -870,6 +916,56 @@
     <div class="session-cards" id="sess-cards"></div>
   </div>
 
+  <!-- ── ROI LOG ── -->
+  <div class="page" id="page-dailyroi">
+    <div class="eyebrow">Performance History</div>
+    <div class="pg-title">Daily ROI Log</div>
+
+    <div class="roi-kpi-row">
+      <div class="roi-kpi">
+        <div class="lbl">Best Day</div>
+        <div class="val pos" id="roi-best-day">—</div>
+      </div>
+      <div class="roi-kpi">
+        <div class="lbl">Worst Day</div>
+        <div class="val" id="roi-worst-day" style="color:var(--loss)">—</div>
+      </div>
+      <div class="roi-kpi">
+        <div class="lbl">Avg Daily ROI</div>
+        <div class="val" id="roi-avg-day">—</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">ROI History by Day</div>
+        <span style="font-size:.64rem;color:var(--stone-400);font-family:'DM Mono',monospace" id="roi-day-count">— trading days</span>
+      </div>
+      <div class="card-body" style="padding-top:8px">
+        <div class="roi-table-wrap">
+          <table class="roi-table">
+            <thead>
+              <tr>
+                <th style="text-align:left">Date</th>
+                <th>Trades</th>
+                <th>Gross P&L</th>
+                <th>Commission</th>
+                <th>Swap</th>
+                <th>Net P&L</th>
+                <th>Balance After</th>
+                <th>Daily ROI%</th>
+              </tr>
+            </thead>
+            <tbody id="roi-log-body"></tbody>
+          </table>
+        </div>
+        <div id="roi-empty" class="empty-state" style="display:none">
+          <div class="icon">◈</div><p>No trade history yet</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <!-- BOTTOM NAV (mobile) -->
@@ -881,6 +977,10 @@
   <button class="nav-item" id="nav-trades"      onclick="switchPage('trades')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
     Trades
+  </button>
+  <button class="nav-item" id="nav-dailyroi"    onclick="switchPage('dailyroi')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    ROI Log
   </button>
   <button class="nav-item" id="nav-projection"  onclick="switchPage('projection')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
@@ -1175,8 +1275,11 @@ function $s(id,t){ const e=document.getElementById(id); if(e)e.textContent=t; }
 function $c(id,c){ const e=document.getElementById(id); if(!e)return; e.classList.remove('positive','negative'); if(c)e.classList.add(c); }
 
 // ── TRADE ACTIONS ──
-function pushTrade(sym,pnl,type){
-  trades.unshift({ id:Date.now(), date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'}), sym,pnl,type });
+function pushTrade(sym, pnl, type, commission=0, swap=0, openTime='', closeTime=''){
+  const dateStr = openTime
+    ? openTime.slice(0,10).replace(/-/g,'.')
+    : new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+  trades.unshift({ id:Date.now(), date:dateStr, sym, pnl, type, commission, swap, openTime, closeTime });
   localStorage.setItem('sb_trades',JSON.stringify(trades));
   recalc();
 }
@@ -1193,9 +1296,12 @@ function addTrade(){
   const type=document.getElementById('t-type').value;
   if(pnl===null){ document.getElementById('t-pnl').style.borderColor='var(--loss)'; return; }
   document.getElementById('t-pnl').style.borderColor='';
-  pushTrade(sym,pnl,type);
-  document.getElementById('t-pnl').value='';
-  document.getElementById('t-symbol').value='';
+  const commission = parseFloat(document.getElementById('t-commission').value)||0;
+  const swap       = parseFloat(document.getElementById('t-swap').value)||0;
+  const openTime   = document.getElementById('t-open-time').value||'';
+  const closeTime  = document.getElementById('t-close-time').value||'';
+  pushTrade(sym, pnl, type, commission, swap, openTime, closeTime);
+  ['t-pnl','t-symbol','t-commission','t-swap','t-open-time','t-close-time'].forEach(id=>{ document.getElementById(id).value=''; });
 }
 function addTradeOv(){
   const sym=(document.getElementById('ov-symbol').value.trim()||'TRADE').toUpperCase();
@@ -1401,13 +1507,26 @@ function recalc(){
     pfEl.style.color = pf >= 1.5 ? 'var(--profit)' : pf >= 1 ? 'var(--gold)' : 'var(--loss)';
   } else { $s('stat-pf','—'); }
 
-  renderTrades(); renderRecent(); renderTable(capital,target,avgPct,balance);
+  renderTrades(); renderRecent(); renderTable(capital,target,avgPct,balance); renderDailyROI(capital);
 }
 
+function fmtDateTime(dt){
+  if(!dt) return '—';
+  // dt is like "2025-01-15T14:30:00" from datetime-local
+  return dt.replace('T',' ');
+}
 function rowHTML(t){
-  return`<div class="trade-row">
+  const hasDetail = t.commission||t.swap||t.openTime||t.closeTime;
+  const detailHTML = hasDetail ? `
+    <div class="trade-detail">
+      ${t.openTime  ? `<span>Open: ${fmtDateTime(t.openTime)}</span>`  : ''}
+      ${t.closeTime ? `<span>Close: ${fmtDateTime(t.closeTime)}</span>` : ''}
+      ${t.commission ? `<span>Comm: -$${Math.abs(t.commission).toFixed(2)}</span>` : ''}
+      ${t.swap       ? `<span>Swap: ${t.swap>=0?'+':'-'}$${Math.abs(t.swap).toFixed(2)}</span>` : ''}
+    </div>` : '';
+  return`<div class="trade-row" style="grid-template-rows:auto${hasDetail?` auto`:''}">
     <span class="td-date">${t.date}</span>
-    <span class="td-sym">${t.sym}</span>
+    <span class="td-sym">${t.sym}${detailHTML}</span>
     <span class="td-type ${t.type}">${t.type.toUpperCase()}</span>
     <span class="td-pnl ${t.pnl>=0?'pos':'neg'}">${t.pnl>=0?'+':''}$${t.pnl.toFixed(2)}</span>
     <button class="btn-del" onclick="delTrade(${t.id})">✕</button>
@@ -1551,6 +1670,132 @@ function updateClock(){
 updateClock();
 setInterval(updateClock, 1000);
 
+// ── DAILY ROI ──
+function renderDailyROI(capital){
+  // group trades by date key (use openTime date if available, else stored date)
+  const byDate = {};
+  const allEvents = [
+    ...trades.map(t=>({...t, _type:'trade'})),
+    ...funds.map(f=>({...f, _type:'fund'}))
+  ].sort((a,b)=>a.id-b.id);
+
+  // compute running balance per event to get balance-before each trade
+  let runBal = capital;
+  allEvents.forEach(ev=>{
+    if(ev._type==='fund'){
+      runBal += ev.type==='deposit' ? ev.amt : -ev.amt;
+    } else {
+      // date key: prefer openTime date
+      const dk = ev.openTime ? ev.openTime.slice(0,10) : ev.date;
+      if(!byDate[dk]) byDate[dk] = { grossPnl:0, commission:0, swap:0, count:0, balanceBefore:runBal };
+      byDate[dk].grossPnl   += ev.pnl;
+      byDate[dk].commission += (ev.commission||0);
+      byDate[dk].swap       += (ev.swap||0);
+      byDate[dk].count++;
+      runBal += ev.pnl;
+    }
+  });
+
+  // build sorted desc list
+  const days = Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+
+  // today's daily ROI for KPI card
+  const todayKey = new Date().toISOString().slice(0,10);
+  const todayData = byDate[todayKey];
+  const kpiEl = document.getElementById('kpi-daily-roi');
+  const kpiSub = document.getElementById('kpi-daily-roi-sub');
+  if(kpiEl){
+    if(todayData && todayData.balanceBefore > 0){
+      const netToday = todayData.grossPnl - todayData.commission + todayData.swap;
+      const roiToday = netToday / todayData.balanceBefore * 100;
+      kpiEl.textContent = (roiToday>=0?'+':'')+roiToday.toFixed(2)+'%';
+      kpiEl.className = 'kpi-value '+(roiToday>=0?'positive':'negative');
+      kpiSub.textContent = `${todayData.count} trade${todayData.count!==1?'s':''} today`;
+    } else {
+      kpiEl.textContent = '—';
+      kpiEl.className = 'kpi-value';
+      kpiSub.textContent = 'No trades today';
+    }
+  }
+
+  // ROI Log page
+  const tbody = document.getElementById('roi-log-body');
+  const emptyEl = document.getElementById('roi-empty');
+  if(!tbody) return;
+
+  if(!days.length){
+    tbody.innerHTML=''; if(emptyEl) emptyEl.style.display='block'; return;
+  }
+  if(emptyEl) emptyEl.style.display='none';
+
+  // compute summary stats
+  const roiPcts = [];
+  let runningBal = capital;
+  // recalc running balance properly for table
+  const allEvSorted = [...allEvents].sort((a,b)=>a.id-b.id);
+
+  // rebuild byDate with cumulative balance after
+  const daysList = {};
+  let rb = capital;
+  allEvSorted.forEach(ev=>{
+    if(ev._type==='fund'){
+      rb += ev.type==='deposit' ? ev.amt : -ev.amt;
+    } else {
+      const dk = ev.openTime ? ev.openTime.slice(0,10) : ev.date;
+      if(!daysList[dk]) daysList[dk] = { grossPnl:0, commission:0, swap:0, count:0, balanceBefore:rb };
+      daysList[dk].grossPnl   += ev.pnl;
+      daysList[dk].commission += (ev.commission||0);
+      daysList[dk].swap       += (ev.swap||0);
+      daysList[dk].count++;
+      rb += ev.pnl;
+      daysList[dk].balanceAfter = rb;
+    }
+  });
+
+  const sortedDays = Object.keys(daysList).sort((a,b)=>b.localeCompare(a));
+  sortedDays.forEach(dk=>{
+    const d = daysList[dk];
+    const net = d.grossPnl - d.commission + d.swap;
+    if(d.balanceBefore > 0) roiPcts.push(net/d.balanceBefore*100);
+  });
+
+  const bestRoi  = roiPcts.length ? Math.max(...roiPcts) : null;
+  const worstRoi = roiPcts.length ? Math.min(...roiPcts) : null;
+  const avgRoi   = roiPcts.length ? roiPcts.reduce((a,b)=>a+b,0)/roiPcts.length : null;
+
+  $s('roi-best-day',  bestRoi  !== null ? (bestRoi>=0?'+':'')+bestRoi.toFixed(2)+'%' : '—');
+  $s('roi-worst-day', worstRoi !== null ? (worstRoi>=0?'+':'')+worstRoi.toFixed(2)+'%' : '—');
+  $s('roi-avg-day',   avgRoi   !== null ? (avgRoi>=0?'+':'')+avgRoi.toFixed(2)+'%' : '—');
+  $s('roi-day-count', `${sortedDays.length} trading day${sortedDays.length!==1?'s':''}`);
+
+  const maxAbs = roiPcts.length ? Math.max(...roiPcts.map(Math.abs)) : 1;
+
+  tbody.innerHTML = sortedDays.map(dk=>{
+    const d = daysList[dk];
+    const net = d.grossPnl - d.commission + d.swap;
+    const roi = d.balanceBefore > 0 ? net/d.balanceBefore*100 : 0;
+    const barPct = maxAbs > 0 ? Math.abs(roi)/maxAbs*100 : 0;
+    const sign = roi >= 0;
+    const commSign = d.commission > 0 ? '-' : '';
+    const swapSign = d.swap >= 0 ? '+' : '-';
+    return `<tr>
+      <td>${dk}</td>
+      <td>${d.count}</td>
+      <td class="${d.grossPnl>=0?'pos':'neg'}">${d.grossPnl>=0?'+':''}$${d.grossPnl.toFixed(2)}</td>
+      <td style="color:var(--loss)">${d.commission!==0?`-$${Math.abs(d.commission).toFixed(2)}`:'—'}</td>
+      <td style="color:${d.swap>=0?'var(--profit)':'var(--loss)'}">${d.swap!==0?`${swapSign}$${Math.abs(d.swap).toFixed(2)}`:'—'}</td>
+      <td class="${net>=0?'pos':'neg'}" style="font-weight:500">${net>=0?'+':''}$${net.toFixed(2)}</td>
+      <td>$${(d.balanceAfter||0).toFixed(2)}</td>
+      <td>
+        <div class="roi-bar-wrap">
+          <div class="roi-bar-track"><div class="roi-bar-fill ${sign?'pos':'neg'}" style="width:${barPct.toFixed(1)}%"></div></div>
+          <span class="roi-badge ${roi>0?'pos':roi<0?'neg':'flat'}">${sign?'+':''}${roi.toFixed(2)}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
 // ── EXPORT FUNCTIONS ──
 function openExport(){
   document.getElementById('exportModal').classList.add('open');
@@ -1652,15 +1897,29 @@ function exportPDF(){
     </div>
   </div>`;
 
-  document.querySelectorAll('.page').forEach(p=>p.style.setProperty('display','none','important'));
-  statementEl.style.display = 'block';
-  setTimeout(()=>{
-    window.print();
-    setTimeout(()=>{
-      statementEl.style.display = 'none';
-      document.querySelectorAll('.page').forEach(p=>p.style.removeProperty('display'));
-    }, 800);
-  }, 150);
+  const win = window.open('','_blank','width=800,height=900');
+  win.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>StoneBridge Statement</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+      *, *::before, *::after { box-sizing:border-box; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+      body { margin:0; padding:0; background:#fff; font-family:'DM Sans',sans-serif; color:#111110; }
+      @media print {
+        body { margin:0; }
+        .no-print { display:none !important; }
+      }
+    </style>
+  </head><body>
+    <div class="no-print" style="background:#1a1917;padding:12px 20px;display:flex;align-items:center;justify-content:space-between">
+      <span style="color:#b8975a;font-family:'DM Sans',sans-serif;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase">StoneBridge Statement Preview</span>
+      <button onclick="window.print()" style="background:#b8975a;color:#fff;border:none;border-radius:6px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;letter-spacing:.06em;text-transform:uppercase">
+        ⬇ Save as PDF
+      </button>
+    </div>
+    ${statementEl.innerHTML}
+  </body></html>`);
+  win.document.close();
 }
 
 // ── CSV EXPORT ──
