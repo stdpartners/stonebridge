@@ -257,11 +257,19 @@
     -webkit-appearance:none; appearance:none;
   }
   .field input:focus, .field select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(184,151,90,.1); background:var(--white); }
+  .field input[type="datetime-local"] {
+    font-size:.7rem; padding:9px 6px;
+    min-width:0; width:100%; box-sizing:border-box;
+    overflow:hidden;
+  }
 
   /* ══ TRADE FORM ══ */
   .trade-form { display:flex; flex-direction:column; gap:9px; }
-  .trade-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .trade-form-grid { display:grid; grid-template-columns:1fr; gap:9px; }
   .trade-form-grid .field-full { grid-column:1/-1; }
+  @media (min-width:480px) {
+    .trade-form-grid { grid-template-columns:1fr 1fr; }
+  }
   .wrap-btn { display:flex; }
   .btn-add {
     background:var(--stone-900); color:var(--gold-light);
@@ -291,18 +299,18 @@
   .pnl-amount { flex:1; min-width:0; }
 
   /* ══ TRADE LOG ══ */
-  .tlog-head { display:grid; grid-template-columns:58px 1fr 58px 80px 24px; gap:7px; padding:7px 0; border-bottom:1px solid var(--border); }
+  .tlog-head { display:grid; grid-template-columns:56px 1fr 46px 72px 22px; gap:5px; padding:7px 0; border-bottom:1px solid var(--border); }
   .col-h { font-size:.56rem; letter-spacing:.1em; text-transform:uppercase; color:var(--stone-400); font-weight:500; }
   .col-h:not(:first-child) { text-align:right; }
-  .trade-rows { max-height:300px; overflow-y:auto; }
+  .trade-rows { max-height:420px; overflow-y:auto; overflow-x:hidden; }
   .trade-rows::-webkit-scrollbar { width:3px; }
   .trade-rows::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
-  .trade-row { display:grid; grid-template-columns:58px 1fr 58px 80px 24px; gap:7px; padding:9px 0; border-bottom:1px solid var(--stone-50); align-items:center; animation:fadeRow .25s ease; transition:background .15s; }
+  .trade-row { display:grid; grid-template-columns:56px 1fr 46px 72px 22px; gap:5px; padding:9px 0; border-bottom:1px solid var(--stone-50); align-items:start; animation:fadeRow .25s ease; transition:background .15s; }
   .trade-row:hover { background:var(--stone-50); padding:9px 5px; margin:0 -5px; border-radius:4px; }
   @keyframes fadeRow { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
-  .td-date { font-size:.68rem; color:var(--stone-400); font-family:'DM Mono',monospace; }
-  .td-sym  { font-size:.82rem; font-weight:500; color:var(--stone-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .td-type { font-size:.58rem; font-weight:500; letter-spacing:.06em; padding:2px 5px; border-radius:3px; display:inline-block; text-align:center; }
+  .td-date { font-size:.64rem; color:var(--stone-400); font-family:'DM Mono',monospace; line-height:1.4; word-break:break-all; }
+  .td-sym  { font-size:.82rem; font-weight:500; color:var(--stone-900); min-width:0; word-break:break-word; white-space:normal; }
+  .td-type { font-size:.56rem; font-weight:500; letter-spacing:.04em; padding:2px 4px; border-radius:3px; display:inline-block; text-align:center; white-space:nowrap; }
   .td-type.deposit    { background:#e8f0fe; color:#3b5bdb; }
   .td-type.withdrawal { background:#fff3e0; color:#e67700; }
 
@@ -328,11 +336,11 @@
   .fund-type-btn.dep  { }
   .fund-type-btn.dep.active  { background:#e8f0fe; border-color:#3b5bdb; color:#3b5bdb; }
   .fund-type-btn.with.active { background:#fff3e0; border-color:#e67700; color:#e67700; }
-  .td-pnl { font-family:'DM Mono',monospace; font-size:.82rem; text-align:right; }
+  .td-pnl { font-family:'DM Mono',monospace; font-size:.78rem; text-align:right; white-space:nowrap; min-width:0; }
   .td-pnl.pos { color:var(--profit); }
   .td-pnl.neg { color:var(--loss);   }
-  .trade-detail { display:flex; flex-wrap:wrap; gap:8px; margin-top:3px; }
-  .trade-detail span { font-size:.6rem; color:var(--stone-400); font-family:'DM Mono',monospace; letter-spacing:.03em; }
+  .trade-detail { display:flex; flex-direction:column; gap:2px; margin-top:4px; }
+  .trade-detail span { font-size:.58rem; color:var(--stone-400); font-family:'DM Mono',monospace; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .btn-del { background:none; border:none; color:var(--stone-200); cursor:pointer; font-size:.7rem; transition:color .2s; padding:2px; }
   .btn-del:hover { color:var(--loss); }
 
@@ -669,6 +677,21 @@
         <div class="kpi-value" id="kpi-daily-roi">—</div>
         <div class="kpi-sub"  id="kpi-daily-roi-sub">Today</div>
       </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Commission</div>
+        <div class="kpi-value" id="kpi-commission">—</div>
+        <div class="kpi-sub"  id="kpi-commission-sub">Trading cost</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg Daily Trades</div>
+        <div class="kpi-value" id="kpi-avg-daily">—</div>
+        <div class="kpi-sub"  id="kpi-avg-daily-sub">Active days</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">This Week</div>
+        <div class="kpi-value" id="kpi-week-trades">—</div>
+        <div class="kpi-sub"  id="kpi-week-pnl">— P&amp;L</div>
+      </div>
     </div>
 
     <div class="overview-grid">
@@ -717,6 +740,12 @@
           <div class="stat-cell"><div class="lbl">Realized R:R</div><div class="val" id="stat-rr">—</div></div>
           <div class="stat-cell"><div class="lbl">Expectancy</div><div class="val" id="stat-exp">—</div></div>
           <div class="stat-cell"><div class="lbl">Profit Factor</div><div class="val" id="stat-pf">—</div></div>
+          <div class="stat-cell" style="background:var(--gold-pale);border:1px solid rgba(184,151,90,.25)">
+            <div class="lbl" style="color:var(--gold)">Avg Hold Time</div>
+            <div class="val" id="stat-hold" style="color:var(--stone-900)">—</div>
+          </div>
+          <div class="stat-cell"><div class="lbl">Positions</div><div class="val" id="stat-streak">—</div></div>
+          <div class="stat-cell"><div class="lbl">Max Drawdown</div><div class="val" id="stat-mdd" style="color:var(--loss)">—</div></div>
         </div>
       </div>
 
@@ -792,10 +821,19 @@
             <!-- Row 3: Commission + Swap -->
             <div class="trade-form-grid">
               <div class="field"><label>Commission ($)</label><input type="text" inputmode="decimal" id="t-commission" placeholder="0.00"></div>
-              <div class="field"><label>Swap ($)</label><input type="text" inputmode="decimal" id="t-swap" placeholder="0.00"></div>
+              <div class="field">
+                <label>Swap ($)</label>
+                <div class="pnl-row">
+                  <select id="t-swap-sign" class="pnl-sign">
+                    <option value="-1" selected>－</option>
+                    <option value="1">＋</option>
+                  </select>
+                  <input type="text" inputmode="decimal" id="t-swap" class="pnl-amount" placeholder="0.00">
+                </div>
+              </div>
             </div>
             <!-- Row 4: Open Time + Close Time -->
-            <div class="trade-form-grid">
+            <div style="display:grid; grid-template-columns:1fr; gap:9px;">
               <div class="field"><label>Open Time</label><input type="datetime-local" id="t-open-time" step="1"></div>
               <div class="field"><label>Close Time</label><input type="datetime-local" id="t-close-time" step="1"></div>
             </div>
@@ -863,15 +901,7 @@
       <div class="card-body">
         <div class="form-row">
           <div class="field"><label>Initial Capital ($)</label><input type="number" id="s-capital" value="1000" oninput="recalc()"></div>
-          <div class="field">
-            <label>Target Mode</label>
-            <div class="tab-row" style="margin-top:4px">
-              <button class="tab-btn active" id="tmode-compound" onclick="setTargetMode('compound')">Compound $</button>
-              <button class="tab-btn" id="tmode-fixed" onclick="setTargetMode('fixed')">Fixed %</button>
-            </div>
-          </div>
           <div class="field" id="field-target-amt"><label>Target ($)</label><input type="number" id="s-target" value="10000" oninput="recalc()"></div>
-          <div class="field" id="field-target-pct" style="display:none"><label>Target Return (%)</label><input type="number" id="s-target-pct" value="100" step="1" oninput="recalc()"></div>
           <div class="field"><label>Avg. Return / Trade (%)</label><input type="number" id="s-avg" value="3" step="0.1" oninput="recalc()"></div>
           <div class="field"><label>Compound Frequency</label>
             <select id="s-freq" onchange="recalc()">
@@ -933,6 +963,13 @@
       <div class="roi-kpi">
         <div class="lbl">Avg Daily ROI</div>
         <div class="val" id="roi-avg-day">—</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-header"><div class="card-title">Equity Curve</div></div>
+      <div class="card-body" style="padding:12px 8px 8px">
+        <canvas id="roi-chart" style="width:100%;height:180px;display:block"></canvas>
       </div>
     </div>
 
@@ -1198,27 +1235,15 @@ let funds  = JSON.parse(localStorage.getItem('sb_funds') ||'[]');
 let currentFundType = 'deposit';
 
 // ── TARGET MODE ──
-let _targetMode = 'compound';
-function setTargetMode(mode, silent){
-  _targetMode = mode;
-  document.getElementById('tmode-compound').classList.toggle('active', mode==='compound');
-  document.getElementById('tmode-fixed').classList.toggle('active',    mode==='fixed');
-  document.getElementById('field-target-amt').style.display = mode==='compound' ? '' : 'none';
-  document.getElementById('field-target-pct').style.display = mode==='fixed'    ? '' : 'none';
-  if(!silent) recalc();
-}
+const _targetMode = 'compound';
 
 // ── RESTORE SETTINGS ──
 (function restoreSettings(){
   const s = JSON.parse(localStorage.getItem('sb_settings')||'{}');
-  if(s.capital)    document.getElementById('s-capital').value    = s.capital;
-  if(s.target)     document.getElementById('s-target').value     = s.target;
-  if(s.targetPct)  document.getElementById('s-target-pct').value = s.targetPct;
-  if(s.avg)        document.getElementById('s-avg').value        = s.avg;
-  if(s.freq)       document.getElementById('s-freq').value       = s.freq;
-  // restore mode โดยไม่ trigger recalc ก่อน แล้วค่อย recalc ครั้งเดียวตอนท้าย
-  if(s.targetMode) setTargetMode(s.targetMode, true);
-  else setTargetMode('compound', true);
+  if(s.capital)    document.getElementById('s-capital').value = s.capital;
+  if(s.target)     document.getElementById('s-target').value  = s.target;
+  if(s.avg)        document.getElementById('s-avg').value     = s.avg;
+  if(s.freq)       document.getElementById('s-freq').value    = s.freq;
 })();
 
 // ── NAV ──
@@ -1273,6 +1298,8 @@ function fmt(n) { const a=Math.abs(n); if(a>=1e6)return(n/1e6).toFixed(2)+'M'; i
 function fmtS(n){ const a=Math.abs(n); if(a>=1e6)return'$'+(n/1e6).toFixed(1)+'M'; if(a>=1e3)return'$'+(n/1e3).toFixed(1)+'K'; return'$'+n.toFixed(0); }
 function $s(id,t){ const e=document.getElementById(id); if(e)e.textContent=t; }
 function $c(id,c){ const e=document.getElementById(id); if(!e)return; e.classList.remove('positive','negative'); if(c)e.classList.add(c); }
+// Net P&L per trade = gross P&L − commission + swap (swap is already negative)
+function netPnlOf(t){ return t.pnl - (t.commission||0) + (t.swap||0); }
 
 // ── TRADE ACTIONS ──
 function pushTrade(sym, pnl, type, commission=0, swap=0, openTime='', closeTime=''){
@@ -1291,17 +1318,33 @@ function parsePnl(valId, signId){
   return n * sign;
 }
 function addTrade(){
-  const sym=(document.getElementById('t-symbol').value.trim()||'TRADE').toUpperCase();
-  const pnl=parsePnl('t-pnl','t-sign');
-  const type=document.getElementById('t-type').value;
-  if(pnl===null){ document.getElementById('t-pnl').style.borderColor='var(--loss)'; return; }
-  document.getElementById('t-pnl').style.borderColor='';
+  let valid = true;
+
+  const symEl      = document.getElementById('t-symbol');
+  const openEl     = document.getElementById('t-open-time');
+  const closeEl    = document.getElementById('t-close-time');
+  const pnlEl      = document.getElementById('t-pnl');
+
+  const sym = symEl.value.trim().toUpperCase();
+  const openTime  = openEl.value;
+  const closeTime = closeEl.value;
+  const pnl = parsePnl('t-pnl','t-sign');
+  const type = document.getElementById('t-type').value;
+
+  // Validate required fields
+  if(!sym){ symEl.style.borderColor='var(--loss)'; valid=false; } else { symEl.style.borderColor=''; }
+  if(!openTime){ openEl.style.borderColor='var(--loss)'; valid=false; } else { openEl.style.borderColor=''; }
+  if(!closeTime){ closeEl.style.borderColor='var(--loss)'; valid=false; } else { closeEl.style.borderColor=''; }
+  if(pnl===null){ pnlEl.style.borderColor='var(--loss)'; valid=false; } else { pnlEl.style.borderColor=''; }
+  if(!valid) return;
+
   const commission = parseFloat(document.getElementById('t-commission').value)||0;
-  const swap       = parseFloat(document.getElementById('t-swap').value)||0;
-  const openTime   = document.getElementById('t-open-time').value||'';
-  const closeTime  = document.getElementById('t-close-time').value||'';
-  pushTrade(sym, pnl, type, commission, swap, openTime, closeTime);
+  const swapRaw    = parseFloat(document.getElementById('t-swap').value)||0;
+  const swapSign   = parseFloat(document.getElementById('t-swap-sign').value);
+  const swap       = swapRaw * swapSign;
+  pushTrade(sym||'TRADE', pnl, type, commission, swap, openTime, closeTime);
   ['t-pnl','t-symbol','t-commission','t-swap','t-open-time','t-close-time'].forEach(id=>{ document.getElementById(id).value=''; });
+  document.getElementById('t-swap-sign').value = '-1';
 }
 function addTradeOv(){
   const sym=(document.getElementById('ov-symbol').value.trim()||'TRADE').toUpperCase();
@@ -1342,22 +1385,19 @@ function recalc(){
   const targetPct = parseFloat(document.getElementById('s-target-pct').value)||100;
 
   const totalPnl   = trades.reduce((s,t)=>s+t.pnl, 0);
+  const totalComm  = trades.reduce((s,t)=>s+(t.commission||0), 0);
+  const totalSwap  = trades.reduce((s,t)=>s+(t.swap||0), 0);
+  const netPnl     = totalPnl - totalComm + totalSwap;   // net after fees — used everywhere
   const totalFunds = funds.reduce((s,f)=> f.type==='deposit' ? s+f.amt : s-f.amt, 0);
   const totalDeposits = funds.filter(f=>f.type==='deposit').reduce((s,f)=>s+f.amt,0);
-  const balance    = capital + totalPnl + totalFunds;
+  const balance    = capital + netPnl + totalFunds;
 
-  // ROI base = capital + deposits (ไม่หัก withdrawal)
   const roiBase = capital + totalDeposits;
-
-  // fixed% mode ใช้ pnlBaseline สำหรับ reset รอบ
   const savedSettings  = JSON.parse(localStorage.getItem('sb_settings')||'{}');
   const pnlBaseline    = _targetMode === 'fixed' ? (savedSettings.pnlBaseline || 0) : 0;
   const roiBaseSnap    = _targetMode === 'fixed' ? (savedSettings.roiBaseSnapshot || roiBase) : roiBase;
-  const pnlSinceReset  = totalPnl - pnlBaseline;
-
-  // ROI จริง — แสดงใน KPI card เสมอ ไม่ถูก reset
-  const roi = roiBase > 0 ? (totalPnl / roiBase * 100) : 0;
-  // Virtual ROI — ใช้คำนวณ target เท่านั้น
+  const pnlSinceReset  = netPnl - pnlBaseline;
+  const roi = roiBase > 0 ? (netPnl / roiBase * 100) : 0;
   const virtualRoi = roiBaseSnap > 0 ? (pnlSinceReset / roiBaseSnap * 100) : 0;
 
   // target ตาม mode
@@ -1383,18 +1423,58 @@ function recalc(){
   const remaining = _targetMode === 'fixed'
     ? targetPnl - pnlSinceReset
     : target - balance;
-  const pnlArr    = trades.map(t=>t.pnl);
-  const best      = pnlArr.length?Math.max(...pnlArr):0;
-  const worst     = pnlArr.length?Math.min(...pnlArr):0;
-  const avg       = pnlArr.length?totalPnl/pnlArr.length:0;
+  const pnlArr = trades.map(t=> t.pnl - (t.commission||0) + (t.swap||0)); // net per trade
+  const best   = pnlArr.length ? Math.max(...pnlArr) : 0;
+  const worst  = pnlArr.length ? Math.min(...pnlArr) : 0;
+  const avg    = pnlArr.length ? netPnl / pnlArr.length : 0;
 
   $s('kpi-balance','$'+fmt(balance));
   $s('kpi-balance-sub','Base $'+fmt(capital));
-  $s('kpi-pnl',(totalPnl>=0?'+':'')+' $'+fmt(totalPnl));
-  $c('kpi-pnl',totalPnl>=0?'positive':'negative');
-  $s('kpi-roi','ROI '+roi.toFixed(2)+'%');
   $s('kpi-winrate',winRate.toFixed(1)+'%');
   $s('kpi-trades',trades.length+' positions');
+
+  // Net P&L KPI (already net)
+  const kpiPnlEl = document.getElementById('kpi-pnl');
+  if(kpiPnlEl){
+    kpiPnlEl.textContent = (netPnl>=0?'+':'')+' $'+fmt(netPnl);
+    kpiPnlEl.className   = 'kpi-value '+(netPnl>=0?'positive':'negative');
+  }
+  $s('kpi-roi','ROI '+roi.toFixed(2)+'%');
+
+  // Total Commission & Swap KPI
+  $s('kpi-commission','$'+totalComm.toFixed(2));
+  $s('kpi-commission-sub','Swap '+(totalSwap>=0?'+':'')+totalSwap.toFixed(2));
+
+  // Avg Daily Trades (replaces Net Profit)
+  const avgDailyEl = document.getElementById('kpi-avg-daily');
+  if(avgDailyEl && trades.length){
+    // unique trading days
+    const daySet = new Set(trades.map(t=> t.openTime ? t.openTime.slice(0,10) : t.date));
+    const avgDaily = (trades.length / daySet.size).toFixed(1);
+    avgDailyEl.textContent = avgDaily;
+    $s('kpi-avg-daily-sub', daySet.size+' active day'+(daySet.size!==1?'s':''));
+  } else if(avgDailyEl){
+    avgDailyEl.textContent = '—';
+    $s('kpi-avg-daily-sub','No trades yet');
+  }
+
+  // Trades This Week
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0=Sun
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - (dayOfWeek===0?6:dayOfWeek-1));
+  startOfWeek.setHours(0,0,0,0);
+  const weekTrades = trades.filter(t=>{
+    const d = t.openTime ? new Date(t.openTime) : new Date(t.id);
+    return d >= startOfWeek;
+  });
+  const weekPnl = weekTrades.reduce((s,t)=>s+t.pnl,0);
+  $s('kpi-week-trades', weekTrades.length+' trades');
+  const weekPnlEl = document.getElementById('kpi-week-pnl');
+  if(weekPnlEl){
+    weekPnlEl.textContent = (weekPnl>=0?'+':'')+' $'+weekPnl.toFixed(2)+' P&L';
+    weekPnlEl.style.color = weekPnl>=0?'var(--profit)':weekPnl<0?'var(--loss)':'';
+  }
   if(remaining > 0){
     $s('kpi-remaining','$'+fmt(remaining));
     const rb = document.getElementById('btn-reset-target');
@@ -1449,8 +1529,8 @@ function recalc(){
   $s('stat-avg',  pnlArr.length?(avg>=0?'+':'')+' $'+avg.toFixed(2):'—');
 
   // ── Deep Insights ──
-  const winners = trades.filter(t=>t.pnl>0).map(t=>t.pnl);
-  const losers  = trades.filter(t=>t.pnl<0).map(t=>t.pnl);
+  const winners = trades.filter(t=>(t.pnl-(t.commission||0)+(t.swap||0))>0).map(t=>t.pnl-(t.commission||0)+(t.swap||0));
+  const losers  = trades.filter(t=>(t.pnl-(t.commission||0)+(t.swap||0))<0).map(t=>t.pnl-(t.commission||0)+(t.swap||0));
   const avgWin  = winners.length ? winners.reduce((a,b)=>a+b,0)/winners.length : 0;
   const avgLoss = losers.length  ? Math.abs(losers.reduce((a,b)=>a+b,0)/losers.length) : 0;
   const lossRate = 1 - winRate/100;
@@ -1506,6 +1586,46 @@ function recalc(){
     pfEl.textContent = pf.toFixed(2);
     pfEl.style.color = pf >= 1.5 ? 'var(--profit)' : pf >= 1 ? 'var(--gold)' : 'var(--loss)';
   } else { $s('stat-pf','—'); }
+
+  // ── Avg Hold Time ──
+  const tradesWithTime = trades.filter(t=>t.openTime&&t.closeTime);
+  if(tradesWithTime.length){
+    const avgMs = tradesWithTime.reduce((sum,t)=>{
+      const diff = new Date(t.closeTime) - new Date(t.openTime);
+      return sum + (diff > 0 ? diff : 0);
+    }, 0) / tradesWithTime.length;
+    const totalMins = Math.floor(avgMs/60000);
+    const days  = Math.floor(totalMins/1440);
+    const hours = Math.floor((totalMins%1440)/60);
+    const mins  = totalMins%60;
+    let holdStr = '';
+    if(days>0)  holdStr += days+'d ';
+    if(hours>0) holdStr += hours+'h ';
+    holdStr += mins+'m';
+    $s('stat-hold', holdStr.trim()||'< 1m');
+  } else { $s('stat-hold','—'); }
+
+  // ── Positions Traded ──
+  $s('stat-streak', trades.length ? trades.length+' total' : '—');
+
+  // ── Max Drawdown ──
+  if(trades.length){
+    const allEv = [
+      ...trades.map(t=>({...t,_type:'trade'})),
+      ...funds.map(f=>({...f,_type:'fund'}))
+    ].sort((a,b)=>a.id-b.id);
+    let rb=capital, peak=capital, mdd=0;
+    allEv.forEach(ev=>{
+      if(ev._type==='fund') rb += ev.type==='deposit'?ev.amt:-ev.amt;
+      else rb += ev.pnl;
+      if(rb>peak) peak=rb;
+      const dd = peak>0 ? (peak-rb)/peak*100 : 0;
+      if(dd>mdd) mdd=dd;
+    });
+    const mddEl = document.getElementById('stat-mdd');
+    mddEl.textContent = '-'+mdd.toFixed(2)+'%';
+    mddEl.style.color = mdd>20?'var(--loss)':mdd>10?'var(--gold)':'var(--stone-600)';
+  } else { $s('stat-mdd','—'); }
 
   renderTrades(); renderRecent(); renderTable(capital,target,avgPct,balance); renderDailyROI(capital);
 }
@@ -1692,7 +1812,7 @@ function renderDailyROI(capital){
       byDate[dk].commission += (ev.commission||0);
       byDate[dk].swap       += (ev.swap||0);
       byDate[dk].count++;
-      runBal += ev.pnl;
+      runBal += ev.pnl - (ev.commission||0) + (ev.swap||0); // net
     }
   });
 
@@ -1747,7 +1867,7 @@ function renderDailyROI(capital){
       daysList[dk].commission += (ev.commission||0);
       daysList[dk].swap       += (ev.swap||0);
       daysList[dk].count++;
-      rb += ev.pnl;
+      rb += ev.pnl - (ev.commission||0) + (ev.swap||0); // net
       daysList[dk].balanceAfter = rb;
     }
   });
@@ -1794,6 +1914,93 @@ function renderDailyROI(capital){
       </td>
     </tr>`;
   }).join('');
+
+  // ── Equity Curve Chart ──
+  const canvas = document.getElementById('roi-chart');
+  if(canvas && sortedDays.length){
+    const dpr = window.devicePixelRatio||1;
+    const W = canvas.offsetWidth||canvas.parentElement.offsetWidth||300;
+    const H = 180;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W+'px';
+    canvas.style.height = H+'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+
+    // data: balance after each day, chronological
+    const chronoDays = [...sortedDays].reverse();
+    const points = chronoDays.map(dk=>({
+      label: dk.slice(5), // MM-DD
+      bal: daysList[dk].balanceAfter
+    }));
+    // prepend capital as start
+    const capital2 = parseFloat(document.getElementById('s-capital').value)||1000;
+    const allPts = [{label:'Start', bal:capital2}, ...points];
+
+    const pad = {t:12,r:16,b:28,l:52};
+    const cw = W - pad.l - pad.r;
+    const ch = H - pad.t - pad.b;
+
+    const vals = allPts.map(p=>p.bal);
+    const minV = Math.min(...vals);
+    const maxV = Math.max(...vals);
+    const range = maxV - minV || 1;
+
+    const xOf = i => pad.l + (i/(allPts.length-1||1))*cw;
+    const yOf = v => pad.t + ch - ((v-minV)/range)*ch;
+
+    // grid lines
+    ctx.strokeStyle='rgba(26,25,23,.06)';
+    ctx.lineWidth=1;
+    for(let g=0;g<=4;g++){
+      const y=pad.t+(ch/4)*g;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+      const val=maxV-((maxV-minV)/4)*g;
+      ctx.fillStyle='#9e9b93';
+      ctx.font=`${10}px DM Mono,monospace`;
+      ctx.textAlign='right';
+      ctx.fillText('$'+fmt(val), pad.l-5, y+4);
+    }
+
+    // gradient fill
+    const grad = ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
+    const isUp = allPts[allPts.length-1].bal >= capital2;
+    grad.addColorStop(0, isUp?'rgba(45,106,79,.25)':'rgba(155,35,53,.2)');
+    grad.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.beginPath();
+    ctx.moveTo(xOf(0), yOf(allPts[0].bal));
+    allPts.forEach((p,i)=>{ if(i>0) ctx.lineTo(xOf(i),yOf(p.bal)); });
+    ctx.lineTo(xOf(allPts.length-1), pad.t+ch);
+    ctx.lineTo(xOf(0), pad.t+ch);
+    ctx.closePath();
+    ctx.fillStyle=grad;
+    ctx.fill();
+
+    // line
+    ctx.beginPath();
+    ctx.strokeStyle = isUp ? '#2d6a4f' : '#9b2335';
+    ctx.lineWidth=2;
+    ctx.lineJoin='round';
+    allPts.forEach((p,i)=>{ i===0?ctx.moveTo(xOf(i),yOf(p.bal)):ctx.lineTo(xOf(i),yOf(p.bal)); });
+    ctx.stroke();
+
+    // dots + x labels
+    allPts.forEach((p,i)=>{
+      // dot
+      ctx.beginPath();
+      ctx.arc(xOf(i),yOf(p.bal),3,0,Math.PI*2);
+      ctx.fillStyle=isUp?'#2d6a4f':'#9b2335';
+      ctx.fill();
+      // x label (skip some if too crowded)
+      if(allPts.length<=10 || i%(Math.ceil(allPts.length/8))===0 || i===allPts.length-1){
+        ctx.fillStyle='#9e9b93';
+        ctx.font=`9px DM Sans,sans-serif`;
+        ctx.textAlign='center';
+        ctx.fillText(p.label, xOf(i), H-8);
+      }
+    });
+  }
 }
 
 // ── EXPORT FUNCTIONS ──
