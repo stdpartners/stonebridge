@@ -1621,8 +1621,10 @@ function recalc(){
 
 function fmtDateTime(dt){
   if(!dt) return '—';
-  // dt is like "2025-01-15T14:30:00" from datetime-local
-  return dt.replace('T',' ');
+  // dt = "2025-01-15T14:30:05"
+  const [datePart, timePart='00:00:00'] = dt.split('T');
+  const [y,m,d] = datePart.split('-');
+  return `${y}.${m}.${d} ${timePart.slice(0,8).padEnd(8,'0')}`;
 }
 function rowHTML(t){
   const hasDetail = t.commission||t.swap||t.openTime||t.closeTime;
@@ -2004,117 +2006,301 @@ document.getElementById('exportModal').addEventListener('click', function(e){
 });
 
 function getExportStats(){
-  const capital  = parseFloat(document.getElementById('s-capital').value)||1000;
-  const totalPnl = trades.reduce((a,t)=>a+t.pnl,0);
+  const capital    = parseFloat(document.getElementById('s-capital').value)||1000;
+  const totalGross = trades.reduce((a,t)=>a+t.pnl,0);
+  const totalComm  = trades.reduce((a,t)=>a+(t.commission||0),0);
+  const totalSwap  = trades.reduce((a,t)=>a+(t.swap||0),0);
+  const totalNet   = totalGross - totalComm + totalSwap;
   const totalFunds = funds.reduce((a,f)=>f.type==='deposit'?a+f.amt:a-f.amt,0);
-  const balance  = capital + totalPnl + totalFunds;
-  const winners  = trades.filter(t=>t.pnl>0).map(t=>t.pnl);
-  const losers   = trades.filter(t=>t.pnl<0).map(t=>t.pnl);
-  const winRate  = trades.length ? (winners.length/trades.length*100).toFixed(1) : '—';
-  const avgW     = winners.length ? winners.reduce((a,b)=>a+b,0)/winners.length : 0;
-  const avgL     = losers.length  ? Math.abs(losers.reduce((a,b)=>a+b,0)/losers.length) : 0;
-  const rr       = avgL > 0 ? (avgW/avgL).toFixed(2) : '—';
-  const roi      = ((balance - capital) / capital * 100).toFixed(2);
-  return { capital, totalPnl, balance, winRate, rr, roi, winners, losers };
+  const totalDep   = funds.filter(f=>f.type==='deposit').reduce((a,f)=>a+f.amt,0);
+  const totalWdr   = funds.filter(f=>f.type==='withdrawal').reduce((a,f)=>a+f.amt,0);
+  const balance    = capital + totalNet + totalFunds;
+  const roiBase    = capital + totalDep;
+  const roi        = roiBase>0 ? (totalNet/roiBase*100) : 0;
+
+  const netArr  = trades.map(t=>t.pnl-(t.commission||0)+(t.swap||0));
+  const winners = netArr.filter(n=>n>0);
+  const losers  = netArr.filter(n=>n<0);
+  const winRate = trades.length ? winners.length/trades.length*100 : 0;
+  const avgW    = winners.length ? winners.reduce((a,b)=>a+b,0)/winners.length : 0;
+  const avgL    = losers.length  ? Math.abs(losers.reduce((a,b)=>a+b,0)/losers.length) : 0;
+  const rr      = avgL>0 ? avgW/avgL : 0;
+  const pf      = winners.length&&losers.length ? winners.reduce((a,b)=>a+b,0)/Math.abs(losers.reduce((a,b)=>a+b,0)) : 0;
+  const exp     = trades.length ? (winRate/100*avgW)-((1-winRate/100)*avgL) : 0;
+  const avgTrade= netArr.length ? totalNet/netArr.length : 0;
+  const best    = netArr.length ? Math.max(...netArr) : 0;
+  const worst   = netArr.length ? Math.min(...netArr) : 0;
+
+  // Max Drawdown
+  let rb=capital, peak=capital, mdd=0;
+  [...trades].sort((a,b)=>a.id-b.id).forEach(t=>{
+    rb += t.pnl-(t.commission||0)+(t.swap||0);
+    if(rb>peak) peak=rb;
+    const dd=peak>0?(peak-rb)/peak*100:0;
+    if(dd>mdd) mdd=dd;
+  });
+
+  // Avg Hold Time
+  const timed = trades.filter(t=>t.openTime&&t.closeTime);
+  let avgHold = '—';
+  if(timed.length){
+    const ms = timed.reduce((s,t)=>s+Math.max(0,new Date(t.closeTime)-new Date(t.openTime)),0)/timed.length;
+    const m=Math.floor(ms/60000), d=Math.floor(m/1440), h=Math.floor((m%1440)/60), mn=m%60;
+    avgHold = (d>0?d+'d ':'')+( h>0?h+'h ':'')+mn+'m';
+  }
+
+  return { capital, totalGross, totalComm, totalSwap, totalNet, totalFunds,
+           totalDep, totalWdr, balance, roi, roiBase,
+           winRate, avgW, avgL, rr, pf, exp, avgTrade, best, worst, mdd, avgHold,
+           winners, losers, netArr };
 }
 
 // ── PDF STATEMENT ──
 function exportPDF(){
   closeExport();
-  const s    = getExportStats();
-  const date = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  const s   = getExportStats();
+  const now = new Date();
+  const dateStr  = now.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  const timeStr  = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const fmt2 = n=>{ const a=Math.abs(n); if(a>=1e6)return(n/1e6).toFixed(2)+'M'; if(a>=1e3)return(n/1e3).toFixed(2)+'K'; return n.toFixed(2); }
+  const sign = (n,unit='$') => (n>=0?`+${unit}${fmt2(n)}`:`-${unit}${fmt2(Math.abs(n))}`);
+  const col  = n => n>0?'#2d6a4f':n<0?'#9b2335':'#5c5a54';
 
-  const tRows = trades.map(t=>({
-    _ts:t.id, date:t.date, detail:t.sym,
-    type: t.type==='long'?'LONG':'SHORT',
-    typeStyle: t.type==='long'?'color:#2d6a4f;background:#eaf4ee':'color:#9b2335;background:#faeaec',
-    amount: t.pnl>=0?`+$${t.pnl.toFixed(2)}`:`-$${Math.abs(t.pnl).toFixed(2)}`,
-    amtColor: t.pnl>=0?'#2d6a4f':'#9b2335'
-  }));
-  const fRows = funds.map(f=>({
-    _ts:f.id, date:f.date, detail:f.note||'Fund Movement',
-    type: f.type==='deposit'?'DEP':'WDR',
-    typeStyle: f.type==='deposit'?'color:#3b5bdb;background:#e8f0fe':'color:#e67700;background:#fff3e0',
-    amount: f.type==='deposit'?`+$${f.amt.toFixed(2)}`:`-$${f.amt.toFixed(2)}`,
-    amtColor: f.type==='deposit'?'#2d6a4f':'#9b2335'
-  }));
-  const allRows = [...tRows,...fRows].sort((a,b)=>b._ts-a._ts);
+  // ── Trade rows — full detail ──
+  const sortedTrades = [...trades].sort((a,b)=>a.id-b.id);
+  let runBal = s.capital + s.totalFunds; // start after fund adjustments
+  // recalc running balance trade-by-trade
+  let rb2 = s.capital;
+  // also account for fund movements before trades
+  const allEvts = [
+    ...trades.map(t=>({...t,_k:'trade'})),
+    ...funds.map(f=>({...f,_k:'fund'}))
+  ].sort((a,b)=>a.id-b.id);
 
-  const rowsHTML = allRows.map(r=>`
+  const balMap = {};
+  let rbRun = s.capital;
+  allEvts.forEach(ev=>{
+    if(ev._k==='fund') rbRun += ev.type==='deposit'?ev.amt:-ev.amt;
+    else {
+      const net = ev.pnl-(ev.commission||0)+(ev.swap||0);
+      rbRun += net;
+      balMap[ev.id] = rbRun;
+    }
+  });
+
+  const tradeRows = sortedTrades.map((t,i)=>{
+    const net = t.pnl-(t.commission||0)+(t.swap||0);
+    const balAfter = balMap[t.id]||0;
+    const fmtDT = dt => {
+      if(!dt) return '—';
+      const [datePart, timePart='00:00:00'] = dt.split('T');
+      const [y,m,d] = datePart.split('-');
+      return `${y}.${m}.${d} ${timePart.slice(0,8).padEnd(8,'0')}`;
+    };
+    const openFmt  = fmtDT(t.openTime);
+    const closeFmt = fmtDT(t.closeTime);
+    // hold time
+    let hold='—';
+    if(t.openTime&&t.closeTime){
+      const ms=Math.max(0,new Date(t.closeTime)-new Date(t.openTime));
+      const mm=Math.floor(ms/60000),dd=Math.floor(mm/1440),hh=Math.floor((mm%1440)/60),mn=mm%60;
+      hold=(dd>0?dd+'d ':'')+(hh>0?hh+'h ':'')+mn+'m';
+    }
+    return `<tr style="border-bottom:1px solid #f0ede8;${i%2===0?'background:#faf9f7':''}">
+      <td style="padding:5px 8px;font-family:monospace;font-size:8pt;color:#5c5a54">${String(i+1).padStart(2,'0')}</td>
+      <td style="padding:5px 8px;font-weight:600;font-size:9pt">${t.sym}</td>
+      <td style="padding:5px 8px"><span style="font-size:7.5pt;padding:1px 5px;border-radius:3px;${t.type==='long'?'color:#2d6a4f;background:#eaf4ee':'color:#9b2335;background:#faeaec'}">${t.type.toUpperCase()}</span></td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8pt;color:#5c5a54">${openFmt}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8pt;color:#5c5a54">${closeFmt}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8pt;text-align:right">${hold}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;color:${col(t.pnl)}">${sign(t.pnl)}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;color:#9b2335">-$${(t.commission||0).toFixed(2)}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;color:${col(t.swap||0)}">${(t.swap||0)>=0?'+':'-'}$${Math.abs(t.swap||0).toFixed(2)}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;font-weight:600;color:${col(net)}">${sign(net)}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;color:#2a2925">$${fmt2(balAfter)}</td>
+    </tr>`;
+  }).join('');
+
+  // ── Fund movement rows ──
+  const fundRows = [...funds].sort((a,b)=>a.id-b.id).map((f,i)=>`
     <tr style="border-bottom:1px solid #f0ede8">
-      <td style="padding:7px 10px;color:#5c5a54;font-size:9pt">${r.date}</td>
-      <td style="padding:7px 10px;font-weight:500">${r.detail}</td>
-      <td style="padding:7px 10px"><span style="font-size:8pt;padding:2px 6px;border-radius:4px;${r.typeStyle}">${r.type}</span></td>
-      <td style="padding:7px 10px;text-align:right;font-family:monospace;color:${r.amtColor};font-weight:500">${r.amount}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8pt;color:#5c5a54">${f.date}</td>
+      <td style="padding:5px 8px;font-size:8.5pt">${f.note||'—'}</td>
+      <td style="padding:5px 8px"><span style="font-size:7.5pt;padding:1px 5px;border-radius:3px;${f.type==='deposit'?'color:#3b5bdb;background:#e8f0fe':'color:#e67700;background:#fff3e0'}">${f.type==='deposit'?'DEPOSIT':'WITHDRAWAL'}</span></td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;font-weight:600;color:${f.type==='deposit'?'#2d6a4f':'#9b2335'}">${f.type==='deposit'?'+':'-'}$${f.amt.toFixed(2)}</td>
     </tr>`).join('');
 
-  const pf = s.winners.length && s.losers.length
-    ? (s.winners.reduce((a,b)=>a+b,0)/Math.abs(s.losers.reduce((a,b)=>a+b,0))).toFixed(2) : '—';
-  const exp = trades.length
-    ? (((s.winners.length/trades.length)*(s.winners.reduce((a,b)=>a+b,0)/Math.max(s.winners.length,1))) +
-       ((s.losers.length/trades.length)*(s.losers.reduce((a,b)=>a+b,0)/Math.max(s.losers.length,1)))).toFixed(2) : '—';
+  // ── Daily ROI rows ──
+  const dayMap={};
+  let rbDay=s.capital;
+  allEvts.forEach(ev=>{
+    if(ev._k==='fund') rbDay+=ev.type==='deposit'?ev.amt:-ev.amt;
+    else {
+      const dk=ev.openTime?ev.openTime.slice(0,10):ev.date;
+      if(!dayMap[dk]) dayMap[dk]={gross:0,comm:0,swap:0,count:0,balBefore:rbDay};
+      dayMap[dk].gross+=ev.pnl; dayMap[dk].comm+=(ev.commission||0); dayMap[dk].swap+=(ev.swap||0); dayMap[dk].count++;
+      rbDay+=ev.pnl-(ev.commission||0)+(ev.swap||0);
+      dayMap[dk].balAfter=rbDay;
+    }
+  });
+  const dayRows=Object.keys(dayMap).sort().map((dk,i)=>{
+    const d=dayMap[dk]; const net=d.gross-d.comm+d.swap;
+    const roi=d.balBefore>0?net/d.balBefore*100:0;
+    return `<tr style="border-bottom:1px solid #f0ede8;${i%2===0?'background:#faf9f7':''}">
+      <td style="padding:5px 8px;font-family:monospace;font-size:8pt;color:#5c5a54">${dk}</td>
+      <td style="padding:5px 8px;text-align:right;font-family:monospace;font-size:8pt">${d.count}</td>
+      <td style="padding:5px 8px;text-align:right;font-family:monospace;font-size:8pt;color:${col(d.gross)}">${sign(d.gross)}</td>
+      <td style="padding:5px 8px;text-align:right;font-family:monospace;font-size:8pt;color:#9b2335">-$${d.comm.toFixed(2)}</td>
+      <td style="padding:5px 8px;text-align:right;font-family:monospace;font-size:8pt;color:${col(d.swap)}">${d.swap>=0?'+':'-'}$${Math.abs(d.swap).toFixed(2)}</td>
+      <td style="padding:5px 8px;text-align:right;font-family:monospace;font-size:8.5pt;font-weight:600;color:${col(net)}">${sign(net)}</td>
+      <td style="padding:5px 8px;text-align:right;font-family:monospace;font-size:8pt">$${fmt2(d.balAfter)}</td>
+      <td style="padding:5px 8px;text-align:right;font-family:monospace;font-size:8.5pt;font-weight:600;color:${col(roi)}">${roi>=0?'+':''}${roi.toFixed(2)}%</td>
+    </tr>`;
+  }).join('');
 
-  const statementEl = document.getElementById('print-statement');
-  statementEl.innerHTML = `
-  <div style="max-width:720px;margin:0 auto;font-family:'DM Sans',sans-serif;color:#111110;font-size:11pt;padding:28pt 32pt">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #b8975a;padding-bottom:16pt;margin-bottom:20pt">
-      <div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20pt;font-weight:600;color:#1a1917;letter-spacing:.02em">StoneBridge Partners Co., Ltd.</div>
-        <div style="font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:#9e9b93;margin-top:4px">Portfolio Statement</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:8pt;color:#9e9b93;letter-spacing:.08em;text-transform:uppercase">Generated</div>
-        <div style="font-family:monospace;font-size:9pt;color:#1a1917;margin-top:2px">${date}</div>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12pt;margin-bottom:16pt">
-      ${[['Balance',`$${s.balance.toFixed(2)}`],['Net P&L',`${s.totalPnl>=0?'+':''}$${s.totalPnl.toFixed(2)}`],['ROI',`${s.roi}%`],['Win Rate',`${s.winRate}%`]]
-        .map(([l,v])=>`<div style="border:1px solid #e2dfd8;border-radius:8px;padding:12px 14px;background:#faf9f7"><div style="font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#9e9b93;margin-bottom:5px">${l}</div><div style="font-family:monospace;font-size:13pt;color:#1a1917">${v}</div></div>`).join('')}
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12pt;margin-bottom:24pt">
-      ${[['Total Trades',trades.length],['Profit Factor',pf],['R:R',s.rr],['Expectancy',exp!=='—'?`$${exp}`:'—']]
-        .map(([l,v])=>`<div style="border:1px solid #e2dfd8;border-radius:8px;padding:12px 14px;background:#fff"><div style="font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#9e9b93;margin-bottom:5px">${l}</div><div style="font-family:monospace;font-size:11pt;color:#2a2925">${v}</div></div>`).join('')}
-    </div>
-    <div style="font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#9e9b93;margin-bottom:10pt;font-weight:500;display:flex;align-items:center;gap:8px">
-      <span style="display:inline-block;width:3px;height:11px;background:#b8975a;border-radius:2px"></span>
-      Activity Log — ${allRows.length} Records
-    </div>
-    <table style="width:100%;border-collapse:collapse;font-size:9.5pt">
-      <thead>
-        <tr style="border-bottom:1.5px solid #e2dfd8">
-          ${['Date','Symbol / Note','Type','Amount'].map((h,i)=>`<th style="text-align:${i===3?'right':'left'};padding:7px 10px;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#9e9b93;font-weight:500">${h}</th>`).join('')}
-        </tr>
-      </thead>
-      <tbody>${rowsHTML}</tbody>
-    </table>
-    <div style="margin-top:28pt;padding-top:12pt;border-top:1px solid #e2dfd8;display:flex;justify-content:space-between;align-items:center">
-      <div style="font-size:7.5pt;color:#9e9b93">StoneBridge Partners Co., Ltd. — Confidential</div>
-      <div style="font-family:monospace;font-size:7.5pt;color:#9e9b93">Capital Base: $${s.capital.toFixed(2)}</div>
-    </div>
+  const kpiBox=(label,value,color='#1a1917')=>`<div style="border:1px solid #e2dfd8;border-radius:8px;padding:10px 12px;background:#faf9f7">
+    <div style="font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:#9e9b93;margin-bottom:4px">${label}</div>
+    <div style="font-family:monospace;font-size:11pt;color:${color};font-weight:500">${value}</div>
   </div>`;
 
-  const win = window.open('','_blank','width=800,height=900');
-  win.document.write(`<!DOCTYPE html><html><head>
-    <meta charset="UTF-8">
-    <title>StoneBridge Statement</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-      *, *::before, *::after { box-sizing:border-box; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
-      body { margin:0; padding:0; background:#fff; font-family:'DM Sans',sans-serif; color:#111110; }
-      @media print {
-        body { margin:0; }
-        .no-print { display:none !important; }
-      }
-    </style>
+  const section=(title)=>`<div style="font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9e9b93;margin:20pt 0 8pt;font-weight:500;display:flex;align-items:center;gap:8px"><span style="display:inline-block;width:3px;height:10px;background:#b8975a;border-radius:2px"></span>${title}</div>`;
+
+  const thStyle=`padding:6px 8px;font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:#9e9b93;font-weight:500;border-bottom:1.5px solid #e2dfd8;white-space:nowrap`;
+
+  const html=`<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>StoneBridge Statement — ${dateStr}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+    body{margin:0;padding:0;background:#fff;font-family:'DM Sans',sans-serif;color:#111110;font-size:10pt}
+    table{width:100%;border-collapse:collapse}
+    @page{size:A4 landscape;margin:16mm 12mm}
+    @media print{.no-print{display:none!important} body{font-size:9pt}}
+  </style>
   </head><body>
-    <div class="no-print" style="background:#1a1917;padding:12px 20px;display:flex;align-items:center;justify-content:space-between">
-      <span style="color:#b8975a;font-family:'DM Sans',sans-serif;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase">StoneBridge Statement Preview</span>
-      <button onclick="window.print()" style="background:#b8975a;color:#fff;border:none;border-radius:6px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;letter-spacing:.06em;text-transform:uppercase">
-        ⬇ Save as PDF
-      </button>
+
+  <div class="no-print" style="background:#1a1917;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99">
+    <span style="color:#b8975a;font-family:'DM Sans',sans-serif;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase">StoneBridge Statement Preview — ${dateStr}</span>
+    <button onclick="window.print()" style="background:#b8975a;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:500;cursor:pointer;letter-spacing:.06em;text-transform:uppercase">⬇ Save as PDF</button>
+  </div>
+
+  <div style="max-width:1000px;margin:0 auto;padding:28pt 32pt">
+
+    <!-- HEADER -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #b8975a;padding-bottom:14pt;margin-bottom:20pt">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22pt;font-weight:600;color:#1a1917;letter-spacing:.02em">StoneBridge Partners Co., Ltd.</div>
+        <div style="font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#9e9b93;margin-top:5px">Trading Account Statement — Full Report</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:7pt;color:#9e9b93;letter-spacing:.1em;text-transform:uppercase">Generated</div>
+        <div style="font-family:'DM Mono',monospace;font-size:8.5pt;color:#1a1917;margin-top:3px">${dateStr} ${timeStr}</div>
+        <div style="font-size:7pt;color:#b8975a;margin-top:4px;letter-spacing:.06em">CONFIDENTIAL</div>
+      </div>
     </div>
-    ${statementEl.innerHTML}
-  </body></html>`);
+
+    <!-- ACCOUNT SUMMARY -->
+    ${section('Account Summary')}
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10pt;margin-bottom:10pt">
+      ${kpiBox('Initial Capital','$'+s.capital.toFixed(2))}
+      ${kpiBox('Current Balance','$'+fmt2(s.balance),col(s.balance-s.capital))}
+      ${kpiBox('Net P&L',sign(s.totalNet),col(s.totalNet))}
+      ${kpiBox('Gross P&L',sign(s.totalGross),col(s.totalGross))}
+      ${kpiBox('Total ROI',(s.roi>=0?'+':'')+s.roi.toFixed(2)+'%',col(s.roi))}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10pt;margin-bottom:6pt">
+      ${kpiBox('Total Commission','-$'+s.totalComm.toFixed(2),'#9b2335')}
+      ${kpiBox('Total Swap',(s.totalSwap>=0?'+':'-')+'$'+Math.abs(s.totalSwap).toFixed(2),col(s.totalSwap))}
+      ${kpiBox('Total Deposits','+$'+s.totalDep.toFixed(2),'#3b5bdb')}
+      ${kpiBox('Total Withdrawals','-$'+s.totalWdr.toFixed(2),'#e67700')}
+      ${kpiBox('Net Fund Flow',(s.totalFunds>=0?'+':'-')+'$'+Math.abs(s.totalFunds).toFixed(2),col(s.totalFunds))}
+    </div>
+
+    <!-- PERFORMANCE METRICS -->
+    ${section('Performance Metrics')}
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10pt;margin-bottom:10pt">
+      ${kpiBox('Total Trades',trades.length)}
+      ${kpiBox('Win Rate',s.winRate.toFixed(1)+'%',s.winRate>=50?'#2d6a4f':'#9b2335')}
+      ${kpiBox('Avg Win','$'+s.avgW.toFixed(2),'#2d6a4f')}
+      ${kpiBox('Avg Loss','-$'+s.avgL.toFixed(2),'#9b2335')}
+      ${kpiBox('Realized R:R',s.rr>0?s.rr.toFixed(2):'—',s.rr>=1?'#2d6a4f':'#9b2335')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10pt">
+      ${kpiBox('Profit Factor',s.pf>0?s.pf.toFixed(2):'—',s.pf>=1.5?'#2d6a4f':s.pf>=1?'#b8975a':'#9b2335')}
+      ${kpiBox('Expectancy','$'+s.exp.toFixed(2),col(s.exp))}
+      ${kpiBox('Best Trade',sign(s.best),'#2d6a4f')}
+      ${kpiBox('Worst Trade',sign(s.worst),'#9b2335')}
+      ${kpiBox('Max Drawdown','-'+s.mdd.toFixed(2)+'%',s.mdd>20?'#9b2335':s.mdd>10?'#b8975a':'#5c5a54')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10pt;margin-top:10pt">
+      ${kpiBox('Avg Net/Trade',sign(s.avgTrade),col(s.avgTrade))}
+      ${kpiBox('Avg Hold Time',s.avgHold)}
+      ${kpiBox('Winners',s.winners.length+' trades','#2d6a4f')}
+      ${kpiBox('Losers',s.losers.length+' trades','#9b2335')}
+      ${kpiBox('Breakeven',(trades.length-s.winners.length-s.losers.length)+' trades')}
+    </div>
+
+    <!-- TRADE LOG -->
+    ${section('Trade History — '+trades.length+' Positions')}
+    ${trades.length ? `
+    <table>
+      <thead><tr>
+        <th style="${thStyle};text-align:left">#</th>
+        <th style="${thStyle};text-align:left">Symbol</th>
+        <th style="${thStyle};text-align:left">Dir</th>
+        <th style="${thStyle};text-align:left">Open Time</th>
+        <th style="${thStyle};text-align:left">Close Time</th>
+        <th style="${thStyle};text-align:right">Hold</th>
+        <th style="${thStyle};text-align:right">Gross P&L</th>
+        <th style="${thStyle};text-align:right">Commission</th>
+        <th style="${thStyle};text-align:right">Swap</th>
+        <th style="${thStyle};text-align:right">Net P&L</th>
+        <th style="${thStyle};text-align:right">Balance</th>
+      </tr></thead>
+      <tbody>${tradeRows}</tbody>
+    </table>` : '<div style="color:#9e9b93;font-size:9pt;padding:12pt 0">No trade records.</div>'}
+
+    <!-- FUND MOVEMENTS -->
+    ${section('Fund Movements — '+funds.length+' Records')}
+    ${funds.length ? `
+    <table>
+      <thead><tr>
+        <th style="${thStyle};text-align:left">Date</th>
+        <th style="${thStyle};text-align:left">Note</th>
+        <th style="${thStyle};text-align:left">Type</th>
+        <th style="${thStyle};text-align:right">Amount</th>
+      </tr></thead>
+      <tbody>${fundRows}</tbody>
+    </table>` : '<div style="color:#9e9b93;font-size:9pt;padding:12pt 0">No fund records.</div>'}
+
+    <!-- DAILY ROI LOG -->
+    ${section('Daily ROI Summary — '+Object.keys(dayMap).length+' Trading Days')}
+    ${Object.keys(dayMap).length ? `
+    <table>
+      <thead><tr>
+        <th style="${thStyle};text-align:left">Date</th>
+        <th style="${thStyle};text-align:right">Trades</th>
+        <th style="${thStyle};text-align:right">Gross P&L</th>
+        <th style="${thStyle};text-align:right">Commission</th>
+        <th style="${thStyle};text-align:right">Swap</th>
+        <th style="${thStyle};text-align:right">Net P&L</th>
+        <th style="${thStyle};text-align:right">Balance After</th>
+        <th style="${thStyle};text-align:right">Daily ROI%</th>
+      </tr></thead>
+      <tbody>${dayRows}</tbody>
+    </table>` : '<div style="color:#9e9b93;font-size:9pt;padding:12pt 0">No daily records.</div>'}
+
+    <!-- FOOTER -->
+    <div style="margin-top:32pt;padding-top:12pt;border-top:1px solid #e2dfd8;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:7pt;color:#9e9b93">StoneBridge Partners Co., Ltd. — This statement is confidential and intended for internal use only.</div>
+      <div style="font-family:'DM Mono',monospace;font-size:7pt;color:#9e9b93">Capital Base: $${s.capital.toFixed(2)} · Generated: ${dateStr} ${timeStr}</div>
+    </div>
+
+  </div></body></html>`;
+
+  const win = window.open('','_blank','width=1100,height=900');
+  win.document.write(html);
   win.document.close();
 }
 
