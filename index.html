@@ -6,17 +6,17 @@
 <title>StoneBridge</title>
 
 <!-- PWA Meta Tags -->
-<meta name="application-name" content="StoneBridge Partners">
+<meta name="application-name" content="StoneBridge">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="StoneBridge">
-<meta name="description" content="StoneBridge Partners Co., Ltd. — Portfolio Intelligence">
+<meta name="description" content="StoneBridge — Portfolio Intelligence">
 <meta name="theme-color" content="#1a1917">
 <meta name="mobile-web-app-capable" content="yes">
 
 <!-- PWA Manifest (inline) -->
 <link rel="manifest" href="data:application/json,{
-  %22name%22:%22StoneBridge+Partners+Co.%2C+Ltd.%22,
+  %22name%22:%22StoneBridge%22,
   %22short_name%22:%22StoneBridge%22,
   %22description%22:%22Portfolio+Intelligence+Tracker%22,
   %22start_url%22:%22.%2Findex.html%22,
@@ -560,6 +560,16 @@
     transition:background .2s;
   }
   .export-close:hover { background:var(--stone-50); }
+  .date-preset-btn {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:5px; padding:4px 10px;
+    font-family:'DM Sans',sans-serif; font-size:.62rem;
+    font-weight:500; letter-spacing:.04em;
+    color:var(--stone-400); cursor:pointer;
+    transition:all .2s;
+  }
+  .date-preset-btn:hover  { border-color:var(--gold); color:var(--stone-900); }
+  .date-preset-btn.active { background:var(--stone-900); color:var(--gold-light); border-color:var(--stone-900); }
 
   /* ══ EXPORT HEADER BUTTON ══ */
   .export-header-btn {
@@ -631,7 +641,7 @@
         </svg>
       </div>
       <div class="brand-name">
-        <span class="main">StoneBridge Partners Co., Ltd.</span>
+        <span class="main">StoneBridge</span>
       </div>
     </div>
     <div class="header-right">
@@ -1049,9 +1059,32 @@
 
 <!-- EXPORT MODAL -->
 <div class="export-modal-overlay" id="exportModal">
-  <div class="export-modal">
+  <div class="export-modal" style="width:min(96vw,440px)">
     <h2>Export Data</h2>
-    <p>Choose export format for your trading records</p>
+    <p>Choose a date range and export format</p>
+
+    <!-- Date Range Picker -->
+    <div style="background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:.58rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Date Range</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="field">
+          <label>From</label>
+          <input type="date" id="export-date-from" style="font-size:.78rem;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--white);color:var(--stone-900);font-family:'DM Mono',monospace;width:100%;box-sizing:border-box;outline:none">
+        </div>
+        <div class="field">
+          <label>To</label>
+          <input type="date" id="export-date-to" style="font-size:.78rem;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--white);color:var(--stone-900);font-family:'DM Mono',monospace;width:100%;box-sizing:border-box;outline:none">
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button onclick="setDatePreset('all')"    class="date-preset-btn" id="preset-all">All</button>
+        <button onclick="setDatePreset('thisMonth')" class="date-preset-btn" id="preset-thisMonth">This Month</button>
+        <button onclick="setDatePreset('lastMonth')" class="date-preset-btn" id="preset-lastMonth">Last Month</button>
+        <button onclick="setDatePreset('thisYear')"  class="date-preset-btn" id="preset-thisYear">This Year</button>
+      </div>
+    </div>
+
+    <div style="font-size:.6rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--stone-400);margin-bottom:10px">Format</div>
     <div class="export-btn-group">
       <button class="export-option" onclick="exportPDF()">
         <div class="export-option-icon">
@@ -1996,6 +2029,17 @@ function renderDailyROI(capital){
 
 // ── EXPORT FUNCTIONS ──
 function openExport(){
+  // Set default date range (all time)
+  const allDates = [
+    ...trades.map(t=>(t.openTime||t.date||'').slice(0,10)),
+    ...funds.map(f=>(f.date||'').slice(0,10))
+  ].filter(Boolean).sort();
+  const fromEl = document.getElementById('export-date-from');
+  const toEl   = document.getElementById('export-date-to');
+  const today  = new Date().toISOString().slice(0,10);
+  if(!fromEl.value) fromEl.value = allDates[0] || today;
+  if(!toEl.value)   toEl.value   = today;
+  setDatePreset('all');
   document.getElementById('exportModal').classList.add('open');
 }
 function closeExport(){
@@ -2005,35 +2049,77 @@ document.getElementById('exportModal').addEventListener('click', function(e){
   if(e.target === this) closeExport();
 });
 
+function setDatePreset(preset){
+  const fromEl = document.getElementById('export-date-from');
+  const toEl   = document.getElementById('export-date-to');
+  const today  = new Date();
+  const pad    = n=>String(n).padStart(2,'0');
+  const fmt    = d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  document.querySelectorAll('.date-preset-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('preset-'+preset)?.classList.add('active');
+  if(preset==='all'){
+    const allDates=[...trades.map(t=>(t.openTime||t.date||'').slice(0,10)),...funds.map(f=>(f.date||'').slice(0,10))].filter(Boolean).sort();
+    fromEl.value = allDates[0]||fmt(today); toEl.value=fmt(today);
+  } else if(preset==='thisMonth'){
+    fromEl.value=`${today.getFullYear()}-${pad(today.getMonth()+1)}-01`; toEl.value=fmt(today);
+  } else if(preset==='lastMonth'){
+    const lm=new Date(today.getFullYear(), today.getMonth()-1, 1);
+    const lme=new Date(today.getFullYear(), today.getMonth(), 0);
+    fromEl.value=fmt(lm); toEl.value=fmt(lme);
+  } else if(preset==='thisYear'){
+    fromEl.value=`${today.getFullYear()}-01-01`; toEl.value=fmt(today);
+  }
+}
+
+function getExportDateRange(){
+  const from = document.getElementById('export-date-from')?.value || '';
+  const to   = document.getElementById('export-date-to')?.value   || '';
+  return { from, to };
+}
+
+function filterByDateRange(items, getDate){
+  const { from, to } = getExportDateRange();
+  if(!from && !to) return items;
+  return items.filter(item=>{
+    const d = (getDate(item)||'').slice(0,10);
+    if(!d) return true;
+    if(from && d < from) return false;
+    if(to   && d > to)   return false;
+    return true;
+  });
+}
+
 function getExportStats(){
   const capital    = parseFloat(document.getElementById('s-capital').value)||1000;
-  const totalGross = trades.reduce((a,t)=>a+t.pnl,0);
-  const totalComm  = trades.reduce((a,t)=>a+(t.commission||0),0);
-  const totalSwap  = trades.reduce((a,t)=>a+(t.swap||0),0);
+  const filteredTrades = filterByDateRange(trades, t=>(t.openTime||t.date||''));
+  const filteredFunds  = filterByDateRange(funds,  f=>(f.date||''));
+  const totalGross = filteredTrades.reduce((a,t)=>a+t.pnl,0);
+  const totalComm  = filteredTrades.reduce((a,t)=>a+(t.commission||0),0);
+  const totalSwap  = filteredTrades.reduce((a,t)=>a+(t.swap||0),0);
   const totalNet   = totalGross - totalComm + totalSwap;
-  const totalFunds = funds.reduce((a,f)=>f.type==='deposit'?a+f.amt:a-f.amt,0);
-  const totalDep   = funds.filter(f=>f.type==='deposit').reduce((a,f)=>a+f.amt,0);
-  const totalWdr   = funds.filter(f=>f.type==='withdrawal').reduce((a,f)=>a+f.amt,0);
+  const totalFunds = filteredFunds.reduce((a,f)=>f.type==='deposit'?a+f.amt:a-f.amt,0);
+  const totalDep   = filteredFunds.filter(f=>f.type==='deposit').reduce((a,f)=>a+f.amt,0);
+  const totalWdr   = filteredFunds.filter(f=>f.type==='withdrawal').reduce((a,f)=>a+f.amt,0);
   const balance    = capital + totalNet + totalFunds;
   const roiBase    = capital + totalDep;
   const roi        = roiBase>0 ? (totalNet/roiBase*100) : 0;
 
-  const netArr  = trades.map(t=>t.pnl-(t.commission||0)+(t.swap||0));
+  const netArr  = filteredTrades.map(t=>t.pnl-(t.commission||0)+(t.swap||0));
   const winners = netArr.filter(n=>n>0);
   const losers  = netArr.filter(n=>n<0);
-  const winRate = trades.length ? winners.length/trades.length*100 : 0;
+  const winRate = filteredTrades.length ? winners.length/filteredTrades.length*100 : 0;
   const avgW    = winners.length ? winners.reduce((a,b)=>a+b,0)/winners.length : 0;
   const avgL    = losers.length  ? Math.abs(losers.reduce((a,b)=>a+b,0)/losers.length) : 0;
   const rr      = avgL>0 ? avgW/avgL : 0;
   const pf      = winners.length&&losers.length ? winners.reduce((a,b)=>a+b,0)/Math.abs(losers.reduce((a,b)=>a+b,0)) : 0;
-  const exp     = trades.length ? (winRate/100*avgW)-((1-winRate/100)*avgL) : 0;
+  const exp     = filteredTrades.length ? (winRate/100*avgW)-((1-winRate/100)*avgL) : 0;
   const avgTrade= netArr.length ? totalNet/netArr.length : 0;
   const best    = netArr.length ? Math.max(...netArr) : 0;
   const worst   = netArr.length ? Math.min(...netArr) : 0;
 
   // Max Drawdown
   let rb=capital, peak=capital, mdd=0;
-  [...trades].sort((a,b)=>a.id-b.id).forEach(t=>{
+  [...filteredTrades].sort((a,b)=>a.id-b.id).forEach(t=>{
     rb += t.pnl-(t.commission||0)+(t.swap||0);
     if(rb>peak) peak=rb;
     const dd=peak>0?(peak-rb)/peak*100:0;
@@ -2041,7 +2127,7 @@ function getExportStats(){
   });
 
   // Avg Hold Time
-  const timed = trades.filter(t=>t.openTime&&t.closeTime);
+  const timed = filteredTrades.filter(t=>t.openTime&&t.closeTime);
   let avgHold = '—';
   if(timed.length){
     const ms = timed.reduce((s,t)=>s+Math.max(0,new Date(t.closeTime)-new Date(t.openTime)),0)/timed.length;
@@ -2052,29 +2138,34 @@ function getExportStats(){
   return { capital, totalGross, totalComm, totalSwap, totalNet, totalFunds,
            totalDep, totalWdr, balance, roi, roiBase,
            winRate, avgW, avgL, rr, pf, exp, avgTrade, best, worst, mdd, avgHold,
-           winners, losers, netArr };
+           winners, losers, netArr,
+           filteredTrades, filteredFunds };
 }
 
 // ── PDF STATEMENT ──
 function exportPDF(){
   closeExport();
   const s   = getExportStats();
+  const { from: drFrom, to: drTo } = getExportDateRange();
   const now = new Date();
   const dateStr  = now.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
   const timeStr  = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   const fmt2 = n=>{ const a=Math.abs(n); if(a>=1e6)return(n/1e6).toFixed(2)+'M'; if(a>=1e3)return(n/1e3).toFixed(2)+'K'; return n.toFixed(2); }
   const sign = (n,unit='$') => (n>=0?`+${unit}${fmt2(n)}`:`-${unit}${fmt2(Math.abs(n))}`);
   const col  = n => n>0?'#2d6a4f':n<0?'#9b2335':'#5c5a54';
+  const dateRangeLabel = drFrom||drTo ? `${drFrom||'—'} → ${drTo||'—'}` : 'All Records';
 
   // ── Trade rows — full detail ──
-  const sortedTrades = [...trades].sort((a,b)=>a.id-b.id);
+  const filteredTrades = s.filteredTrades;
+  const filteredFunds  = s.filteredFunds;
+  const sortedTrades = [...filteredTrades].sort((a,b)=>a.id-b.id);
   let runBal = s.capital + s.totalFunds; // start after fund adjustments
   // recalc running balance trade-by-trade
   let rb2 = s.capital;
   // also account for fund movements before trades
   const allEvts = [
-    ...trades.map(t=>({...t,_k:'trade'})),
-    ...funds.map(f=>({...f,_k:'fund'}))
+    ...filteredTrades.map(t=>({...t,_k:'trade'})),
+    ...filteredFunds.map(f=>({...f,_k:'fund'}))
   ].sort((a,b)=>a.id-b.id);
 
   const balMap = {};
@@ -2122,7 +2213,7 @@ function exportPDF(){
   }).join('');
 
   // ── Fund movement rows ──
-  const fundRows = [...funds].sort((a,b)=>a.id-b.id).map((f,i)=>`
+  const fundRows = [...filteredFunds].sort((a,b)=>a.id-b.id).map((f,i)=>`
     <tr style="border-bottom:1px solid #f0ede8">
       <td style="padding:5px 8px;font-family:monospace;font-size:8pt;color:#5c5a54">${f.date}</td>
       <td style="padding:5px 8px;font-size:8.5pt">${f.note||'—'}</td>
@@ -2174,7 +2265,10 @@ function exportPDF(){
   <style>
     *,*::before,*::after{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
     body{margin:0;padding:0;background:#fff;font-family:'DM Sans',sans-serif;color:#111110;font-size:10pt}
-    table{width:100%;border-collapse:collapse}
+    table{width:100%;border-collapse:collapse;page-break-inside:auto}
+    tr{page-break-inside:avoid;page-break-after:auto}
+    thead{display:table-header-group}
+    .section-block{page-break-inside:avoid}
     @page{size:A4 landscape;margin:16mm 12mm}
     @media print{.no-print{display:none!important} body{font-size:9pt}}
   </style>
@@ -2190,8 +2284,8 @@ function exportPDF(){
     <!-- HEADER -->
     <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #b8975a;padding-bottom:14pt;margin-bottom:20pt">
       <div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:22pt;font-weight:600;color:#1a1917;letter-spacing:.02em">StoneBridge Partners Co., Ltd.</div>
-        <div style="font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#9e9b93;margin-top:5px">Trading Account Statement — Full Report</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22pt;font-weight:600;color:#1a1917;letter-spacing:.02em">StoneBridge</div>
+        <div style="font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#9e9b93;margin-top:5px">Trading Account Statement — ${dateRangeLabel}</div>
       </div>
       <div style="text-align:right">
         <div style="font-size:7pt;color:#9e9b93;letter-spacing:.1em;text-transform:uppercase">Generated</div>
@@ -2238,12 +2332,12 @@ function exportPDF(){
       ${kpiBox('Avg Hold Time',s.avgHold)}
       ${kpiBox('Winners',s.winners.length+' trades','#2d6a4f')}
       ${kpiBox('Losers',s.losers.length+' trades','#9b2335')}
-      ${kpiBox('Breakeven',(trades.length-s.winners.length-s.losers.length)+' trades')}
+      ${kpiBox('Breakeven',(filteredTrades.length-s.winners.length-s.losers.length)+' trades')}
     </div>
 
     <!-- TRADE LOG -->
-    ${section('Trade History — '+trades.length+' Positions')}
-    ${trades.length ? `
+    ${section('Trade History — '+filteredTrades.length+' Positions')}
+    ${filteredTrades.length ? `
     <table>
       <thead><tr>
         <th style="${thStyle};text-align:left">#</th>
@@ -2262,8 +2356,8 @@ function exportPDF(){
     </table>` : '<div style="color:#9e9b93;font-size:9pt;padding:12pt 0">No trade records.</div>'}
 
     <!-- FUND MOVEMENTS -->
-    ${section('Fund Movements — '+funds.length+' Records')}
-    ${funds.length ? `
+    ${section('Fund Movements — '+filteredFunds.length+' Records')}
+    ${filteredFunds.length ? `
     <table>
       <thead><tr>
         <th style="${thStyle};text-align:left">Date</th>
@@ -2293,7 +2387,7 @@ function exportPDF(){
 
     <!-- FOOTER -->
     <div style="margin-top:32pt;padding-top:12pt;border-top:1px solid #e2dfd8;display:flex;justify-content:space-between;align-items:center">
-      <div style="font-size:7pt;color:#9e9b93">StoneBridge Partners Co., Ltd. — This statement is confidential and intended for internal use only.</div>
+      <div style="font-size:7pt;color:#9e9b93">StoneBridge — This statement is confidential and intended for internal use only.</div>
       <div style="font-family:'DM Mono',monospace;font-size:7pt;color:#9e9b93">Capital Base: $${s.capital.toFixed(2)} · Generated: ${dateStr} ${timeStr}</div>
     </div>
 
@@ -2308,19 +2402,22 @@ function exportPDF(){
 function exportCSV(){
   closeExport();
   const s = getExportStats();
+  const { filteredTrades: ft, filteredFunds: ff } = s;
+  const { from: drFrom, to: drTo } = getExportDateRange();
   const lines = [['Type','Date','Symbol / Note','Direction','Amount ($)'].join(',')];
-  [...trades.map(t=>['trade',t.date,`"${t.sym}"`,t.type,t.pnl.toFixed(2)]),
-   ...funds.map(f=>['fund',f.date,`"${f.note||'Fund Movement'}"`,f.type,((f.type==='deposit'?1:-1)*f.amt).toFixed(2)])]
-    .sort((a,b)=>0)
+  [...ft.map(t=>['trade',(t.openTime||t.date||'').slice(0,10),`"${t.sym}"`,t.type,t.pnl.toFixed(2)]),
+   ...ff.map(f=>['fund',f.date,`"${f.note||'Fund Movement'}"`,f.type,((f.type==='deposit'?1:-1)*f.amt).toFixed(2)])]
+    .sort((a,b)=>a[1]<b[1]?-1:1)
     .forEach(r=>lines.push(r.join(',')));
   lines.push('','SUMMARY',
+    `Date Range,${drFrom||'—'} to ${drTo||'—'}`,
     `Capital,$${s.capital.toFixed(2)}`,
     `Balance,$${s.balance.toFixed(2)}`,
-    `Net P&L,$${s.totalPnl.toFixed(2)}`,
-    `ROI,${s.roi}%`,
-    `Win Rate,${s.winRate}%`,
-    `R:R,${s.rr}`,
-    `Total Trades,${trades.length}`
+    `Net P&L,$${s.totalNet.toFixed(2)}`,
+    `ROI,${s.roi.toFixed(2)}%`,
+    `Win Rate,${s.winRate.toFixed(2)}%`,
+    `R:R,${s.rr.toFixed(2)}`,
+    `Total Trades,${ft.length}`
   );
   const blob = new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8;'});
   const a = document.createElement('a');
@@ -2333,10 +2430,12 @@ function exportCSV(){
 function exportJSON(){
   closeExport();
   const s = getExportStats();
+  const { filteredTrades: ft, filteredFunds: ff } = s;
+  const { from: drFrom, to: drTo } = getExportDateRange();
   const payload = {
-    meta:{ app:'StoneBridge Partners Portfolio Tracker', exported:new Date().toISOString(), version:'2.0' },
-    summary:{ capital:s.capital, balance:parseFloat(s.balance.toFixed(2)), netPnl:parseFloat(s.totalPnl.toFixed(2)), roi:parseFloat(s.roi), winRate:parseFloat(s.winRate), rr:s.rr, totalTrades:trades.length },
-    trades, funds,
+    meta:{ app:'StoneBridge Portfolio Tracker', exported:new Date().toISOString(), version:'2.0', dateRange:{from:drFrom||null,to:drTo||null} },
+    summary:{ capital:s.capital, balance:parseFloat(s.balance.toFixed(2)), netPnl:parseFloat(s.totalNet.toFixed(2)), roi:parseFloat(s.roi.toFixed(2)), winRate:parseFloat(s.winRate.toFixed(2)), rr:parseFloat(s.rr.toFixed(2)), totalTrades:ft.length },
+    trades: ft, funds: ff,
     settings: JSON.parse(localStorage.getItem('sb_settings')||'{}')
   };
   const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
