@@ -694,9 +694,9 @@
         <div class="kpi-sub"  id="kpi-daily-roi-sub">Today</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Total Commission</div>
-        <div class="kpi-value" id="kpi-commission">—</div>
-        <div class="kpi-sub"  id="kpi-commission-sub">Trading cost</div>
+        <div class="kpi-label">Post-Withdrawal ROI</div>
+        <div class="kpi-value" id="kpi-withdrawal-roi">—</div>
+        <div class="kpi-sub"  id="kpi-withdrawal-roi-sub">Since last withdrawal</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Avg Daily Trades</div>
@@ -1481,9 +1481,45 @@ function recalc(){
   }
   $s('kpi-roi','ROI '+roi.toFixed(2)+'%');
 
-  // Total Commission & Swap KPI
-  $s('kpi-commission','$'+totalComm.toFixed(2));
-  $s('kpi-commission-sub','Swap '+(totalSwap>=0?'+':'')+totalSwap.toFixed(2));
+  // ── Post-Withdrawal ROI ──
+  // หา withdrawal ล่าสุด แล้วคำนวณ ROI จากจุดนั้น
+  // เรียง events ทั้งหมดตาม timestamp
+  const allEventsWdr = [
+    ...trades.map(t=>({...t, _type:'trade'})),
+    ...funds.map(f=>({...f, _type:'fund'}))
+  ].sort((a,b)=>a.id-b.id);
+
+  // หา index ของ withdrawal ล่าสุด
+  let lastWdrIdx = -1;
+  allEventsWdr.forEach((ev, idx) => {
+    if(ev._type === 'fund' && ev.type === 'withdrawal') lastWdrIdx = idx;
+  });
+
+  const wdrRoiEl  = document.getElementById('kpi-withdrawal-roi');
+  const wdrSubEl  = document.getElementById('kpi-withdrawal-roi-sub');
+  if(lastWdrIdx === -1){
+    // ไม่เคยถอนเลย — ใช้ overall ROI แทน
+    if(wdrRoiEl){ wdrRoiEl.textContent = (roi>=0?'+':'')+roi.toFixed(2)+'%'; wdrRoiEl.className='kpi-value '+(roi>=0?'positive':'negative'); }
+    if(wdrSubEl) wdrSubEl.textContent = 'No withdrawal yet';
+  } else {
+    // คำนวณ balance ณ จุดหลังถอนครั้งล่าสุด (= ทุนใหม่)
+    let balAfterWdr = capital;
+    for(let i=0;i<=lastWdrIdx;i++){
+      const ev = allEventsWdr[i];
+      if(ev._type==='fund') balAfterWdr += ev.type==='deposit' ? ev.amt : -ev.amt;
+      else balAfterWdr += ev.pnl - (ev.commission||0) + (ev.swap||0);
+    }
+    // คำนวณ net P&L หลังจุดนั้น
+    let netPnlAfterWdr = 0;
+    for(let i=lastWdrIdx+1;i<allEventsWdr.length;i++){
+      const ev = allEventsWdr[i];
+      if(ev._type==='trade') netPnlAfterWdr += ev.pnl - (ev.commission||0) + (ev.swap||0);
+    }
+    const wdrRoiPct = balAfterWdr > 0 ? (netPnlAfterWdr / balAfterWdr * 100) : 0;
+    const wdrDate   = allEventsWdr[lastWdrIdx].date || '—';
+    if(wdrRoiEl){ wdrRoiEl.textContent = (wdrRoiPct>=0?'+':'')+wdrRoiPct.toFixed(2)+'%'; wdrRoiEl.className='kpi-value '+(wdrRoiPct>=0?'positive':'negative'); }
+    if(wdrSubEl) wdrSubEl.textContent = 'Since '+wdrDate;
+  }
 
   // Avg Daily Trades (replaces Net Profit)
   const avgDailyEl = document.getElementById('kpi-avg-daily');
