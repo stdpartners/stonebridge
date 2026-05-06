@@ -1518,7 +1518,7 @@ function recalc(){
     const wdrRoiPct = balAfterWdr > 0 ? (netPnlAfterWdr / balAfterWdr * 100) : 0;
     const wdrDate   = allEventsWdr[lastWdrIdx].date || '—';
     if(wdrRoiEl){ wdrRoiEl.textContent = (wdrRoiPct>=0?'+':'')+wdrRoiPct.toFixed(2)+'%'; wdrRoiEl.className='kpi-value '+(wdrRoiPct>=0?'positive':'negative'); }
-    if(wdrSubEl) wdrSubEl.textContent = 'Since '+wdrDate;
+    if(wdrSubEl) wdrSubEl.textContent = (netPnlAfterWdr>=0?'+$':'-$')+Math.abs(netPnlAfterWdr).toFixed(2)+' · Since '+wdrDate;
   }
 
   // Avg Daily Trades (replaces Net Profit)
