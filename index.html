@@ -2248,14 +2248,34 @@ function exportPDF(){
     </tr>`;
   }).join('');
 
-  // ── Fund movement rows ──
-  const fundRows = [...filteredFunds].sort((a,b)=>a.id-b.id).map((f,i)=>`
-    <tr style="border-bottom:1px solid #f0ede8">
+  // ── Fund movement rows — full fields + running balance ──
+  let rbFund = s.capital;
+  const fundBalMap = {};
+  allEvts.forEach(ev => {
+    if(ev._k === 'fund'){
+      rbFund += ev.type === 'deposit' ? ev.amt : -ev.amt;
+      fundBalMap[ev.id] = rbFund;
+    } else {
+      rbFund += ev.pnl - (ev.commission||0) + (ev.swap||0);
+    }
+  });
+
+  const fundRows = [...filteredFunds].sort((a,b)=>a.id-b.id).map((f,i)=>{
+    const isDep = f.type === 'deposit';
+    const balAfterFund = fundBalMap[f.id] || 0;
+    // format id as readable timestamp
+    const tsDate = new Date(f.id);
+    const tsStr = isNaN(tsDate) ? '—' : tsDate.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    return `<tr style="border-bottom:1px solid #f0ede8;${i%2===0?'background:#faf9f7':''}">
+      <td style="padding:5px 8px;font-family:monospace;font-size:8pt;color:#5c5a54">${String(i+1).padStart(2,'0')}</td>
       <td style="padding:5px 8px;font-family:monospace;font-size:8pt;color:#5c5a54">${f.date}</td>
-      <td style="padding:5px 8px;font-size:8.5pt">${f.note||'—'}</td>
-      <td style="padding:5px 8px"><span style="font-size:7.5pt;padding:1px 5px;border-radius:3px;${f.type==='deposit'?'color:#3b5bdb;background:#e8f0fe':'color:#e67700;background:#fff3e0'}">${f.type==='deposit'?'DEPOSIT':'WITHDRAWAL'}</span></td>
-      <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;font-weight:600;color:${f.type==='deposit'?'#2d6a4f':'#9b2335'}">${f.type==='deposit'?'+':'-'}$${f.amt.toFixed(2)}</td>
-    </tr>`).join('');
+      <td style="padding:5px 8px;font-family:monospace;font-size:7.5pt;color:#9e9b93">${tsStr}</td>
+      <td style="padding:5px 8px"><span style="font-size:7.5pt;padding:1px 5px;border-radius:3px;${isDep?'color:#3b5bdb;background:#e8f0fe':'color:#e67700;background:#fff3e0'}">${isDep?'DEPOSIT':'WITHDRAWAL'}</span></td>
+      <td style="padding:5px 8px;font-size:8.5pt;color:#5c5a54">${f.note||'—'}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;font-weight:600;color:${isDep?'#2d6a4f':'#9b2335'}">${isDep?'+':'-'}$${f.amt.toFixed(2)}</td>
+      <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;color:#2a2925">$${fmt2(balAfterFund)}</td>
+    </tr>`;
+  }).join('');
 
   // ── Daily ROI rows ──
   const dayMap={};
@@ -2396,10 +2416,13 @@ function exportPDF(){
     ${filteredFunds.length ? `
     <table>
       <thead><tr>
+        <th style="${thStyle};text-align:left">#</th>
         <th style="${thStyle};text-align:left">Date</th>
-        <th style="${thStyle};text-align:left">Note</th>
+        <th style="${thStyle};text-align:left">Timestamp</th>
         <th style="${thStyle};text-align:left">Type</th>
+        <th style="${thStyle};text-align:left">Note</th>
         <th style="${thStyle};text-align:right">Amount</th>
+        <th style="${thStyle};text-align:right">Balance After</th>
       </tr></thead>
       <tbody>${fundRows}</tbody>
     </table>` : '<div style="color:#9e9b93;font-size:9pt;padding:12pt 0">No fund records.</div>'}
