@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>StoneBridge</title>
-
 <!-- PWA Meta Tags -->
 <meta name="application-name" content="StoneBridge">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +12,6 @@
 <meta name="description" content="StoneBridge — Portfolio Intelligence">
 <meta name="theme-color" content="#1a1917">
 <meta name="mobile-web-app-capable" content="yes">
-
 <!-- PWA Manifest (inline) -->
 <link rel="manifest" href="data:application/json,{
   %22name%22:%22StoneBridge%22,
@@ -28,7 +26,6 @@
     {%22src%22:%22data:image/svg+xml,%253Csvg+xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'+viewBox%3D'0+0+192+192'%253E%253Crect+width%3D'192'+height%3D'192'+rx%3D'32'+fill%3D'%25231a1917'%2F%253E%253Crect+x%3D'16'+y%3D'128'+width%3D'160'+height%3D'18'+rx%3D'3'+fill%3D'%25231a1917'%2F%253E%253Cpath+d%3D'M24+128+Q72+56+96+56+Q120+56+168+128'+stroke%3D'%2523b8975a'+stroke-width%3D'9'+fill%3D'none'%2F%253E%253Crect+x%3D'44'+y%3D'84'+width%3D'24'+height%3D'44'+rx%3D'2'+fill%3D'%2523b8975a'+opacity%3D'.7'%2F%253E%253Crect+x%3D'84'+y%3D'64'+width%3D'24'+height%3D'64'+rx%3D'2'+fill%3D'%2523b8975a'%2F%253E%253Crect+x%3D'124'+y%3D'84'+width%3D'24'+height%3D'44'+rx%3D'2'+fill%3D'%2523b8975a'+opacity%3D'.7'%2F%253E%253C%2Fsvg%253E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}
   ]
 }">
-
 <!-- Apple Touch Icon (SVG inline as data URI) -->
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%231a1917'/><rect x='14' y='120' width='152' height='16' rx='3' fill='%231a1917'/><path d='M22 120 Q68 52 90 52 Q112 52 158 120' stroke='%23b8975a' stroke-width='8' fill='none'/><rect x='40' y='78' width='22' height='42' rx='2' fill='%23b8975a' opacity='.7'/><rect x='79' y='58' width='22' height='62' rx='2' fill='%23b8975a'/><rect x='118' y='78' width='22' height='42' rx='2' fill='%23b8975a' opacity='.7'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
@@ -59,7 +56,6 @@
     --nav-h:        60px;
     --shadow-sm:    0 1px 3px rgba(26,25,23,.06),0 1px 2px rgba(26,25,23,.04);
   }
-
   *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html { scroll-behavior:smooth; }
   body {
@@ -73,7 +69,6 @@
     padding-top: calc(var(--ticker-h) + var(--header-h));
     padding-bottom: var(--nav-h);
   }
-
   /* ══ TICKER TAPE ══ */
   .ticker-wrap {
     position: fixed;
@@ -114,7 +109,6 @@
   .tick-chg.down { color:#e07070; background:rgba(224,112,112,.12); }
   .tick-arrow.up   { color:#5ec994; font-size:.54rem; }
   .tick-arrow.down { color:#e07070; font-size:.54rem; }
-
   /* ══ HEADER ══ */
   .header {
     position: fixed;
@@ -140,9 +134,7 @@
     white-space: nowrap;
   }
   .brand-name .sub { font-size:.62rem; color:var(--stone-400); letter-spacing:.12em; text-transform:uppercase; }
-
   .header-right { display:flex; align-items:center; gap:16px; }
-
   .desk-nav { display:none; gap:2px; }
   .desk-nav-btn {
     background:none; border:none; cursor:pointer;
@@ -154,7 +146,6 @@
   }
   .desk-nav-btn:hover  { color:var(--stone-800); background:var(--stone-50); }
   .desk-nav-btn.active { color:var(--stone-900); background:var(--stone-100); }
-
   .header-date {
     font-family:'DM Mono',monospace;
     font-size:.66rem; color:var(--stone-400); letter-spacing:.04em;
@@ -166,20 +157,16 @@
     animation:blink 3s ease-in-out infinite;
   }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-
   /* ══ MAIN ══ */
   .main { max-width:1100px; margin:0 auto; padding:24px 16px 20px; }
-
   /* ══ PAGES ══ */
   .page { display:none; }
   .page.active { display:block; }
   .fade-up { animation:fadeUp .35s ease both; }
   @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
-
   /* ══ TYPE HELPERS ══ */
   .eyebrow { font-size:.62rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:3px; }
   .pg-title { font-family:'Cormorant Garamond',serif; font-size:1.55rem; font-weight:300; color:var(--stone-900); margin-bottom:20px; letter-spacing:.01em; }
-
   /* ══ KPI ROW ══ */
   .kpi-row {
     display:grid; grid-template-columns:repeat(2,1fr);
@@ -202,14 +189,12 @@
   .kpi-sub { font-size:.68rem; color:var(--stone-400); }
   .kpi-value.positive { color:var(--profit); }
   .kpi-value.negative { color:var(--loss); }
-
   /* ══ CARDS ══ */
   .card { background:var(--white); border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-sm); margin-bottom:14px; }
   .card-header { padding:15px 18px 0; display:flex; align-items:center; justify-content:space-between; }
   .card-title { font-size:.6rem; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--stone-400); display:flex; align-items:center; gap:7px; }
   .card-title::before { content:''; display:inline-block; width:3px; height:11px; background:var(--gold); border-radius:2px; }
   .card-body { padding:13px 18px 18px; }
-
   /* ══ PROGRESS HERO ══ */
   .progress-hero {
     background:var(--stone-900); border-radius:12px;
@@ -235,14 +220,12 @@
   .ms-track { background:rgba(255,255,255,.06); border-radius:2px; height:4px; overflow:hidden; }
   .ms-fill  { height:100%; border-radius:2px; transition:width 1s cubic-bezier(.4,0,.2,1); }
   .ms-val   { font-family:'DM Mono',monospace; font-size:.7rem; color:rgba(255,255,255,.45); text-align:right; }
-
   /* ══ STATS STRIP ══ */
   .stats-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px; }
   .stat-cell { background:var(--white); padding:12px 14px; }
   .stat-cell .lbl { font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--stone-400); margin-bottom:3px; }
   .stat-cell .val { font-family:'DM Mono',monospace; font-size:.9rem; color:var(--stone-900); }
   .pos { color:var(--profit) !important; }
-
   /* ══ FORMS ══ */
   .form-row { display:grid; grid-template-columns:1fr; gap:11px; }
   .field { display:flex; flex-direction:column; gap:5px; }
@@ -262,7 +245,6 @@
     min-width:0; width:100%; box-sizing:border-box;
     overflow:hidden;
   }
-
   /* ══ TRADE FORM ══ */
   .trade-form { display:flex; flex-direction:column; gap:9px; }
   .trade-form-grid { display:grid; grid-template-columns:1fr; gap:9px; }
@@ -282,7 +264,6 @@
   .btn-add svg { width:16px; height:16px; stroke-width:2; flex-shrink:0; }
   .btn-add:hover  { background:var(--stone-800); }
   .btn-add:active { transform:scale(.97); }
-
   /* sign + amount row */
   .pnl-row { display:flex; gap:8px; }
   .pnl-sign {
@@ -297,7 +278,6 @@
   }
   .pnl-sign:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(184,151,90,.1); }
   .pnl-amount { flex:1; min-width:0; }
-
   /* ══ TRADE LOG ══ */
   .tlog-head { display:grid; grid-template-columns:56px 1fr 46px 72px 22px; gap:5px; padding:7px 0; border-bottom:1px solid var(--border); }
   .col-h { font-size:.56rem; letter-spacing:.1em; text-transform:uppercase; color:var(--stone-400); font-weight:500; }
@@ -313,7 +293,6 @@
   .td-type { font-size:.56rem; font-weight:500; letter-spacing:.04em; padding:2px 4px; border-radius:3px; display:inline-block; text-align:center; white-space:nowrap; }
   .td-type.deposit    { background:#e8f0fe; color:#3b5bdb; }
   .td-type.withdrawal { background:#fff3e0; color:#e67700; }
-
   /* tab switcher */
   .tab-row { display:flex; gap:6px; margin-bottom:14px; }
   .tab-btn {
@@ -323,7 +302,6 @@
     color:var(--stone-400); cursor:pointer; transition:all .2s; text-align:center;
   }
   .tab-btn.active { background:var(--stone-900); color:var(--gold-light); border-color:var(--stone-900); }
-
   /* fund form */
   .fund-form { display:flex; flex-direction:column; gap:9px; }
   .fund-type-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -343,7 +321,6 @@
   .trade-detail span { font-size:.58rem; color:var(--stone-400); font-family:'DM Mono',monospace; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .btn-del { background:none; border:none; color:var(--stone-200); cursor:pointer; font-size:.7rem; transition:color .2s; padding:2px; }
   .btn-del:hover { color:var(--loss); }
-
   /* ══ COMPOUND TABLE ══ */
   .comp-table { width:100%; border-collapse:collapse; }
   .comp-table th { font-size:.56rem; letter-spacing:.1em; text-transform:uppercase; color:var(--stone-400); font-weight:500; padding:8px 10px; text-align:right; border-bottom:1px solid var(--border); }
@@ -354,7 +331,6 @@
   .comp-table tr.row-current td { background:var(--gold-pale); color:var(--stone-900); }
   .comp-table tr.row-current td:first-child { color:var(--gold); font-weight:500; }
   .td-pos { color:var(--profit); }
-
   /* ══ ROI LOG PAGE ══ */
   .roi-kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
   .roi-kpi { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:14px 14px 12px; }
@@ -376,7 +352,6 @@
   .roi-badge.pos { background:#eaf4ee; color:#2d6a4f; }
   .roi-badge.neg { background:#faeaec; color:#9b2335; }
   .roi-badge.flat{ background:var(--paper); color:var(--stone-400); }
-
   /* ══ BOTTOM NAV ══ */
   .bottom-nav {
     position:fixed; bottom:0; left:0; right:0;
@@ -392,12 +367,10 @@
   }
   .nav-item.active { color:var(--stone-900); }
   .nav-item svg { width:20px; height:20px; stroke-width:1.5; }
-
   /* ══ EMPTY STATE ══ */
   .empty-state { text-align:center; padding:28px 16px; color:var(--stone-400); }
   .empty-state .icon { font-size:1.4rem; margin-bottom:7px; opacity:.4; }
   .empty-state p { font-size:.76rem; letter-spacing:.04em; }
-
   /* ══ DESKTOP ≥768px ══ */
   @media (min-width:768px) {
     body { padding-bottom:0; }
@@ -405,22 +378,17 @@
     .desk-nav   { display:flex; }
     .header-date { display:block; }
     .main { padding:28px 32px; max-width:1200px; margin:0 auto; }
-
     .kpi-row { grid-template-columns:repeat(4,1fr); }
-
     .overview-grid { display:grid; grid-template-columns:1fr 340px; gap:16px; align-items:start; }
-
     /* desktop trade form — stack nicely, use 2-col grid inside each row */
     .trade-form { display:flex; flex-direction:column; gap:9px; }
     .trade-form-grid { grid-template-columns:1fr 1fr; }
     .wrap-btn { display:flex; }
     .btn-add { min-height:42px; }
-
     .form-row { grid-template-columns:repeat(2,1fr); }
     .progress-big { font-size:2.4rem; }
     .tlog-head, .trade-row { grid-template-columns:72px 1fr 60px 88px 28px; }
   }
-
   @media (min-width:1024px) {
     .kpi-row { grid-template-columns:repeat(4,1fr); }
     .main { padding:32px 48px; }
@@ -447,7 +415,6 @@
     font-family:'DM Mono',monospace; font-size:.6rem;
     color:var(--stone-400); margin-bottom:20px;
   }
-
   .btn-reset-target {
     display:block; margin-top:8px;
     background:var(--gold); color:var(--white);
@@ -464,7 +431,6 @@
   .session-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   @media(min-width:640px){ .session-cards { grid-template-columns:repeat(3,1fr); } }
   @media(min-width:900px){ .session-cards { grid-template-columns:repeat(5,1fr); } }
-
   .sess-card {
     border:1px solid var(--border); border-radius:10px;
     padding:14px 13px; background:var(--white);
@@ -499,7 +465,6 @@
   .sess-pair:last-child { border-bottom:none; }
   .sess-pair.gold  { color:var(--gold); font-weight:500; }
   .sess-pair.muted { color:var(--stone-300); }
-
   .sess-now-label {
     font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
     color:var(--stone-400); margin-bottom:10px;
@@ -513,7 +478,6 @@
   @media (min-width:1024px) {
     .progress-big { font-size:2.6rem; }
   }
-
   /* ══ EXPORT MODAL ══ */
   .export-modal-overlay {
     display:none; position:fixed; inset:0; z-index:500;
@@ -570,7 +534,6 @@
   }
   .date-preset-btn:hover  { border-color:var(--gold); color:var(--stone-900); }
   .date-preset-btn.active { background:var(--stone-900); color:var(--gold-light); border-color:var(--stone-900); }
-
   /* ══ EXPORT HEADER BUTTON ══ */
   .export-header-btn {
     background: var(--stone-900); color: var(--gold-light);
@@ -582,7 +545,6 @@
   }
   .export-header-btn:hover { background: var(--stone-800); }
   .export-btn-label { display: none; }
-
   @media (min-width: 768px) {
     .export-header-btn {
       width: auto; height: auto;
@@ -593,7 +555,6 @@
     }
     .export-btn-label { display: inline; }
   }
-
   /* ══ PRINT STATEMENT ══ */
   @media print {
     *, *::before, *::after { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
@@ -613,161 +574,6 @@
     .trade-row, .tlog-head { break-inside:avoid; }
     .comp-table { font-size:9pt; }
   }
-
-  /* ══ ACCOUNT SWITCHER ══ */
-  .account-switcher {
-    position: fixed;
-    top: calc(var(--ticker-h) + var(--header-h));
-    left: 0; right: 0;
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    z-index: 90;
-    display: flex;
-    align-items: center;
-    gap: 0;
-    padding: 0 16px;
-    height: 44px;
-    box-shadow: 0 1px 4px rgba(26,25,23,.05);
-  }
-  .account-switcher-label {
-    font-size: .56rem; letter-spacing: .14em; text-transform: uppercase;
-    color: var(--stone-400); margin-right: 12px; white-space: nowrap;
-    font-weight: 500;
-  }
-  .acct-btn {
-    display: flex; align-items: center; gap: 7px;
-    padding: 5px 14px; border-radius: 20px;
-    border: 1px solid transparent; background: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: .7rem; font-weight: 500;
-    color: var(--stone-400); cursor: pointer;
-    transition: all .2s; white-space: nowrap;
-  }
-  .acct-btn .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .acct-btn.active {
-    background: var(--stone-900); color: var(--gold-light);
-    border-color: var(--stone-900);
-  }
-  .acct-btn:not(.active):hover { background: var(--stone-50); color: var(--stone-800); border-color: var(--border); }
-  .acct-btn .dot-partners { background: var(--gold); }
-  .acct-btn .dot-lr       { background: #6b8cba; }
-
-  body.has-switcher { padding-top: calc(var(--ticker-h) + var(--header-h) + 44px); }
-
-  /* ══ LR PAGE ══ */
-  .lr-bucket-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 14px;
-  }
-  @media(min-width:768px){ .lr-bucket-grid { grid-template-columns: repeat(4,1fr); } }
-  .lr-bucket {
-    background: var(--white); border: 1px solid var(--border);
-    border-radius: 12px; padding: 16px 14px;
-    position: relative; overflow: hidden;
-    transition: box-shadow .2s;
-  }
-  .lr-bucket:hover { box-shadow: 0 4px 16px rgba(26,25,23,.08); }
-  .lr-bucket::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; right: 0; height: 3px;
-  }
-  .lr-bucket.core::before  { background: linear-gradient(90deg,#7dba9b,#aed5c4); }
-  .lr-bucket.sov::before   { background: linear-gradient(90deg,var(--gold),var(--gold-light)); }
-  .lr-bucket.asym::before  { background: linear-gradient(90deg,#9b2335,#c45b6a); }
-  .lr-bucket.usdc::before  { background: linear-gradient(90deg,#3b5bdb,#6b8cba); }
-  .lr-bucket-label { font-size: .56rem; letter-spacing: .12em; text-transform: uppercase; color: var(--stone-400); margin-bottom: 4px; font-weight: 500; }
-  .lr-bucket-alloc { font-family: 'DM Mono',monospace; font-size: 1.5rem; color: var(--stone-900); line-height: 1; margin-bottom: 6px; }
-  .lr-bucket-assets { font-size: .62rem; color: var(--stone-500); line-height: 1.5; }
-
-  .lr-holding-table { width: 100%; border-collapse: collapse; }
-  .lr-holding-table th { font-size: .54rem; letter-spacing: .1em; text-transform: uppercase; color: var(--stone-400); font-weight: 500; padding: 8px 10px; border-bottom: 1.5px solid var(--border); text-align: right; }
-  .lr-holding-table th:first-child { text-align: left; }
-  .lr-holding-table td { padding: 10px 10px; font-family: 'DM Mono',monospace; font-size: .76rem; border-bottom: 1px solid var(--stone-50); text-align: right; color: var(--stone-600); }
-  .lr-holding-table td:first-child { text-align: left; color: var(--stone-900); font-weight: 500; }
-  .lr-holding-table tr:hover td { background: var(--stone-50); }
-  .lr-badge {
-    display: inline-block; font-size: .52rem; font-weight: 600;
-    letter-spacing: .06em; text-transform: uppercase;
-    padding: 2px 7px; border-radius: 10px;
-  }
-  .lr-badge.core  { background: #eaf4ee; color: #2d6a4f; }
-  .lr-badge.sov   { background: var(--gold-pale); color: var(--gold); }
-  .lr-badge.asym  { background: #faeaec; color: #9b2335; }
-  .lr-badge.usdc  { background: #e8f0fe; color: #3b5bdb; }
-
-
-  /* ══ LR DYNAMIC BUCKET SECTIONS ══ */
-  .lr-section { margin-bottom: 16px; }
-  .lr-section-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px; border-radius: 10px 10px 0 0;
-    border: 1px solid var(--border); border-bottom: none;
-    background: var(--stone-900);
-  }
-  .lr-section-left { display: flex; align-items: center; gap: 10px; }
-  .lr-section-stripe { width: 4px; height: 20px; border-radius: 2px; flex-shrink: 0; }
-  .lr-section-name { font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--white); }
-  .lr-section-plan-alloc { font-size: .6rem; color: rgba(255,255,255,.4); font-family: 'DM Mono',monospace; }
-  .lr-section-right { display: flex; align-items: center; gap: 16px; }
-  .lr-section-stat { text-align: right; }
-  .lr-section-stat .lbl { font-size: .52rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.35); }
-  .lr-section-stat .val { font-family: 'DM Mono',monospace; font-size: .82rem; color: var(--white); }
-  .lr-section-stat .val.pos { color: #5ec994; }
-  .lr-section-stat .val.neg { color: #e07070; }
-
-  .lr-token-grid {
-    border: 1px solid var(--border); border-top: none;
-    border-radius: 0 0 10px 10px; overflow: hidden;
-    background: var(--white);
-  }
-  .lr-token-row {
-    display: grid;
-    grid-template-columns: 44px 1fr 80px 90px 90px 80px 80px;
-    gap: 0; align-items: center;
-    padding: 11px 14px; border-bottom: 1px solid var(--stone-50);
-    transition: background .15s;
-  }
-  .lr-token-row:last-child { border-bottom: none; }
-  .lr-token-row:hover { background: var(--stone-50); }
-  .lr-token-row.header-row {
-    background: var(--stone-50); border-bottom: 1px solid var(--border);
-    padding: 7px 14px;
-  }
-  .lr-token-row.header-row span {
-    font-size: .52rem; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--stone-400); font-weight: 500; text-align: right;
-  }
-  .lr-token-row.header-row span:first-child { text-align: left; }
-  .lr-token-sym { font-weight: 700; font-size: .78rem; color: var(--stone-900); font-family: 'DM Mono',monospace; }
-  .lr-token-cell { font-family: 'DM Mono',monospace; font-size: .74rem; color: var(--stone-600); text-align: right; }
-  .lr-token-cell.highlight { color: var(--stone-900); font-weight: 500; }
-  .lr-token-cell.pos { color: var(--profit); }
-  .lr-token-cell.neg { color: var(--loss); }
-  .lr-token-cell.gold { color: var(--gold); }
-  .lr-token-price-chg { font-size: .6rem; display: block; }
-
-  .lr-empty-bucket {
-    padding: 20px; text-align: center;
-    font-size: .72rem; color: var(--stone-400);
-    border: 1px solid var(--border); border-top: none;
-    border-radius: 0 0 10px 10px; background: var(--white);
-  }
-
-  @media(max-width:640px){
-    .lr-token-row {
-      grid-template-columns: 40px 1fr 72px 80px 72px;
-    }
-    .lr-token-row .lr-hide-mobile { display: none; }
-  }
-
-  .lr-add-form { display: flex; flex-direction: column; gap: 9px; }
-  .lr-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-  @media(min-width:640px){ .lr-form-grid { grid-template-columns: 1fr 1fr 1fr 1fr; } }
-
-  .lr-pnl-row { display: flex; align-items: center; gap: 8px; }
-  .lr-pnl-sign { width: 56px; flex-shrink: 0; background: var(--paper); border: 1px solid var(--border); border-radius: 6px; padding: 9px 6px; font-family: 'DM Mono',monospace; font-size: 1rem; text-align: center; cursor: pointer; outline: none; -webkit-appearance: none; appearance: none; transition: border-color .2s; }
-  .lr-pnl-sign:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(184,151,90,.1); }
-
   /* ══ UPDATE LOG PAGE ══ */
   .update-log-entry {
     background: var(--white); border: 1px solid var(--border);
@@ -789,7 +595,6 @@
   .update-log-items { list-style: none; display: flex; flex-direction: column; gap: 4px; }
   .update-log-items li { font-size: .74rem; color: var(--stone-500); padding-left: 14px; position: relative; }
   .update-log-items li::before { content: '·'; position: absolute; left: 4px; color: var(--gold); }
-
   .update-log-tag {
     display: inline-block; font-size: .5rem; font-weight: 600; letter-spacing: .08em;
     text-transform: uppercase; padding: 2px 6px; border-radius: 8px; margin-left: 6px;
@@ -797,30 +602,16 @@
   .update-log-tag.feature  { background: #e8f0fe; color: #3b5bdb; }
   .update-log-tag.improve  { background: #eaf4ee; color: #2d6a4f; }
   .update-log-tag.fix      { background: #fff3e0; color: #e67700; }
-
   #print-statement { display:none; }
 </style>
 </head>
-<body class="has-switcher">
-
-<!-- ACCOUNT SWITCHER -->
-<div class="account-switcher" id="accountSwitcher">
-  <span class="account-switcher-label">Account</span>
-  <button class="acct-btn active" id="acct-btn-partners" onclick="switchAccount('partners')">
-    <span class="dot dot-partners"></span>Partners
-  </button>
-  <button class="acct-btn" id="acct-btn-lr" onclick="switchAccount('lr')">
-    <span class="dot dot-lr"></span>Liquidity Reserve
-  </button>
-</div>
-
+<body>
 <!-- TICKER TAPE -->
 <div class="ticker-wrap">
   <div class="ticker-track" id="tickerTrack">
     <div class="tick-item"><span class="tick-sym">LOADING</span><span class="tick-price">—</span></div>
   </div>
 </div>
-
 <!-- HEADER -->
 <header class="header">
   <div class="header-inner">
@@ -847,7 +638,6 @@
         <button class="desk-nav-btn"        id="dnav-dailyroi"   onclick="switchPage('dailyroi')">ROI Log</button>
         <button class="desk-nav-btn"        id="dnav-projection" onclick="switchPage('projection')">Projection</button>
         <button class="desk-nav-btn"        id="dnav-sessions"   onclick="switchPage('sessions')">Sessions</button>
-        <button class="desk-nav-btn"        id="dnav-lr"         onclick="switchPage('lr')">Liquidity Reserve</button>
         <button class="desk-nav-btn"        id="dnav-changelog"  onclick="switchPage('changelog')">Update Logs</button>
       </nav>
       <span class="header-date" id="headerDate">—</span>
@@ -859,10 +649,8 @@
     </div>
   </div>
 </header>
-
 <!-- MAIN -->
 <main class="main">
-
   <!-- ── OVERVIEW ── -->
   <div class="page active fade-up" id="page-overview">
     <div class="kpi-row">
@@ -907,7 +695,6 @@
         <div class="kpi-sub"  id="kpi-week-pnl">— P&amp;L</div>
       </div>
     </div>
-
     <div class="overview-grid">
       <!-- LEFT -->
       <div class="overview-left">
@@ -946,7 +733,6 @@
             </div>
           </div>
         </div>
-
         <div class="stats-strip" style="grid-template-columns:repeat(3,1fr)">
           <div class="stat-cell"><div class="lbl">Best Trade</div><div class="val pos" id="stat-best">—</div></div>
           <div class="stat-cell"><div class="lbl">Worst Trade</div><div class="val" style="color:var(--loss)" id="stat-worst">—</div></div>
@@ -962,7 +748,6 @@
           <div class="stat-cell"><div class="lbl">Max Drawdown</div><div class="val" id="stat-mdd" style="color:var(--loss)">—</div></div>
         </div>
       </div>
-
       <!-- RIGHT (desktop quick panel) -->
       <div class="overview-right">
         <div class="card">
@@ -988,7 +773,6 @@
             </button>
           </div>
         </div>
-
         <div class="card">
           <div class="card-header"><div class="card-title">Recent Positions</div></div>
           <div class="card-body" style="padding-top:8px"><div id="recentRows"></div></div>
@@ -996,18 +780,15 @@
       </div>
     </div>
   </div>
-
   <!-- ── TRADES ── -->
   <div class="page" id="page-trades">
     <div class="eyebrow">Position Log</div>
     <div class="pg-title">Trade History</div>
-
     <!-- Tab switcher -->
     <div class="tab-row">
       <button class="tab-btn active" id="tab-trade" onclick="switchTab('trade')">New Trade</button>
       <button class="tab-btn" id="tab-fund" onclick="switchTab('fund')">Deposit / Withdraw</button>
     </div>
-
     <!-- Trade form -->
     <div id="form-trade">
       <div class="card">
@@ -1046,17 +827,17 @@
                 </div>
               </div>
             </div>
-            <!-- Row 4: Open Time + Close Time -->
+            <!-- Row 4: Open Time + Close Time (optional) -->
             <div style="display:grid; grid-template-columns:1fr; gap:9px;">
               <div class="field">
-                <label>Open Time</label>
+                <label>Open Time <span style="text-transform:none;color:var(--stone-400);font-weight:400">(optional)</span></label>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
                   <input type="date" id="t-open-date" style="min-width:0;font-size:.75rem;padding:9px 6px;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--stone-900);font-family:inherit;box-sizing:border-box;width:100%">
                   <input type="time" id="t-open-hms" step="1" placeholder="00:00:00" style="min-width:0;font-size:.75rem;padding:9px 6px;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--stone-900);font-family:'DM Mono',monospace;box-sizing:border-box;width:100%">
                 </div>
               </div>
               <div class="field">
-                <label>Close Time</label>
+                <label>Close Time <span style="text-transform:none;color:var(--stone-400);font-weight:400">(optional)</span></label>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
                   <input type="date" id="t-close-date" style="min-width:0;font-size:.75rem;padding:9px 6px;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--stone-900);font-family:inherit;box-sizing:border-box;width:100%">
                   <input type="time" id="t-close-hms" step="1" placeholder="00:00:00" style="min-width:0;font-size:.75rem;padding:9px 6px;border:1px solid var(--border);border-radius:8px;background:var(--paper);color:var(--stone-900);font-family:'DM Mono',monospace;box-sizing:border-box;width:100%">
@@ -1073,7 +854,6 @@
         </div>
       </div>
     </div>
-
     <!-- Fund form -->
     <div id="form-fund" style="display:none">
       <div class="card">
@@ -1101,7 +881,6 @@
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-header"><div class="card-title">All Activity</div></div>
       <div class="card-body" style="padding-top:8px">
@@ -1116,12 +895,10 @@
       </div>
     </div>
   </div>
-
   <!-- ── PROJECTION ── -->
   <div class="page" id="page-projection">
     <div class="eyebrow">Compound Model</div>
     <div class="pg-title">Growth Projection</div>
-
     <div class="card">
       <div class="card-header"><div class="card-title">Parameters</div></div>
       <div class="card-body">
@@ -1139,7 +916,6 @@
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-header"><div class="card-title">Compound Schedule</div></div>
       <div class="card-body" style="padding-top:8px;overflow-x:auto">
@@ -1150,33 +926,27 @@
       </div>
     </div>
   </div>
-
   <!-- ── SESSIONS ── -->
   <div class="page" id="page-sessions">
     <div class="eyebrow">Market Hours</div>
     <div class="pg-title">Trading Sessions</div>
-
     <div class="card" style="margin-bottom:16px">
       <div class="card-body" style="padding-bottom:14px">
         <div class="sess-now-label">Current Time (Local)</div>
         <div class="sess-clock" id="sess-clock">00:00:00</div>
         <div class="sess-active-name" id="sess-active-name">—</div>
-
         <!-- Timeline bar -->
         <div class="session-timeline" style="margin-top:18px">
           <div class="timeline-bar" id="sess-timeline-bar"></div>
         </div>
       </div>
     </div>
-
     <div class="session-cards" id="sess-cards"></div>
   </div>
-
   <!-- ── ROI LOG ── -->
   <div class="page" id="page-dailyroi">
     <div class="eyebrow">Performance History</div>
     <div class="pg-title">Daily ROI Log</div>
-
     <div class="roi-kpi-row">
       <div class="roi-kpi">
         <div class="lbl">Best Day</div>
@@ -1191,14 +961,12 @@
         <div class="val" id="roi-avg-day">—</div>
       </div>
     </div>
-
     <div class="card" style="margin-bottom:14px">
       <div class="card-header"><div class="card-title">Equity Curve</div></div>
       <div class="card-body" style="padding:12px 8px 8px">
         <canvas id="roi-chart" style="width:100%;height:180px;display:block"></canvas>
       </div>
     </div>
-
     <div class="card">
       <div class="card-header">
         <div class="card-title">ROI History by Day</div>
@@ -1228,125 +996,24 @@
       </div>
     </div>
   </div>
-
-  <!-- ── LIQUIDITY RESERVE ── -->
-  <div class="page" id="page-lr">
-    <div class="eyebrow">Liquidity Reserve</div>
-    <div class="pg-title">Portfolio Holdings</div>
-
-    <!-- Live Price Status -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-      <div id="lr-price-dot" style="width:7px;height:7px;border-radius:50%;background:var(--stone-200);flex-shrink:0;transition:background .4s"></div>
-      <span id="lr-price-status" style="font-size:.62rem;color:var(--stone-400);font-family:'DM Mono',monospace;letter-spacing:.04em">Fetching live prices…</span>
-      <button onclick="fetchLRPrices()" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:5px;padding:3px 10px;font-size:.6rem;color:var(--stone-400);cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:all .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--stone-800)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--stone-400)'">&#8635; Refresh</button>
-    </div>
-
-    <!-- Dynamic Bucket Sections -->
-    <div id="lr-bucket-sections"></div>
-
-    <!-- KPI Row -->
-    <div class="kpi-row" style="margin-bottom:16px">
-      <div class="kpi-card">
-        <div class="kpi-label">Total Value</div>
-        <div class="kpi-value" id="lr-kpi-total">—</div>
-        <div class="kpi-sub" id="lr-kpi-total-sub">Portfolio value</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Total P&L</div>
-        <div class="kpi-value" id="lr-kpi-pnl">—</div>
-        <div class="kpi-sub" id="lr-kpi-roi">ROI —</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Holdings</div>
-        <div class="kpi-value" id="lr-kpi-count">—</div>
-        <div class="kpi-sub">Active positions</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Last Updated</div>
-        <div class="kpi-value" id="lr-kpi-updated" style="font-size:.85rem">—</div>
-        <div class="kpi-sub">Latest entry</div>
-      </div>
-    </div>
-
-    <!-- Add Holding Form -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-header"><div class="card-title">Add / Update Holding</div></div>
-      <div class="card-body">
-        <div class="lr-add-form">
-          <div class="lr-form-grid">
-            <div class="field">
-              <label>Token / Asset</label>
-              <input type="text" id="lr-token" placeholder="e.g. SOL" style="text-transform:uppercase">
-            </div>
-            <div class="field">
-              <label>Bucket</label>
-              <select id="lr-bucket-sel">
-                <option value="core">Core Growth</option>
-                <option value="sov">Store of Value</option>
-                <option value="asym">Asymmetric Bet</option>
-                <option value="usdc">USDC Buffer</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Amount (Units)</label>
-              <input type="text" inputmode="decimal" id="lr-amount" placeholder="0.00">
-            </div>
-            <div class="field">
-              <label>Entry Price (USD/unit)</label>
-              <input type="text" inputmode="decimal" id="lr-cost" placeholder="0.00">
-            </div>
-          </div>
-          <div class="field">
-            <label>Note (optional)</label>
-            <input type="text" id="lr-note" placeholder="e.g. DCA entry · Binance">
-          </div>
-          <div class="wrap-btn">
-            <button class="btn-add" onclick="addLRHolding()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
-              Add Holding
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Holdings Table -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">All Holdings</div>
-        <span style="font-size:.64rem;color:var(--stone-400);font-family:'DM Mono',monospace" id="lr-holding-count">— positions</span>
-      </div>
-      <div class="card-body" style="padding-top:8px;overflow-x:auto">
-        <table class="lr-holding-table">
-          <thead>
-            <tr>
-              <th style="text-align:left">Token</th>
-              <th style="text-align:left">Bucket</th>
-              <th>Units</th>
-              <th>Entry Price</th>
-              <th>Total Cost</th>
-              <th>Avg. Cost</th>
-              <th>Date</th>
-              <th>Note</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="lr-holdings-body"></tbody>
-        </table>
-        <div id="lr-empty" class="empty-state" style="display:none">
-          <div class="icon">◈</div><p>No holdings recorded yet</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ── CHANGELOG ── -->
   <div class="page" id="page-changelog">
     <div class="eyebrow">System</div>
     <div class="pg-title">Update Logs</div>
-
     <div id="changelog-entries">
       <!-- Initial log entry -->
+      <div class="update-log-entry">
+        <div class="update-log-meta">
+          <span class="update-log-date">2026-07-08</span>
+          <span class="update-log-version">v2.1</span>
+        </div>
+        <div class="update-log-title">StoneBridge 2.1 — Liquidity Reserve Removed &amp; Flexible Trade Timestamps</div>
+        <ul class="update-log-items">
+          <li>Removed Liquidity Reserve (LR) module, account switcher, and all related holdings/price-fetch logic <span class="update-log-tag fix">Fix</span></li>
+          <li>App simplified back to a single Partners trading account <span class="update-log-tag improve">Improve</span></li>
+          <li>Open/Close date &amp; time on new trades are now fully optional — no longer required to save a position <span class="update-log-tag improve">Improve</span></li>
+        </ul>
+      </div>
       <div class="update-log-entry">
         <div class="update-log-meta">
           <span class="update-log-date">2026-06-01</span>
@@ -1363,7 +1030,6 @@
         </ul>
       </div>
     </div>
-
     <!-- Add Log Entry (admin) -->
     <div class="card" style="margin-top:20px">
       <div class="card-header"><div class="card-title">Add Update Entry</div></div>
@@ -1397,9 +1063,7 @@
       </div>
     </div>
   </div>
-
 </main>
-
 <!-- BOTTOM NAV (mobile) -->
 <nav class="bottom-nav">
   <button class="nav-item active" id="nav-overview"   onclick="switchPage('overview')">
@@ -1418,10 +1082,6 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
     Projection
   </button>
-  <button class="nav-item" id="nav-lr"          onclick="switchPage('lr')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-    LR
-  </button>
   <button class="nav-item" id="nav-changelog"   onclick="switchPage('changelog')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     Logs
@@ -1431,13 +1091,11 @@
     Sessions
   </button>
 </nav>
-
 <!-- EXPORT MODAL -->
 <div class="export-modal-overlay" id="exportModal">
   <div class="export-modal" style="width:min(96vw,440px)">
     <h2>Export Data</h2>
     <p>Choose a date range and export format</p>
-
     <!-- Date Range Picker -->
     <div style="background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">
       <div style="font-size:.58rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Date Range</div>
@@ -1458,7 +1116,6 @@
         <button onclick="setDatePreset('thisYear')"  class="date-preset-btn" id="preset-thisYear">This Year</button>
       </div>
     </div>
-
     <div style="font-size:.6rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--stone-400);margin-bottom:10px">Format</div>
     <div class="export-btn-group">
       <button class="export-option" onclick="exportPDF()">
@@ -1492,10 +1149,8 @@
     <button class="export-close" onclick="closeExport()">Cancel</button>
   </div>
 </div>
-
 <!-- Hidden print-only statement -->
 <div id="print-statement"></div>
-
 <script>
 // ── SESSIONS DATA (declared early so ticker can use it) ──
 const SESSIONS = [
@@ -1511,7 +1166,6 @@ const SESSIONS = [
     pairs:['XAU/USD','XAG/USD','BTC/USD'] }
 ];
 const TOTAL_MINS = 1440;
-
 function getActiveSession(mins){
   for(const s of SESSIONS){
     if(s.start < s.end){ if(mins >= s.start && mins < s.end) return s; }
@@ -1519,7 +1173,6 @@ function getActiveSession(mins){
   }
   return null;
 }
-
 // ── TICKER (real prices) ──
 let tickerData = [
   { sym:'XAU/USD', price:0, chg:0, dec:2 },
@@ -1534,22 +1187,18 @@ let tickerData = [
   { sym:'GBP/JPY', price:0, chg:0, dec:2 },
   { sym:'EUR/JPY', price:0, chg:0, dec:2 },
 ];
-
 function buildTicker() {
   const track = document.getElementById('tickerTrack');
   if(!track) return;
-
   // หา session ปัจจุบัน
   const now    = new Date();
   const mins   = now.getHours()*60 + now.getMinutes();
   const active = typeof getActiveSession === 'function' ? getActiveSession(mins) : null;
-
   // กรองเฉพาะ pair ที่อยู่ใน session นั้น
   const activePairs = active ? active.pairs : null;
   const pool = tickerData.filter(a =>
     a.price > 0 && (!activePairs || activePairs.includes(a.sym))
   );
-
   if(!pool.length) return;
   const items = [...pool, ...pool];
   track.innerHTML = items.map(a => {
@@ -1567,7 +1216,6 @@ function buildTicker() {
     </div>`;
   }).join('');
 }
-
 async function fetchPrices() {
   try {
     // Binance — BTC/USD (ฟรี ไม่ต้อง key)
@@ -1575,13 +1223,11 @@ async function fetchPrices() {
       fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'),
       fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY,AUD,CAD')
     ]);
-
     if(btcRes.status === 'fulfilled' && btcRes.value.ok){
       const d = await btcRes.value.json();
       const t = tickerData.find(a=>a.sym==='BTC/USD');
       if(t){ t.price = parseFloat(d.lastPrice); t.chg = parseFloat(d.priceChangePercent); }
     }
-
     if(forexRes.status === 'fulfilled' && forexRes.value.ok){
       const d = await forexRes.value.json();
       const r = d.rates;
@@ -1596,7 +1242,6 @@ async function fetchPrices() {
       const AUDJPY = AUDUSD * USDJPY;
       const GBPJPY = GBPUSD * USDJPY;
       const EURJPY = EURUSD * USDJPY;
-
       const update = (sym, price) => {
         const t = tickerData.find(a=>a.sym===sym);
         if(t) { const prev = t.price||price; t.chg = prev>0 ? (price-prev)/prev*100 : 0; t.price = price; }
@@ -1610,7 +1255,6 @@ async function fetchPrices() {
       update('GBP/JPY', GBPJPY);
       update('EUR/JPY', EURJPY);
     }
-
     // XAU + XAG — ลอง metals.live ก่อน fallback เป็น Binance PAXG
     try {
       const metalsRes = await fetch('https://api.metals.live/v1/spot/gold,silver');
@@ -1630,7 +1274,6 @@ async function fetchPrices() {
         if(silver){ const t=tickerData.find(a=>a.sym==='XAG/USD'); if(t){ const prev=t.price||silver; t.chg=prev>0?(silver-prev)/prev*100:0; t.price=silver; } }
       }
     } catch(e) {}
-
     // Fallback: ดึง PAXG (gold-backed token) จาก Binance แทน XAU ถ้ายังไม่มีราคา
     const xau = tickerData.find(a=>a.sym==='XAU/USD');
     if(!xau || xau.price === 0){
@@ -1642,27 +1285,20 @@ async function fetchPrices() {
         }
       } catch(e) {}
     }
-
   } catch(e) { console.warn('Ticker fetch error', e); }
-
   buildTicker();
 }
-
 fetchPrices();
 setInterval(fetchPrices, 30000); // refresh ทุก 30 วิ
-
 // ── DATE ──
 document.getElementById('headerDate').textContent =
   new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
-
 // ── STATE ──
 let trades = JSON.parse(localStorage.getItem('sb_trades')||'[]');
 let funds  = JSON.parse(localStorage.getItem('sb_funds') ||'[]');
 let currentFundType = 'deposit';
-
 // ── TARGET MODE ──
 const _targetMode = 'compound';
-
 // ── RESTORE SETTINGS ──
 (function restoreSettings(){
   const s = JSON.parse(localStorage.getItem('sb_settings')||'{}');
@@ -1671,7 +1307,6 @@ const _targetMode = 'compound';
   if(s.avg)        document.getElementById('s-avg').value     = s.avg;
   if(s.freq)       document.getElementById('s-freq').value    = s.freq;
 })();
-
 // ── NAV ──
 function switchPage(name) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1682,7 +1317,6 @@ function switchPage(name) {
   ['nav-'+name,'dnav-'+name].forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.add('active'); });
   window.scrollTo(0,0);
 }
-
 // ── TAB SWITCHER (trade vs fund) ──
 function switchTab(tab) {
   document.getElementById('form-trade').style.display = tab==='trade' ? 'block' : 'none';
@@ -1690,14 +1324,12 @@ function switchTab(tab) {
   document.getElementById('tab-trade').classList.toggle('active', tab==='trade');
   document.getElementById('tab-fund').classList.toggle('active',  tab==='fund');
 }
-
 // ── FUND TYPE (deposit vs withdrawal) ──
 function selectFund(type) {
   currentFundType = type;
   document.getElementById('fund-dep').classList.toggle('active',  type==='deposit');
   document.getElementById('fund-with').classList.toggle('active', type==='withdrawal');
 }
-
 // ── ADD FUND ──
 function addFund() {
   const amt = parseFloat(document.getElementById('f-amount').value.trim());
@@ -1716,9 +1348,7 @@ function addFund() {
   document.getElementById('f-note').value='';
   recalc();
 }
-
 function delFund(id){ funds=funds.filter(f=>f.id!==id); localStorage.setItem('sb_funds',JSON.stringify(funds)); recalc(); }
-
 // ── HELPERS ──
 function fmt(n) { const a=Math.abs(n); if(a>=1e6)return(n/1e6).toFixed(2)+'M'; if(a>=1e3)return(n/1e3).toFixed(2)+'K'; return n.toFixed(2); }
 function fmtS(n){ const a=Math.abs(n); if(a>=1e6)return'$'+(n/1e6).toFixed(1)+'M'; if(a>=1e3)return'$'+(n/1e3).toFixed(1)+'K'; return'$'+n.toFixed(0); }
@@ -1726,7 +1356,6 @@ function $s(id,t){ const e=document.getElementById(id); if(e)e.textContent=t; }
 function $c(id,c){ const e=document.getElementById(id); if(!e)return; e.classList.remove('positive','negative'); if(c)e.classList.add(c); }
 // Net P&L per trade = gross P&L − commission + swap (swap is already negative)
 function netPnlOf(t){ return t.pnl - (t.commission||0) + (t.swap||0); }
-
 // ── TRADE ACTIONS ──
 function pushTrade(sym, pnl, type, commission=0, swap=0, openTime='', closeTime=''){
   const dateStr = openTime
@@ -1745,36 +1374,32 @@ function parsePnl(valId, signId){
 }
 function addTrade(){
   let valid = true;
-
   const symEl       = document.getElementById('t-symbol');
   const openDateEl  = document.getElementById('t-open-date');
   const openHmsEl   = document.getElementById('t-open-hms');
   const closeDateEl = document.getElementById('t-close-date');
   const closeHmsEl  = document.getElementById('t-close-hms');
   const pnlEl       = document.getElementById('t-pnl');
-
   const sym       = symEl.value.trim().toUpperCase();
   const openDate  = openDateEl.value;
   const openHms   = openHmsEl.value || '00:00:00';
   const closeDate = closeDateEl.value;
   const closeHms  = closeHmsEl.value || '00:00:00';
+  // Open/Close date & time are optional — only build a timestamp when a date was actually entered
   const openTime  = openDate  ? `${openDate}T${openHms}`  : '';
   const closeTime = closeDate ? `${closeDate}T${closeHms}` : '';
   const pnl  = parsePnl('t-pnl','t-sign');
   const type = document.getElementById('t-type').value;
-
-  // validate required
+  // validate required (symbol + P&L only; open/close date are optional)
   if(!sym)       { symEl.style.borderColor      = 'var(--loss)'; valid=false; } else symEl.style.borderColor='';
-  if(!openDate)  { openDateEl.style.borderColor  = 'var(--loss)'; valid=false; } else openDateEl.style.borderColor='';
-  if(!closeDate) { closeDateEl.style.borderColor = 'var(--loss)'; valid=false; } else closeDateEl.style.borderColor='';
+  openDateEl.style.borderColor  = '';
+  closeDateEl.style.borderColor = '';
   if(pnl===null) { pnlEl.style.borderColor       = 'var(--loss)'; valid=false; } else pnlEl.style.borderColor='';
   if(!valid) return;
-
   const commission = parseFloat(document.getElementById('t-commission').value)||0;
   const swapRaw    = parseFloat(document.getElementById('t-swap').value)||0;
   const swapSign   = parseFloat(document.getElementById('t-swap-sign').value);
   const swap       = swapRaw * swapSign;
-
   pushTrade(sym||'TRADE', pnl, type, commission, swap, openTime, closeTime);
   ['t-pnl','t-symbol','t-commission','t-swap','t-open-date','t-open-hms','t-close-date','t-close-hms']
     .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
@@ -1799,7 +1424,6 @@ function resetTarget(){
   const curBalance = capital + totalPnl + totalFunds;
   const totalDeposits = funds.filter(f=>f.type==='deposit').reduce((a,f)=>a+f.amt,0);
   const curRoiBase = capital + totalDeposits;
-
   // บันทึก pnlBaseline = totalPnl ณ ตอนนี้
   // recalc จะหัก baseline ออกเพื่อให้ ROI เริ่มที่ 0
   const s = JSON.parse(localStorage.getItem('sb_settings')||'{}');
@@ -1808,15 +1432,12 @@ function resetTarget(){
   localStorage.setItem('sb_settings', JSON.stringify(s));
   recalc();
 }
-
 function delTrade(id){ trades=trades.filter(t=>t.id!==id); localStorage.setItem('sb_trades',JSON.stringify(trades)); recalc(); }
-
 // ── RECALC ──
 function recalc(){
   const capital=parseFloat(document.getElementById('s-capital').value)||1000;
   const avgPct = parseFloat(document.getElementById('s-avg').value)||3;
   const freq   = document.getElementById('s-freq').value||'1';
-
   const totalPnl   = trades.reduce((s,t)=>s+t.pnl, 0);
   const totalComm  = trades.reduce((s,t)=>s+(t.commission||0), 0);
   const totalSwap  = trades.reduce((s,t)=>s+(t.swap||0), 0);
@@ -1824,30 +1445,24 @@ function recalc(){
   const totalFunds = funds.reduce((s,f)=> f.type==='deposit' ? s+f.amt : s-f.amt, 0);
   const totalDeposits = funds.filter(f=>f.type==='deposit').reduce((s,f)=>s+f.amt,0);
   const balance    = capital + netPnl + totalFunds;
-
   const roiBase   = capital + totalDeposits;
   const roi       = roiBase > 0 ? (netPnl / roiBase * 100) : 0;
   const target    = parseFloat(document.getElementById('s-target').value)||10000;
   const remaining = target - balance;
-
   // save settings
   const _prev = JSON.parse(localStorage.getItem('sb_settings')||'{}');
   localStorage.setItem('sb_settings', JSON.stringify({ ..._prev, capital, target, avg:avgPct, freq }));
-
   const wins    = trades.filter(t=>(t.pnl-(t.commission||0)+(t.swap||0))>0).length;
   const winRate = trades.length ? wins/trades.length*100 : 0;
-
   const targetPnl  = target - roiBase;
   const pnlArr = trades.map(t=> t.pnl-(t.commission||0)+(t.swap||0));
   const best   = pnlArr.length ? Math.max(...pnlArr) : 0;
   const worst  = pnlArr.length ? Math.min(...pnlArr) : 0;
   const avg    = pnlArr.length ? netPnl / pnlArr.length : 0;
-
   $s('kpi-balance','$'+fmt(balance));
   $s('kpi-balance-sub','Base $'+fmt(capital));
   $s('kpi-winrate',winRate.toFixed(1)+'%');
   $s('kpi-trades',trades.length+' positions');
-
   // Net P&L KPI (already net)
   const kpiPnlEl = document.getElementById('kpi-pnl');
   if(kpiPnlEl){
@@ -1855,7 +1470,6 @@ function recalc(){
     kpiPnlEl.className   = 'kpi-value '+(netPnl>=0?'positive':'negative');
   }
   $s('kpi-roi','ROI '+roi.toFixed(2)+'%');
-
   // ── Post-Withdrawal ROI ──
   // หา withdrawal ล่าสุด แล้วคำนวณ ROI จากจุดนั้น
   // เรียง events ทั้งหมดตาม timestamp
@@ -1863,13 +1477,11 @@ function recalc(){
     ...trades.map(t=>({...t, _type:'trade'})),
     ...funds.map(f=>({...f, _type:'fund'}))
   ].sort((a,b)=>a.id-b.id);
-
   // หา index ของ withdrawal ล่าสุด
   let lastWdrIdx = -1;
   allEventsWdr.forEach((ev, idx) => {
     if(ev._type === 'fund' && ev.type === 'withdrawal') lastWdrIdx = idx;
   });
-
   const wdrRoiEl  = document.getElementById('kpi-withdrawal-roi');
   const wdrSubEl  = document.getElementById('kpi-withdrawal-roi-sub');
   if(lastWdrIdx === -1){
@@ -1895,7 +1507,6 @@ function recalc(){
     if(wdrRoiEl){ wdrRoiEl.textContent = (wdrRoiPct>=0?'+':'')+wdrRoiPct.toFixed(2)+'%'; wdrRoiEl.className='kpi-value '+(wdrRoiPct>=0?'positive':'negative'); }
     if(wdrSubEl) wdrSubEl.textContent = (netPnlAfterWdr>=0?'+$':'-$')+Math.abs(netPnlAfterWdr).toFixed(2)+' · Since '+wdrDate;
   }
-
   // Avg Daily Trades (replaces Net Profit)
   const avgDailyEl = document.getElementById('kpi-avg-daily');
   if(avgDailyEl && trades.length){
@@ -1908,7 +1519,6 @@ function recalc(){
     avgDailyEl.textContent = '—';
     $s('kpi-avg-daily-sub','No trades yet');
   }
-
   // Trades This Week
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0=Sun
@@ -1931,11 +1541,9 @@ function recalc(){
   } else {
     $s('kpi-remaining','✓ Achieved');
   }
-
   let b2=balance,cnt=0;
   while(b2<target&&cnt<9999){b2+=b2*avgPct/100;cnt++;}
   $s('kpi-trades-needed',(cnt<9999?cnt:'9999+')+' trades est.');
-
   // progress bar
   const progEnd = target - capital;
   const progCur = balance - capital;
@@ -1947,7 +1555,6 @@ function recalc(){
   $s('prog-lbl-start',fmtS(capital));
   $s('prog-lbl-end',fmtS(target));
   document.getElementById('prog-fill').style.width=gp+'%';
-
   const msSet=(bId,vId,s,ms,cur)=>{
     const p=Math.min(100,Math.max(0,(cur-s)/(ms-s)*100));
     document.getElementById(bId).style.width=p+'%';
@@ -1956,18 +1563,15 @@ function recalc(){
   msSet('ms2','ms2v',capital,capital*2,balance);
   msSet('ms5','ms5v',capital,capital*5,balance);
   msSet('ms10','ms10v',capital,capital*10,balance);
-
   $s('stat-best', pnlArr.length?'+$'+best.toFixed(2):'—');
   $s('stat-worst',pnlArr.length?'$' +worst.toFixed(2):'—');
   $s('stat-avg',  pnlArr.length?(avg>=0?'+':'')+' $'+avg.toFixed(2):'—');
-
   // ── Deep Insights ──
   const winners = trades.filter(t=>(t.pnl-(t.commission||0)+(t.swap||0))>0).map(t=>t.pnl-(t.commission||0)+(t.swap||0));
   const losers  = trades.filter(t=>(t.pnl-(t.commission||0)+(t.swap||0))<0).map(t=>t.pnl-(t.commission||0)+(t.swap||0));
   const avgWin  = winners.length ? winners.reduce((a,b)=>a+b,0)/winners.length : 0;
   const avgLoss = losers.length  ? Math.abs(losers.reduce((a,b)=>a+b,0)/losers.length) : 0;
   const lossRate = 1 - winRate/100;
-
   // Realized R:R
   if(winners.length && losers.length){
     const rr = avgWin / avgLoss;
@@ -1975,7 +1579,6 @@ function recalc(){
     rrEl.textContent = '1 : ' + rr.toFixed(2);
     rrEl.style.color = rr >= 1 ? 'var(--profit)' : 'var(--loss)';
   } else { $s('stat-rr','—'); }
-
   // Expectancy % of portfolio (คำนวณย้อนหลังจาก running balance รวม deposit/withdrawal)
   if(trades.length >= 2){
     // รวม trades + funds เรียงตาม timestamp (เก่าสุดก่อน)
@@ -1983,11 +1586,9 @@ function recalc(){
       ...trades.map(t => ({ ...t, _type:'trade' })),
       ...funds.map(f  => ({ ...f, _type:'fund'  }))
     ].sort((a,b) => a.id - b.id); // id = Date.now() ตอนบันทึก
-
     let runBal = capital;
     const winPcts  = [];
     const lossPcts = [];
-
     allEvents.forEach(e => {
       if(e._type === 'fund'){
         // deposit/withdrawal อัปเดต balance แต่ไม่นับเป็น trade
@@ -2000,16 +1601,13 @@ function recalc(){
         runBal += e.pnl;
       }
     });
-
     const avgWinPct  = winPcts.length  ? winPcts.reduce((a,b)=>a+b,0)  / winPcts.length  : 0;
     const avgLossPct = lossPcts.length ? lossPcts.reduce((a,b)=>a+b,0) / lossPcts.length : 0;
     const expPct = (winRate/100 * avgWinPct) - (lossRate * avgLossPct);
-
     const expEl = document.getElementById('stat-exp');
     expEl.textContent = (expPct >= 0 ? '+' : '') + expPct.toFixed(2) + '%';
     expEl.style.color = expPct >= 0 ? 'var(--profit)' : 'var(--loss)';
   } else { $s('stat-exp','—'); }
-
   // Profit Factor
   if(winners.length && losers.length){
     const grossWin  = winners.reduce((a,b)=>a+b,0);
@@ -2019,7 +1617,6 @@ function recalc(){
     pfEl.textContent = pf.toFixed(2);
     pfEl.style.color = pf >= 1.5 ? 'var(--profit)' : pf >= 1 ? 'var(--gold)' : 'var(--loss)';
   } else { $s('stat-pf','—'); }
-
   // ── Avg Hold Time ──
   const tradesWithTime = trades.filter(t=>t.openTime&&t.closeTime);
   if(tradesWithTime.length){
@@ -2037,10 +1634,8 @@ function recalc(){
     holdStr += mins+'m';
     $s('stat-hold', holdStr.trim()||'< 1m');
   } else { $s('stat-hold','—'); }
-
   // ── Positions Traded ──
   $s('stat-streak', trades.length ? trades.length+' total' : '—');
-
   // ── Max Drawdown ──
   if(trades.length){
     const allEv = [
@@ -2059,10 +1654,8 @@ function recalc(){
     mddEl.textContent = '-'+mdd.toFixed(2)+'%';
     mddEl.style.color = mdd>20?'var(--loss)':mdd>10?'var(--gold)':'var(--stone-600)';
   } else { $s('stat-mdd','—'); }
-
   renderTrades(); renderRecent(); renderTable(capital,target,avgPct,balance); renderDailyROI(capital);
 }
-
 function fmtDateTime(dt){
   if(!dt) return '—';
   // dt = "2025-01-15T14:30:05"
@@ -2087,9 +1680,7 @@ function rowHTML(t){
     <button class="btn-del" onclick="delTrade(${t.id})">✕</button>
   </div>`;
 }
-
 const EMPTY=`<div class="empty-state"><div class="icon">◈</div><p>No positions recorded</p></div>`;
-
 function fundRowHTML(f){
   const isDep = f.type==='deposit';
   return`<div class="trade-row">
@@ -2100,13 +1691,11 @@ function fundRowHTML(f){
     <button class="btn-del" onclick="delFund(${f.id})">✕</button>
   </div>`;
 }
-
 function allRowsSorted(){
   const tRows = trades.map(t=>({...t, _ts: t.id, _html: rowHTML(t)}));
   const fRows = funds.map(f=>({...f, _ts: f.id, _html: fundRowHTML(f)}));
   return [...tRows,...fRows].sort((a,b)=>b._ts-a._ts).map(r=>r._html).join('');
 }
-
 function renderTrades(){
   const e=document.getElementById('tradeRows');
   if(!e) return;
@@ -2119,7 +1708,6 @@ function renderRecent(){
   const all = trades.length||funds.length;
   e.innerHTML = all ? allRowsSorted().split('</div>').slice(0,5).join('</div>') + (allRowsSorted().split('</div>').length>1?'':'') : EMPTY;
 }
-
 function renderTable(capital,target,avgPct,cur){
   const tb=document.getElementById('compBody'); if(!tb)return; tb.innerHTML='';
   let bal=capital;
@@ -2135,16 +1723,13 @@ function renderTable(capital,target,avgPct,cur){
     if(bal>=target*1.15)break;
   }
 }
-
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape') closeExport();
   if(e.key!=='Enter')return;
   if(document.activeElement.closest('#page-trades .trade-form')) addTrade();
   if(document.activeElement.closest('.overview-right')) addTradeOv();
 });
-
 // ── SESSIONS UI ──
-
 function buildSessionCards(activeSess){
   const el = document.getElementById('sess-cards'); if(!el) return;
   el.innerHTML = SESSIONS.map(s => {
@@ -2168,14 +1753,11 @@ function buildSessionCards(activeSess){
     </div>`;
   }).join('');
 }
-
 function buildTimelineBar(activeSess){
   const el = document.getElementById('sess-timeline-bar'); if(!el) return;
-
   const now        = new Date();
   const localMins  = now.getHours()*60 + now.getMinutes();
   const dotPct     = ((localMins - 7*60 + 1440) % 1440) / 1440 * 100;
-
   const ordered = [
     { id:'asia',    start:7*60,  end:15*60 }, // 8h
     { id:'london',  start:15*60, end:19*60 }, // 4h
@@ -2183,7 +1765,6 @@ function buildTimelineBar(activeSess){
     { id:'nylate',  start:23*60, end:4*60  }, // 5h
     { id:'dead',    start:4*60,  end:7*60  }, // 3h
   ];
-
   const segs = ordered.map(o => {
     const s        = SESSIONS.find(x=>x.id===o.id);
     const dur      = o.start < o.end ? o.end - o.start : (1440 - o.start) + o.end;
@@ -2191,7 +1772,6 @@ function buildTimelineBar(activeSess){
     const isActive = activeSess && activeSess.id === o.id;
     return `<div style="width:${pct}%;height:100%;background:${s.color};opacity:${isActive?1:0.3};border-radius:3px;flex-shrink:0;"></div>`;
   }).join('');
-
   el.style.position = 'relative';
   el.style.display  = 'flex';
   el.style.gap      = '2px';
@@ -2208,7 +1788,6 @@ function buildTimelineBar(activeSess){
     animation:dotPulse 2s ease-in-out infinite;
   "></div>`;
 }
-
 function updateClock(){
   const now  = new Date();
   const mins = now.getHours()*60+now.getMinutes();
@@ -2224,7 +1803,6 @@ function updateClock(){
 }
 updateClock();
 setInterval(updateClock, 1000);
-
 // ── DAILY ROI ──
 function renderDailyROI(capital){
   // group trades by date key (use openTime date if available, else stored date)
@@ -2233,7 +1811,6 @@ function renderDailyROI(capital){
     ...trades.map(t=>({...t, _type:'trade'})),
     ...funds.map(f=>({...f, _type:'fund'}))
   ].sort((a,b)=>a.id-b.id);
-
   // compute running balance per event to get balance-before each trade
   let runBal = capital;
   allEvents.forEach(ev=>{
@@ -2250,10 +1827,8 @@ function renderDailyROI(capital){
       runBal += ev.pnl - (ev.commission||0) + (ev.swap||0); // net
     }
   });
-
   // build sorted desc list
   const days = Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
-
   // today's daily ROI for KPI card
   const todayKey = new Date().toISOString().slice(0,10);
   const todayData = byDate[todayKey];
@@ -2272,23 +1847,19 @@ function renderDailyROI(capital){
       kpiSub.textContent = 'No trades today';
     }
   }
-
   // ROI Log page
   const tbody = document.getElementById('roi-log-body');
   const emptyEl = document.getElementById('roi-empty');
   if(!tbody) return;
-
   if(!days.length){
     tbody.innerHTML=''; if(emptyEl) emptyEl.style.display='block'; return;
   }
   if(emptyEl) emptyEl.style.display='none';
-
   // compute summary stats
   const roiPcts = [];
   let runningBal = capital;
   // recalc running balance properly for table
   const allEvSorted = [...allEvents].sort((a,b)=>a.id-b.id);
-
   // rebuild byDate with cumulative balance after
   const daysList = {};
   let rb = capital;
@@ -2306,25 +1877,20 @@ function renderDailyROI(capital){
       daysList[dk].balanceAfter = rb;
     }
   });
-
   const sortedDays = Object.keys(daysList).sort((a,b)=>b.localeCompare(a));
   sortedDays.forEach(dk=>{
     const d = daysList[dk];
     const net = d.grossPnl - d.commission + d.swap;
     if(d.balanceBefore > 0) roiPcts.push(net/d.balanceBefore*100);
   });
-
   const bestRoi  = roiPcts.length ? Math.max(...roiPcts) : null;
   const worstRoi = roiPcts.length ? Math.min(...roiPcts) : null;
   const avgRoi   = roiPcts.length ? roiPcts.reduce((a,b)=>a+b,0)/roiPcts.length : null;
-
   $s('roi-best-day',  bestRoi  !== null ? (bestRoi>=0?'+':'')+bestRoi.toFixed(2)+'%' : '—');
   $s('roi-worst-day', worstRoi !== null ? (worstRoi>=0?'+':'')+worstRoi.toFixed(2)+'%' : '—');
   $s('roi-avg-day',   avgRoi   !== null ? (avgRoi>=0?'+':'')+avgRoi.toFixed(2)+'%' : '—');
   $s('roi-day-count', `${sortedDays.length} trading day${sortedDays.length!==1?'s':''}`);
-
   const maxAbs = roiPcts.length ? Math.max(...roiPcts.map(Math.abs)) : 1;
-
   tbody.innerHTML = sortedDays.map(dk=>{
     const d = daysList[dk];
     const net = d.grossPnl - d.commission + d.swap;
@@ -2349,7 +1915,6 @@ function renderDailyROI(capital){
       </td>
     </tr>`;
   }).join('');
-
   // ── Equity Curve Chart ──
   const canvas = document.getElementById('roi-chart');
   if(canvas && sortedDays.length){
@@ -2362,7 +1927,6 @@ function renderDailyROI(capital){
     canvas.style.height = H+'px';
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr,dpr);
-
     // data: balance after each day, chronological
     const chronoDays = [...sortedDays].reverse();
     const points = chronoDays.map(dk=>({
@@ -2372,19 +1936,15 @@ function renderDailyROI(capital){
     // prepend capital as start
     const capital2 = parseFloat(document.getElementById('s-capital').value)||1000;
     const allPts = [{label:'Start', bal:capital2}, ...points];
-
     const pad = {t:12,r:16,b:28,l:52};
     const cw = W - pad.l - pad.r;
     const ch = H - pad.t - pad.b;
-
     const vals = allPts.map(p=>p.bal);
     const minV = Math.min(...vals);
     const maxV = Math.max(...vals);
     const range = maxV - minV || 1;
-
     const xOf = i => pad.l + (i/(allPts.length-1||1))*cw;
     const yOf = v => pad.t + ch - ((v-minV)/range)*ch;
-
     // grid lines
     ctx.strokeStyle='rgba(26,25,23,.06)';
     ctx.lineWidth=1;
@@ -2397,7 +1957,6 @@ function renderDailyROI(capital){
       ctx.textAlign='right';
       ctx.fillText('$'+fmt(val), pad.l-5, y+4);
     }
-
     // gradient fill
     const grad = ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
     const isUp = allPts[allPts.length-1].bal >= capital2;
@@ -2411,7 +1970,6 @@ function renderDailyROI(capital){
     ctx.closePath();
     ctx.fillStyle=grad;
     ctx.fill();
-
     // line
     ctx.beginPath();
     ctx.strokeStyle = isUp ? '#2d6a4f' : '#9b2335';
@@ -2419,7 +1977,6 @@ function renderDailyROI(capital){
     ctx.lineJoin='round';
     allPts.forEach((p,i)=>{ i===0?ctx.moveTo(xOf(i),yOf(p.bal)):ctx.lineTo(xOf(i),yOf(p.bal)); });
     ctx.stroke();
-
     // dots + x labels
     allPts.forEach((p,i)=>{
       // dot
@@ -2437,7 +1994,6 @@ function renderDailyROI(capital){
     });
   }
 }
-
 // ── EXPORT FUNCTIONS ──
 function openExport(){
   // Set default date range (all time)
@@ -2459,7 +2015,6 @@ function closeExport(){
 document.getElementById('exportModal').addEventListener('click', function(e){
   if(e.target === this) closeExport();
 });
-
 function setDatePreset(preset){
   const fromEl = document.getElementById('export-date-from');
   const toEl   = document.getElementById('export-date-to');
@@ -2481,13 +2036,11 @@ function setDatePreset(preset){
     fromEl.value=`${today.getFullYear()}-01-01`; toEl.value=fmt(today);
   }
 }
-
 function getExportDateRange(){
   const from = document.getElementById('export-date-from')?.value || '';
   const to   = document.getElementById('export-date-to')?.value   || '';
   return { from, to };
 }
-
 function filterByDateRange(items, getDate){
   const { from, to } = getExportDateRange();
   if(!from && !to) return items;
@@ -2499,7 +2052,6 @@ function filterByDateRange(items, getDate){
     return true;
   });
 }
-
 function getExportStats(){
   const capital    = parseFloat(document.getElementById('s-capital').value)||1000;
   const filteredTrades = filterByDateRange(trades, t=>(t.openTime||t.date||''));
@@ -2514,7 +2066,6 @@ function getExportStats(){
   const balance    = capital + totalNet + totalFunds;
   const roiBase    = capital + totalDep;
   const roi        = roiBase>0 ? (totalNet/roiBase*100) : 0;
-
   const netArr  = filteredTrades.map(t=>t.pnl-(t.commission||0)+(t.swap||0));
   const winners = netArr.filter(n=>n>0);
   const losers  = netArr.filter(n=>n<0);
@@ -2527,7 +2078,6 @@ function getExportStats(){
   const avgTrade= netArr.length ? totalNet/netArr.length : 0;
   const best    = netArr.length ? Math.max(...netArr) : 0;
   const worst   = netArr.length ? Math.min(...netArr) : 0;
-
   // Max Drawdown
   let rb=capital, peak=capital, mdd=0;
   [...filteredTrades].sort((a,b)=>a.id-b.id).forEach(t=>{
@@ -2536,7 +2086,6 @@ function getExportStats(){
     const dd=peak>0?(peak-rb)/peak*100:0;
     if(dd>mdd) mdd=dd;
   });
-
   // Avg Hold Time
   const timed = filteredTrades.filter(t=>t.openTime&&t.closeTime);
   let avgHold = '—';
@@ -2545,14 +2094,12 @@ function getExportStats(){
     const m=Math.floor(ms/60000), d=Math.floor(m/1440), h=Math.floor((m%1440)/60), mn=m%60;
     avgHold = (d>0?d+'d ':'')+( h>0?h+'h ':'')+mn+'m';
   }
-
   return { capital, totalGross, totalComm, totalSwap, totalNet, totalFunds,
            totalDep, totalWdr, balance, roi, roiBase,
            winRate, avgW, avgL, rr, pf, exp, avgTrade, best, worst, mdd, avgHold,
            winners, losers, netArr,
            filteredTrades, filteredFunds };
 }
-
 // ── PDF STATEMENT ──
 function exportPDF(){
   closeExport();
@@ -2565,7 +2112,6 @@ function exportPDF(){
   const sign = (n,unit='$') => (n>=0?`+${unit}${fmt2(n)}`:`-${unit}${fmt2(Math.abs(n))}`);
   const col  = n => n>0?'#2d6a4f':n<0?'#9b2335':'#5c5a54';
   const dateRangeLabel = drFrom||drTo ? `${drFrom||'—'} → ${drTo||'—'}` : 'All Records';
-
   // ── Trade rows — full detail ──
   const filteredTrades = s.filteredTrades;
   const filteredFunds  = s.filteredFunds;
@@ -2578,7 +2124,6 @@ function exportPDF(){
     ...filteredTrades.map(t=>({...t,_k:'trade'})),
     ...filteredFunds.map(f=>({...f,_k:'fund'}))
   ].sort((a,b)=>a.id-b.id);
-
   const balMap = {};
   let rbRun = s.capital;
   allEvts.forEach(ev=>{
@@ -2589,7 +2134,6 @@ function exportPDF(){
       balMap[ev.id] = rbRun;
     }
   });
-
   const tradeRows = sortedTrades.map((t,i)=>{
     const net = t.pnl-(t.commission||0)+(t.swap||0);
     const balAfter = balMap[t.id]||0;
@@ -2622,7 +2166,6 @@ function exportPDF(){
       <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;color:#2a2925">$${fmt2(balAfter)}</td>
     </tr>`;
   }).join('');
-
   // ── Fund movement rows — full fields + running balance ──
   let rbFund = s.capital;
   const fundBalMap = {};
@@ -2634,7 +2177,6 @@ function exportPDF(){
       rbFund += ev.pnl - (ev.commission||0) + (ev.swap||0);
     }
   });
-
   const fundRows = [...filteredFunds].sort((a,b)=>a.id-b.id).map((f,i)=>{
     const isDep = f.type === 'deposit';
     const balAfterFund = fundBalMap[f.id] || 0;
@@ -2651,7 +2193,6 @@ function exportPDF(){
       <td style="padding:5px 8px;font-family:monospace;font-size:8.5pt;text-align:right;color:#2a2925">$${fmt2(balAfterFund)}</td>
     </tr>`;
   }).join('');
-
   // ── Daily ROI rows ──
   const dayMap={};
   let rbDay=s.capital;
@@ -2679,16 +2220,12 @@ function exportPDF(){
       <td style="padding:5px 8px;text-align:right;font-family:monospace;font-size:8.5pt;font-weight:600;color:${col(roi)}">${roi>=0?'+':''}${roi.toFixed(2)}%</td>
     </tr>`;
   }).join('');
-
   const kpiBox=(label,value,color='#1a1917')=>`<div style="border:1px solid #e2dfd8;border-radius:8px;padding:10px 12px;background:#faf9f7">
     <div style="font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:#9e9b93;margin-bottom:4px">${label}</div>
     <div style="font-family:monospace;font-size:11pt;color:${color};font-weight:500">${value}</div>
   </div>`;
-
   const section=(title)=>`<div style="font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9e9b93;margin:20pt 0 8pt;font-weight:500;display:flex;align-items:center;gap:8px"><span style="display:inline-block;width:3px;height:10px;background:#b8975a;border-radius:2px"></span>${title}</div>`;
-
   const thStyle=`padding:6px 8px;font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:#9e9b93;font-weight:500;border-bottom:1.5px solid #e2dfd8;white-space:nowrap`;
-
   const html=`<!DOCTYPE html><html><head>
   <meta charset="UTF-8">
   <title>StoneBridge Statement — ${dateStr}</title>
@@ -2703,15 +2240,12 @@ function exportPDF(){
     @page{size:A4 landscape;margin:16mm 12mm}
     @media print{.no-print{display:none!important} body{font-size:9pt}}
   </style>
-  </head><body class="has-switcher">
-
+  </head><body>
   <div class="no-print" style="background:#1a1917;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99">
     <span style="color:#b8975a;font-family:'DM Sans',sans-serif;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase">StoneBridge Statement Preview — ${dateStr}</span>
     <button onclick="window.print()" style="background:#b8975a;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:500;cursor:pointer;letter-spacing:.06em;text-transform:uppercase">⬇ Save as PDF</button>
   </div>
-
   <div style="max-width:1000px;margin:0 auto;padding:28pt 32pt">
-
     <!-- HEADER -->
     <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #b8975a;padding-bottom:14pt;margin-bottom:20pt">
       <div>
@@ -2724,7 +2258,6 @@ function exportPDF(){
         <div style="font-size:7pt;color:#b8975a;margin-top:4px;letter-spacing:.06em">CONFIDENTIAL</div>
       </div>
     </div>
-
     <!-- ACCOUNT SUMMARY -->
     ${section('Account Summary')}
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10pt;margin-bottom:10pt">
@@ -2741,7 +2274,6 @@ function exportPDF(){
       ${kpiBox('Total Withdrawals','-$'+s.totalWdr.toFixed(2),'#e67700')}
       ${kpiBox('Net Fund Flow',(s.totalFunds>=0?'+':'-')+'$'+Math.abs(s.totalFunds).toFixed(2),col(s.totalFunds))}
     </div>
-
     <!-- PERFORMANCE METRICS -->
     ${section('Performance Metrics')}
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10pt;margin-bottom:10pt">
@@ -2765,7 +2297,6 @@ function exportPDF(){
       ${kpiBox('Losers',s.losers.length+' trades','#9b2335')}
       ${kpiBox('Breakeven',(filteredTrades.length-s.winners.length-s.losers.length)+' trades')}
     </div>
-
     <!-- TRADE LOG -->
     ${section('Trade History — '+filteredTrades.length+' Positions')}
     ${filteredTrades.length ? `
@@ -2785,7 +2316,6 @@ function exportPDF(){
       </tr></thead>
       <tbody>${tradeRows}</tbody>
     </table>` : '<div style="color:#9e9b93;font-size:9pt;padding:12pt 0">No trade records.</div>'}
-
     <!-- FUND MOVEMENTS -->
     ${section('Fund Movements — '+filteredFunds.length+' Records')}
     ${filteredFunds.length ? `
@@ -2801,7 +2331,6 @@ function exportPDF(){
       </tr></thead>
       <tbody>${fundRows}</tbody>
     </table>` : '<div style="color:#9e9b93;font-size:9pt;padding:12pt 0">No fund records.</div>'}
-
     <!-- DAILY ROI LOG -->
     ${section('Daily ROI Summary — '+Object.keys(dayMap).length+' Trading Days')}
     ${Object.keys(dayMap).length ? `
@@ -2818,20 +2347,16 @@ function exportPDF(){
       </tr></thead>
       <tbody>${dayRows}</tbody>
     </table>` : '<div style="color:#9e9b93;font-size:9pt;padding:12pt 0">No daily records.</div>'}
-
     <!-- FOOTER -->
     <div style="margin-top:32pt;padding-top:12pt;border-top:1px solid #e2dfd8;display:flex;justify-content:space-between;align-items:center">
       <div style="font-size:7pt;color:#9e9b93">StoneBridge — This statement is confidential and intended for internal use only.</div>
       <div style="font-family:'DM Mono',monospace;font-size:7pt;color:#9e9b93">Capital Base: $${s.capital.toFixed(2)} · Generated: ${dateStr} ${timeStr}</div>
     </div>
-
   </div></body></html>`;
-
   const win = window.open('','_blank','width=1100,height=900');
   win.document.write(html);
   win.document.close();
 }
-
 // ── CSV EXPORT ──
 function exportCSV(){
   closeExport();
@@ -2859,7 +2384,6 @@ function exportCSV(){
   a.download = `stonebridge_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
-
 // ── JSON EXPORT ──
 function exportJSON(){
   closeExport();
@@ -2867,7 +2391,7 @@ function exportJSON(){
   const { filteredTrades: ft, filteredFunds: ff } = s;
   const { from: drFrom, to: drTo } = getExportDateRange();
   const payload = {
-    meta:{ app:'StoneBridge Portfolio Tracker', exported:new Date().toISOString(), version:'2.0', dateRange:{from:drFrom||null,to:drTo||null} },
+    meta:{ app:'StoneBridge Portfolio Tracker', exported:new Date().toISOString(), version:'2.1', dateRange:{from:drFrom||null,to:drTo||null} },
     summary:{ capital:s.capital, balance:parseFloat(s.balance.toFixed(2)), netPnl:parseFloat(s.totalNet.toFixed(2)), roi:parseFloat(s.roi.toFixed(2)), winRate:parseFloat(s.winRate.toFixed(2)), rr:parseFloat(s.rr.toFixed(2)), totalTrades:ft.length },
     trades: ft, funds: ff,
     settings: JSON.parse(localStorage.getItem('sb_settings')||'{}')
@@ -2878,393 +2402,14 @@ function exportJSON(){
   a.download = `stonebridge_backup_${new Date().toISOString().slice(0,10)}.json`;
   a.click();
 }
-
-
-// ── ACCOUNT SWITCHER ──────────────────────────────────────────────────────────
-let currentAccount = 'partners';
-
-function switchAccount(acct) {
-  currentAccount = acct;
-  document.getElementById('acct-btn-partners').classList.toggle('active', acct === 'partners');
-  document.getElementById('acct-btn-lr').classList.toggle('active', acct === 'lr');
-
-  // Show/hide pages based on account
-  const partnerPages = ['overview','trades','dailyroi','projection','sessions'];
-  const lrPages      = ['lr'];
-
-  if (acct === 'partners') {
-    switchPage('overview');
-  } else {
-    switchPage('lr');
-  }
-}
-
-
-// ── LR LIVE PRICES ────────────────────────────────────────────────────────────
-const SYMBOL_MAP = {
-  'BTC':'BTCUSDT','ETH':'ETHUSDT','SOL':'SOLUSDT','BNB':'BNBUSDT',
-  'AVAX':'AVAXUSDT','ADA':'ADAUSDT','NEAR':'NEARUSDT','PAXG':'PAXGUSDT',
-  'ONDO':'ONDOUSDT','ZRO':'ZROUSDT','SYRUP':'SYRUPUSDT','USDC':'USDCUSDT'
-};
-
-let lrLivePrices = {}; // { TOKEN: { price, chg24h } }
-
-async function fetchLRPrices() {
-  const dotEl    = document.getElementById('lr-price-dot');
-  const statusEl = document.getElementById('lr-price-status');
-  if (dotEl)    dotEl.style.background = 'var(--gold)';
-  if (statusEl) statusEl.textContent   = 'Fetching live prices…';
-
-  // Get unique tokens from holdings
-  const tokens = [...new Set(lrHoldings.map(h => h.token))];
-  if (!tokens.length) {
-    if (dotEl)    dotEl.style.background = 'var(--stone-300)';
-    if (statusEl) statusEl.textContent   = 'No holdings — add assets first';
-    renderLRBucketSections();
-    return;
-  }
-
-  // Map to Binance symbols
-  const symbols = tokens.map(t => SYMBOL_MAP[t] || (t + 'USDT'));
-  const symbolStr = JSON.stringify(symbols);
-
-  try {
-    const res = await fetch(
-      'https://api.binance.com/api/v3/ticker/24hr?symbols=' + encodeURIComponent(symbolStr)
-    );
-    if (!res.ok) throw new Error('API error ' + res.status);
-    const data = await res.json();
-
-    data.forEach(d => {
-      // Reverse-map symbol → token
-      const token = Object.keys(SYMBOL_MAP).find(k => SYMBOL_MAP[k] === d.symbol)
-                 || d.symbol.replace('USDT','');
-      lrLivePrices[token] = {
-        price:  parseFloat(d.lastPrice),
-        chg24h: parseFloat(d.priceChangePercent)
-      };
-    });
-
-    // USDC is always ~$1
-    if (tokens.includes('USDC')) lrLivePrices['USDC'] = { price: 1.0, chg24h: 0 };
-
-    const now = new Date();
-    const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-    if (dotEl)    { dotEl.style.background = 'var(--profit)'; }
-    if (statusEl) statusEl.textContent = 'Live · Updated ' + timeStr;
-
-  } catch(e) {
-    if (dotEl)    dotEl.style.background = 'var(--loss)';
-    if (statusEl) statusEl.textContent   = 'Price fetch failed — showing cost basis';
-  }
-
-  renderLRBucketSections();
-  updateLRKPIs();
-}
-
-const BUCKET_META = {
-  core:  { name:'Core Growth',    alloc:'35%', color:'#7dba9b' },
-  sov:   { name:'Store of Value', alloc:'40%', color:'#b8975a' },
-  asym:  { name:'Asymmetric Bet', alloc:'15%', color:'#9b2335' },
-  usdc:  { name:'USDC Buffer',    alloc:'10%', color:'#3b5bdb' },
-};
-const BUCKET_ORDER = ['sov','core','asym','usdc'];
-
-function renderLRBucketSections() {
-  const container = document.getElementById('lr-bucket-sections');
-  if (!container) return;
-
-  // Compute total portfolio value for % calc
-  let totalPortfolioValue = 0;
-  lrHoldings.forEach(h => {
-    const lp = lrLivePrices[h.token];
-    totalPortfolioValue += h.amount * (lp ? lp.price : (h.entryPrice || 0));
-  });
-
-  // Group holdings by bucket
-  const byBucket = {};
-  BUCKET_ORDER.forEach(b => byBucket[b] = []);
-  lrHoldings.forEach(h => {
-    const b = h.bucket || 'core';
-    if (!byBucket[b]) byBucket[b] = [];
-    byBucket[b].push(h);
-  });
-
-  // Compute avg cost per token
-  const avgMap = {};
-  lrHoldings.forEach(h => {
-    if (!avgMap[h.token]) avgMap[h.token] = { units: 0, cost: 0 };
-    avgMap[h.token].units += h.amount;
-    avgMap[h.token].cost  += h.amount * (h.entryPrice || 0);
-  });
-
-  let html = '';
-
-  BUCKET_ORDER.forEach(bucketKey => {
-    const meta    = BUCKET_META[bucketKey];
-    const entries = byBucket[bucketKey];
-
-    // Aggregate by token within bucket
-    const tokenMap = {};
-    entries.forEach(h => {
-      if (!tokenMap[h.token]) tokenMap[h.token] = { units: 0, cost: 0, notes: [] };
-      tokenMap[h.token].units += h.amount;
-      tokenMap[h.token].cost  += h.amount * (h.entryPrice || 0);
-      if (h.note) tokenMap[h.token].notes.push(h.note);
-    });
-
-    const tokens = Object.keys(tokenMap);
-
-    // Bucket totals
-    let bucketValue = 0, bucketCost = 0;
-    tokens.forEach(t => {
-      const lp = lrLivePrices[t];
-      bucketValue += tokenMap[t].units * (lp ? lp.price : 0);
-      bucketCost  += tokenMap[t].cost;
-    });
-    const bucketPnl    = bucketValue - bucketCost;
-    const bucketPnlPct = bucketCost > 0 ? bucketPnl / bucketCost * 100 : 0;
-    const bucketPortPct = totalPortfolioValue > 0 ? bucketValue / totalPortfolioValue * 100 : 0;
-
-    const fmtUSD = (n, dec=2) => n > 0 ? '$' + n.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec}) : '—';
-    const fmtPct = (n) => (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
-    const sign   = (n) => n >= 0 ? 'pos' : 'neg';
-
-    html += `<div class="lr-section">
-      <div class="lr-section-header">
-        <div class="lr-section-left">
-          <div class="lr-section-stripe" style="background:${meta.color}"></div>
-          <div>
-            <div class="lr-section-name">${meta.name}</div>
-            <div class="lr-section-plan-alloc">Target ${meta.alloc} of LR</div>
-          </div>
-        </div>
-        <div class="lr-section-right">
-          <div class="lr-section-stat">
-            <div class="lbl">Portfolio %</div>
-            <div class="val">${bucketPortPct > 0 ? bucketPortPct.toFixed(1) + '%' : '—'}</div>
-          </div>
-          <div class="lr-section-stat">
-            <div class="lbl">Value</div>
-            <div class="val">${bucketValue > 0 ? fmtUSD(bucketValue) : '—'}</div>
-          </div>
-          <div class="lr-section-stat">
-            <div class="lbl">P&L</div>
-            <div class="val ${bucketCost > 0 ? sign(bucketPnl) : ''}">${bucketCost > 0 ? (bucketPnl >= 0 ? '+' : '') + fmtUSD(bucketPnl) + ' (' + fmtPct(bucketPnlPct) + ')' : '—'}</div>
-          </div>
-        </div>
-      </div>`;
-
-    if (!tokens.length) {
-      html += `<div class="lr-empty-bucket">No holdings in this bucket yet</div>`;
-    } else {
-      html += `<div class="lr-token-grid">
-        <div class="lr-token-row header-row">
-          <span>Token</span>
-          <span style="text-align:left">Live Price</span>
-          <span>Units</span>
-          <span class="lr-hide-mobile">Total Value</span>
-          <span>P&L</span>
-          <span class="lr-hide-mobile">Portfolio %</span>
-          <span>Avg. Cost</span>
-        </div>`;
-
-      tokens.forEach(token => {
-        const td       = tokenMap[token];
-        const lp       = lrLivePrices[token];
-        const livePrice = lp ? lp.price : 0;
-        const chg24h   = lp ? lp.chg24h : null;
-        const totalVal = td.units * livePrice;
-        const avgCost  = td.units > 0 ? td.cost / td.units : 0;
-        const pnl      = totalVal - td.cost;
-        const pnlPct   = td.cost > 0 ? pnl / td.cost * 100 : 0;
-        const portPct  = totalPortfolioValue > 0 ? totalVal / totalPortfolioValue * 100 : 0;
-
-        const priceStr = livePrice > 0
-          ? '$' + livePrice.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits: livePrice < 1 ? 6 : 2})
-          : '—';
-        const chgStr = chg24h !== null
-          ? `<span class="lr-token-price-chg ${chg24h >= 0 ? 'pos' : 'neg'}">${chg24h >= 0 ? '+' : ''}${chg24h.toFixed(2)}%</span>`
-          : '';
-        const unitsStr = td.units.toLocaleString('en-US', {maximumFractionDigits: td.units < 1 ? 6 : 4});
-        const valStr   = totalVal > 0 ? fmtUSD(totalVal) : '—';
-        const pnlStr   = td.cost > 0
-          ? `<span class="${sign(pnl)}">${pnl >= 0 ? '+' : ''}${fmtUSD(Math.abs(pnl))}</span><span class="lr-token-price-chg ${sign(pnl)}">${fmtPct(pnlPct)}</span>`
-          : '—';
-        const portStr  = portPct > 0 ? portPct.toFixed(1) + '%' : '—';
-        const avgStr   = avgCost > 0
-          ? '$' + avgCost.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits: avgCost < 1 ? 6 : 2})
-          : '—';
-
-        html += `<div class="lr-token-row">
-          <div class="lr-token-sym">${token}</div>
-          <div class="lr-token-cell highlight">${priceStr}${chgStr}</div>
-          <div class="lr-token-cell">${unitsStr}</div>
-          <div class="lr-token-cell lr-hide-mobile">${valStr}</div>
-          <div class="lr-token-cell">${pnlStr}</div>
-          <div class="lr-token-cell lr-hide-mobile">${portStr}</div>
-          <div class="lr-token-cell gold">${avgStr}</div>
-        </div>`;
-      });
-
-      html += `</div>`;
-    }
-
-    html += `</div>`;
-  });
-
-  container.innerHTML = html || '<div class="empty-state"><div class="icon">◈</div><p>No holdings recorded</p></div>';
-}
-
-// Auto-fetch on page load and every 60s
-fetchLRPrices();
-setInterval(fetchLRPrices, 60000);
-
-// ── LR HOLDINGS ───────────────────────────────────────────────────────────────
-let lrHoldings = JSON.parse(localStorage.getItem('sb_lr_holdings') || '[]');
-
-function addLRHolding() {
-  const tokenEl  = document.getElementById('lr-token');
-  const amtEl    = document.getElementById('lr-amount');
-  const costEl   = document.getElementById('lr-cost');
-  const bucketEl = document.getElementById('lr-bucket-sel');
-  const noteEl   = document.getElementById('lr-note');
-
-  const token      = tokenEl.value.trim().toUpperCase();
-  const amount     = parseFloat(amtEl.value.trim());
-  const entryPrice = parseFloat(costEl.value.trim()) || 0;
-  const bucket     = bucketEl.value;
-  const note       = noteEl.value.trim();
-  const totalCost  = amount * entryPrice;
-
-  if (!token) { tokenEl.style.borderColor = 'var(--loss)'; return; }
-  tokenEl.style.borderColor = '';
-
-  if (isNaN(amount) || amount < 0) { amtEl.style.borderColor = 'var(--loss)'; return; }
-  amtEl.style.borderColor = '';
-
-  lrHoldings.unshift({
-    id: Date.now(),
-    date: new Date().toISOString().slice(0,10),
-    token,
-    amount,
-    entryPrice,
-    cost: totalCost,
-    bucket,
-    note
-  });
-  localStorage.setItem('sb_lr_holdings', JSON.stringify(lrHoldings));
-
-  tokenEl.value = '';
-  amtEl.value   = '';
-  costEl.value  = '';
-  noteEl.value  = '';
-
-  renderLRHoldings();
-  renderLRBucketSections();
-  updateLRKPIs();
-}
-
-function delLRHolding(id) {
-  lrHoldings = lrHoldings.filter(h => h.id !== id);
-  localStorage.setItem('sb_lr_holdings', JSON.stringify(lrHoldings));
-  renderLRHoldings();
-  renderLRBucketSections();
-  updateLRKPIs();
-}
-
-const BUCKET_LABELS = { core:'Core Growth', sov:'Store of Value', asym:'Asymmetric Bet', usdc:'USDC Buffer' };
-
-function renderLRHoldings() {
-  const tbody   = document.getElementById('lr-holdings-body');
-  const emptyEl = document.getElementById('lr-empty');
-  const countEl = document.getElementById('lr-holding-count');
-  if (!tbody) return;
-
-  if (!lrHoldings.length) {
-    tbody.innerHTML = '';
-    if (emptyEl) emptyEl.style.display = 'block';
-    if (countEl) countEl.textContent = '0 positions';
-    return;
-  }
-  if (emptyEl) emptyEl.style.display = 'none';
-  if (countEl) countEl.textContent = lrHoldings.length + ' position' + (lrHoldings.length !== 1 ? 's' : '');
-
-  // Compute Avg. Cost per token (weighted average across all entries)
-  const avgCostMap = {};
-  lrHoldings.forEach(h => {
-    if (!avgCostMap[h.token]) avgCostMap[h.token] = { totalUnits: 0, totalCost: 0 };
-    avgCostMap[h.token].totalUnits += h.amount;
-    avgCostMap[h.token].totalCost  += (h.entryPrice || h.cost || 0) * h.amount;
-  });
-
-  tbody.innerHTML = lrHoldings.map(h => {
-    const avgCost = avgCostMap[h.token] && avgCostMap[h.token].totalUnits > 0
-      ? avgCostMap[h.token].totalCost / avgCostMap[h.token].totalUnits
-      : 0;
-    const entryPrice = h.entryPrice !== undefined ? h.entryPrice : (h.amount > 0 ? h.cost / h.amount : 0);
-    const totalCost  = h.amount * entryPrice;
-    return `
-    <tr>
-      <td style="font-weight:600;color:var(--stone-900)">${h.token}</td>
-      <td><span class="lr-badge ${h.bucket}">${BUCKET_LABELS[h.bucket] || h.bucket}</span></td>
-      <td>${h.amount.toLocaleString('en-US', {maximumFractionDigits:6})}</td>
-      <td>${entryPrice > 0 ? '$' + entryPrice.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:4}) : '—'}</td>
-      <td>${totalCost > 0 ? '$' + totalCost.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—'}</td>
-      <td style="color:var(--gold);font-weight:500">${avgCost > 0 ? '$' + avgCost.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:4}) : '—'}</td>
-      <td>${h.date}</td>
-      <td style="color:var(--stone-400);font-size:.68rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.note || '—'}</td>
-      <td><button class="btn-del" onclick="delLRHolding(${h.id})">✕</button></td>
-    </tr>`;
-  }).join('');
-}
-
-function updateLRKPIs() {
-  // Use live prices if available, else fall back to entry price
-  const totalCost = lrHoldings.reduce((s, h) => {
-    const lp = lrLivePrices[h.token];
-    const price = lp ? lp.price : (h.entryPrice !== undefined ? h.entryPrice : (h.amount > 0 ? h.cost / h.amount : 0));
-    return s + h.amount * price;
-  }, 0);
-  const totalCostBasis = lrHoldings.reduce((s, h) => {
-    const ep = h.entryPrice !== undefined ? h.entryPrice : (h.amount > 0 ? h.cost / h.amount : 0);
-    return s + h.amount * ep;
-  }, 0);
-  const totalPnlLR = totalCost - totalCostBasis;
-  const totalRoiLR = totalCostBasis > 0 ? totalPnlLR / totalCostBasis * 100 : 0;
-  const count     = lrHoldings.length;
-
-  const totalEl   = document.getElementById('lr-kpi-total');
-  const pnlEl     = document.getElementById('lr-kpi-pnl');
-  const roiEl     = document.getElementById('lr-kpi-roi');
-  const countEl2  = document.getElementById('lr-kpi-count');
-  const updEl     = document.getElementById('lr-kpi-updated');
-
-  if (totalEl)  { totalEl.textContent = totalCost > 0 ? '$' + totalCost.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—'; }
-  if (countEl2) countEl2.textContent = count > 0 ? count : '—';
-  if (pnlEl)    {
-    if (totalCostBasis > 0) {
-      pnlEl.textContent = (totalPnlLR >= 0 ? '+$' : '-$') + Math.abs(totalPnlLR).toFixed(2);
-      pnlEl.className   = 'kpi-value ' + (totalPnlLR >= 0 ? 'positive' : 'negative');
-    } else { pnlEl.textContent = '—'; }
-  }
-  if (roiEl)    roiEl.textContent = totalCostBasis > 0 ? 'ROI ' + (totalRoiLR >= 0 ? '+' : '') + totalRoiLR.toFixed(2) + '%' : 'ROI —';
-  if (updEl)    updEl.textContent    = lrHoldings.length ? lrHoldings[0].date : '—';
-}
-
-// Init LR on load
-renderLRHoldings();
-updateLRKPIs();
-
 // ── CHANGELOG ─────────────────────────────────────────────────────────────────
 let customLogs = JSON.parse(localStorage.getItem('sb_changelog') || '[]');
-
 function renderCustomLogs() {
   const container = document.getElementById('changelog-entries');
   if (!container) return;
-  // Remove previous custom entries (keep first static entry)
-  const staticEntry = container.querySelector('.update-log-entry');
-
+  // Remove previous custom entries (keep static entries)
+  const staticEntries = container.querySelectorAll('.update-log-entry');
+  const anchor = staticEntries.length ? staticEntries[0] : null;
   customLogs.forEach(log => {
     // Check if already rendered
     if (document.getElementById('log-entry-' + log.id)) return;
@@ -3282,37 +2427,30 @@ function renderCustomLogs() {
         ${log.changes.map(c => `<li>${c}</li>`).join('')}
       </ul>
     `;
-    container.insertBefore(div, staticEntry);
+    if(anchor) container.insertBefore(div, anchor);
+    else container.appendChild(div);
   });
 }
-
 function addLogEntry() {
   const version  = document.getElementById('log-version').value.trim();
   const date     = document.getElementById('log-date').value;
   const title    = document.getElementById('log-title').value.trim();
   const changes  = document.getElementById('log-changes').value.trim().split('\n').filter(Boolean);
-
   if (!version || !date || !title || !changes.length) return;
-
   const entry = { id: Date.now(), version, date, title, changes };
   customLogs.unshift(entry);
   localStorage.setItem('sb_changelog', JSON.stringify(customLogs));
-
   document.getElementById('log-version').value  = '';
   document.getElementById('log-date').value     = '';
   document.getElementById('log-title').value    = '';
   document.getElementById('log-changes').value  = '';
-
   renderCustomLogs();
   switchPage('changelog');
 }
-
 // Set today's date as default for log form
 const logDateEl = document.getElementById('log-date');
 if (logDateEl) logDateEl.value = new Date().toISOString().slice(0,10);
-
 renderCustomLogs();
-
 recalc();
 if ('serviceWorker' in navigator) {
   const swCode = `
